@@ -1090,8 +1090,11 @@ function chevIcon(){
 function openAddForm(parentId, gender, motherIdOverride){
   const form = document.createElement('div');
   form.className='add-form';
+  const fieldsHtml = Array.from({length:6}).map((_,i)=>
+    `<input type="text" class="newNameInput" placeholder="اسم ${i+1}" style="margin-bottom:8px;">`
+  ).join('');
   form.innerHTML = `
-    <input type="text" id="newNameInput" placeholder="اكتب الاسم">
+    ${fieldsHtml}
     <div class="gender-toggle">
       <button type="button" data-g="m" class="${gender==='m'?'active':''}">ذكر</button>
       <button type="button" data-g="f" class="${gender==='f'?'active':''}">أنثى</button>
@@ -1113,22 +1116,26 @@ function openAddForm(parentId, gender, motherIdOverride){
   });
   document.getElementById('cancelNew').onclick = ()=>{ form.remove(); };
   document.getElementById('saveNew').onclick = ()=>{
-    const name = document.getElementById('newNameInput').value.trim();
-    if(!name){ showToast('اكتب اسمًا أولًا'); return; }
+    const names = Array.from(form.querySelectorAll('.newNameInput'))
+      .map(input=>input.value.trim())
+      .filter(name=>name.length>0);
+    if(names.length===0){ showToast('اكتب اسمًا واحدًا على الأقل'); return; }
     const parent = P[parentId]; // always the father (husband) when motherIdOverride is set — nasab always follows the father
-    const newId = 'u_'+(idCounter++);
     const connector = chosenGender==='m' ? 'بن' : 'بنت';
-    const chain = `${name} ${connector} ${parent.chain}`;
-    const fatherId = motherIdOverride ? parentId : (parent.gender==='m' ? parentId : null);
-    const motherId = motherIdOverride ? motherIdOverride : (parent.gender==='f' ? parentId : null);
-    add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
-    parent.childIds.push(newId);
-    if(motherIdOverride && P[motherIdOverride] && !P[motherIdOverride].childIds.includes(newId)){
-      P[motherIdOverride].childIds.push(newId);
-    }
-    addedByUser.add(newId);
+    names.forEach(name=>{
+      const newId = 'u_'+(idCounter++);
+      const chain = `${name} ${connector} ${parent.chain}`;
+      const fatherId = motherIdOverride ? parentId : (parent.gender==='m' ? parentId : null);
+      const motherId = motherIdOverride ? motherIdOverride : (parent.gender==='f' ? parentId : null);
+      add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
+      parent.childIds.push(newId);
+      if(motherIdOverride && P[motherIdOverride] && !P[motherIdOverride].childIds.includes(newId)){
+        P[motherIdOverride].childIds.push(newId);
+      }
+      addedByUser.add(newId);
+    });
     persistState();
-    showToast('تمت الإضافة');
+    showToast(names.length>1 ? `تمت إضافة ${names.length} أسماء` : 'تمت الإضافة');
     form.remove();
     render();
   };
