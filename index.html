@@ -708,6 +708,20 @@ function isChainSource(child, parentId){
   return child.fatherId===parentId || (!child.fatherId && child.motherId===parentId);
 }
 
+function applyChainGenderSuffix(chain, gender){
+  // the final nisba/tribal word must agree with the chain's own subject (leftmost person),
+  // not with whichever parent chain it was built from
+  const words = chain.split(' ');
+  let last = words[words.length-1];
+  if(gender==='f'){
+    if(last.endsWith('ي') && !last.endsWith('ية')) last = last + 'ة';
+  } else {
+    if(last.endsWith('ية')) last = last.slice(0,-1);
+  }
+  words[words.length-1] = last;
+  return words.join(' ');
+}
+
 function rebuildDescendantChains(personId){
   const p = P[personId];
   if(!p) return;
@@ -715,7 +729,7 @@ function rebuildDescendantChains(personId){
     const child = P[cid];
     if(!child || !isChainSource(child, personId)) return;
     const connector = child.gender==='m' ? 'بن' : 'بنت';
-    child.chain = `${child.name} ${connector} ${p.chain}`;
+    child.chain = applyChainGenderSuffix(`${child.name} ${connector} ${p.chain}`, child.gender);
     rebuildDescendantChains(cid);
   });
 }
@@ -1146,20 +1160,35 @@ function openAddForm(parentId, gender, motherIdOverride){
     if(names.length===0){ showToast('اكتب اسمًا واحدًا على الأقل'); return; }
     const parent = P[parentId]; // always the father (husband) when motherIdOverride is set — nasab always follows the father
     const connector = chosenGender==='m' ? 'بن' : 'بنت';
+    let linkedCount = 0, createdCount = 0;
     names.forEach(name=>{
-      const newId = 'u_'+(idCounter++);
-      const chain = `${name} ${connector} ${parent.chain}`;
+      const chain = applyChainGenderSuffix(`${name} ${connector} ${parent.chain}`, chosenGender);
       const fatherId = motherIdOverride ? parentId : (parent.gender==='m' ? parentId : null);
       const motherId = motherIdOverride ? motherIdOverride : (parent.gender==='f' ? parentId : null);
-      add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
-      parent.childIds.push(newId);
+      // an identical full chain means this is the SAME real person already recorded elsewhere —
+      // link them here instead of creating a confusing duplicate record
+      const existing = Object.values(P).find(p=>p.chain===chain && p.id!==parentId);
+      let newId;
+      if(existing){
+        newId = existing.id;
+        linkedCount++;
+      } else {
+        newId = 'u_'+(idCounter++);
+        add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
+        addedByUser.add(newId);
+        createdCount++;
+      }
+      if(!parent.childIds.includes(newId)) parent.childIds.push(newId);
       if(motherIdOverride && P[motherIdOverride] && !P[motherIdOverride].childIds.includes(newId)){
         P[motherIdOverride].childIds.push(newId);
       }
-      addedByUser.add(newId);
     });
     persistState();
-    showToast(names.length>1 ? `تمت إضافة ${names.length} أسماء` : 'تمت الإضافة');
+    if(linkedCount>0){
+      showToast(linkedCount===names.length ? 'الاسم موجود مسبقًا — تم الربط بدل التكرار' : `تمت الإضافة (${linkedCount} منها كان مسجّلًا فرُبط بدل التكرار)`);
+    } else {
+      showToast(names.length>1 ? `تمت إضافة ${names.length} أسماء` : 'تمت الإضافة');
+    }
     form.remove();
     render();
   };
