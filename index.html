@@ -516,6 +516,7 @@ const renameLog = {};       // { personId: newName } — applied on top of seed 
 const spouseLog = {};       // { personId: spouseName } — husband/wife name recorded from the sons/daughters page
 const deceasedLog = {};     // { personId: true/false } — deceased flag set from the edit panel
 const altNamesLog = {};     // { personId: [altName, ...] } — additional names added without replacing the main name
+const chainLog = {};        // { personId: fullChainString } — full nasab edited directly, overrides the auto-built chain
 const amountsLog = {};      // { ownerId: { relativeId: amountString } } — wasiyya amounts per relative
 const deletedIds = new Set(); // ids removed by any user of this link
 let idCounter = 1;
@@ -741,6 +742,17 @@ function renamePerson(personId, newName){
   person.name = newName;
   person.chain = newName + person.chain.slice(oldName.length);
   renameLog[personId] = newName;
+  rebuildDescendantChains(personId);
+}
+
+function setFullChain(personId, newChain){
+  const person = P[personId];
+  if(!person) return;
+  const firstSpace = newChain.indexOf(' ');
+  const newName = firstSpace===-1 ? newChain : newChain.slice(0, firstSpace);
+  person.name = newName;
+  person.chain = newChain;
+  chainLog[personId] = newChain;
   rebuildDescendantChains(personId);
 }
 
@@ -1254,7 +1266,8 @@ function openEditPanel(personId){
   const altNames = person.altNames || [];
   const altNamesTags = altNames.map(n=>`<span class="alt-name-tag">${n} <span class="alt-name-remove" data-name="${n}">×</span></span>`).join('');
   panel.innerHTML = `
-    <input type="text" id="editNameInput" value="${person.name}">
+    <label class="alt-names-label" style="margin-bottom:4px;display:block;">الاسم الكامل (النسب) — عدّل، أضف، أو احذف أي جزء منه</label>
+    <textarea id="editNameInput" rows="3" style="width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);font-family:'Tajawal';font-size:15px;resize:vertical;">${person.chain}</textarea>
     <label style="display:flex;align-items:center;gap:8px;margin:10px 2px;font-size:14px;color:var(--ink-soft);cursor:pointer;">
       <input type="checkbox" id="deceasedCheck" ${person.isDeceased ? 'checked' : ''} style="width:16px;height:16px;">
       توفاه الله
@@ -1304,9 +1317,9 @@ function openEditPanel(personId){
 
   document.getElementById('cancelEdit').onclick = ()=>panel.remove();
   document.getElementById('saveEdit').onclick = ()=>{
-    const newName = document.getElementById('editNameInput').value.trim();
-    if(!newName){ showToast('اكتب اسمًا أولًا'); return; }
-    renamePerson(personId, newName);
+    const newChain = document.getElementById('editNameInput').value.trim();
+    if(!newChain){ showToast('اكتب الاسم الكامل أولًا'); return; }
+    setFullChain(personId, newChain);
     setDeceased(personId, document.getElementById('deceasedCheck').checked);
     persistState();
     showToast('تم تحديث البيانات');
@@ -1367,6 +1380,7 @@ function buildPayload(){
   return {
     adds: Array.from(addedByUser).map(id=>P[id]).filter(Boolean),
     renames: Object.assign({}, renameLog),
+    chains: Object.assign({}, chainLog),
     spouses: Object.assign({}, spouseLog),
     deceased: Object.assign({}, deceasedLog),
     altNames: JSON.parse(JSON.stringify(altNamesLog)),
@@ -1428,6 +1442,11 @@ function applyPayload(payload){
   Object.keys(payload.renames||{}).forEach(id=>{
     if(P[id] && P[id].name !== payload.renames[id]){
       renamePerson(id, payload.renames[id]);
+    }
+  });
+  Object.keys(payload.chains||{}).forEach(id=>{
+    if(P[id] && P[id].chain !== payload.chains[id]){
+      setFullChain(id, payload.chains[id]);
     }
   });
   Object.keys(payload.deceased||{}).forEach(id=>{
