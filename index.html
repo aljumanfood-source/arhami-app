@@ -1240,6 +1240,12 @@ function openAddForm(parentId, gender, motherIdOverride){
       if(existing){
         newId = existing.id;
         linkedCount++;
+        // backfill parent links the earlier record was missing — this is the actual bug:
+        // reusing an existing record without also setting ITS OWN motherId/fatherId left the
+        // link one-directional (the mother's childIds knew about the child, but the child's own
+        // motherId stayed empty), so relations like "أمي وأخوالي" silently came up empty for them
+        if(!existing.fatherId && fatherId) existing.fatherId = fatherId;
+        if(!existing.motherId && motherId) existing.motherId = motherId;
       } else {
         newId = 'u_'+(idCounter++);
         add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
@@ -1520,8 +1526,9 @@ async function restoreState(){
       if(res && res.value) applyPayload(JSON.parse(res.value));
     }
   }catch(e){ /* first run or storage unavailable */ }
+  const repaired = repairParentLinks();
   const autoMerged = quickSafeMerge();
-  if(autoMerged>0) persistState();
+  if(repaired>0 || autoMerged>0) persistState();
   render();
 }
 
@@ -1581,6 +1588,23 @@ function applyPayload(payload){
     if(P[id]) deletePerson(id);
     deletedIds.add(id);
   });
+}
+
+/* one-time repair pass: fixes the specific data corruption caused by the openAddForm bug above —
+   a child whose id was reused (linked instead of duplicated) but whose OWN motherId/fatherId field
+   was never actually set, even though the parent's childIds list already includes them. Runs on
+   every load; harmless no-op once the live data is healed. */
+function repairParentLinks(){
+  let fixedCount = 0;
+  Object.values(P).forEach(parent=>{
+    (parent.childIds||[]).forEach(childId=>{
+      const child = P[childId];
+      if(!child) return;
+      if(parent.gender==='f' && !child.motherId){ child.motherId = parent.id; fixedCount++; }
+      if(parent.gender==='m' && !child.fatherId){ child.fatherId = parent.id; fixedCount++; }
+    });
+  });
+  return fixedCount;
 }
 
 /* manual backup — a safety net in case this device/session can't reach persistent storage */
