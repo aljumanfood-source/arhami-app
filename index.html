@@ -1247,7 +1247,13 @@ function openAddForm(parentId, gender, motherIdOverride){
         if(!existing.fatherId && fatherId) existing.fatherId = fatherId;
         if(!existing.motherId && motherId) existing.motherId = motherId;
       } else {
-        newId = 'u_'+(idCounter++);
+        // was 'u_'+(idCounter++): idCounter is only a local per-session GUESS (roughly
+        // "however many people I currently know about"), never a real synced counter. Two
+        // family members adding people around the same time from different devices could
+        // independently generate the exact same id for two DIFFERENT people — and the id
+        // collision would silently merge/overwrite one into the other on the next save. A
+        // random id makes that collision astronomically unlikely instead of routine.
+        newId = 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
         add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
         addedByUser.add(newId);
         createdCount++;
