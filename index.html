@@ -953,6 +953,11 @@ function renderHome(){
     return;
   }
   const results = Object.values(P).filter(p=>{
+    // the VISIBLE search box only surfaces layer 8+ (the more recent, actionable generations) —
+    // this does NOT affect the separate auto-link matching used when adding new names, which
+    // deliberately still checks every layer (including ancestors) so duplicates keep getting
+    // linked instead of recreated, regardless of what shows up here
+    if(p.layer<8) return false;
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
