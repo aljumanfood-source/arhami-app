@@ -1362,50 +1362,43 @@ function armDelete(btn, personId){
 
 /* shared persistence — visible and editable by anyone who opens this link */
 /* storage adapter — window.storage exists only inside Claude's artifact preview.
-   Once this file is deployed as a real website, fall back to the browser's own
-   localStorage so each visitor still gets reliable persistence across visits. */
+   Once this file is deployed as a real website, we talk to Firebase directly using
+   ONE KEY PER DATA CATEGORY — the same pattern used in مركز ابراء العلمي — instead of
+   one giant blob key. Two people editing different categories (say, one adds a name
+   while another edits a chain) never collide at all since they touch different keys;
+   and even two edits to the SAME category only need to merge that one small piece. */
 const FIREBASE_URL = 'https://ibra-quran-default-rtdb.asia-southeast1.firebasedatabase.app';
 const usingFirebase = !(typeof window!=='undefined' && window.storage && typeof window.storage.get==='function');
 let lastFirebaseError = null;
 
-async function firebaseGet(key){
+const STORAGE_KEYS = {
+  adds:     'arhami:persons',
+  renames:  'arhami:renames',
+  chains:   'arhami:chains',
+  spouses:  'arhami:spouses',
+  deceased: 'arhami:deceased',
+  altNames: 'arhami:altNames',
+  amounts:  'arhami:amounts',
+  deletes:  'arhami:deletes'
+};
+const LEGACY_BLOB_KEY = 'arhami:family_data'; // pre-migration single-key format, read once as a fallback
+
+async function firebaseGetRaw(key){
   const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json?t=' + Date.now(), { cache:'no-store' });
   if(!r.ok) throw new Error('firebase GET HTTP '+r.status);
   const v = await r.json();
   if(v===null || v===undefined) throw new Error('not found');
-  return typeof v === 'string' ? v : JSON.stringify(v);
+  return v; // already-parsed JSON (object/array), not a JSON string
 }
-async function firebaseSet(key, value){
-  let parsed; try{ parsed = JSON.parse(value); }catch(e){ parsed = value; }
+async function firebaseSetRaw(key, value){
   const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json', {
-    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(parsed), cache:'no-store'
+    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(value), cache:'no-store'
   });
   if(!r.ok) throw new Error('firebase PUT HTTP '+r.status);
 }
 
-const storageAdapter = usingFirebase ? {
-      async get(key){
-        try{
-          const str = await firebaseGet(key);
-          try{ localStorage.setItem(key, str); }catch(e){}
-          return {key, value:str};
-        }catch(e){
-          lastFirebaseError = e.message;
-          const v = localStorage.getItem(key);
-          if(v===null) throw new Error('not found');
-          return {key, value:v};
-        }
-      },
-      async set(key, value){
-        try{ localStorage.setItem(key, value); }catch(e){}
-        // the shared save MUST reach Firebase — if it fails, this throws so the caller
-        // (persistState) knows the save did not actually sync, instead of assuming success
-        // because the local cache write happened to work.
-        await firebaseSet(key, value);
-        return {key, value};
-      }
-    }
-  : {
+// legacy single-key adapter — only used in the non-Firebase preview fallback now
+const storageAdapter = usingFirebase ? null : {
       async get(key){ return window.storage.get(key, true); },
       async set(key, value){ return window.storage.set(key, value, true); }
     };
@@ -1434,27 +1427,34 @@ function updateSyncBadge(state){
   else if(state==='failed'){ badge.textContent='⚠️ فشل الحفظ — حاول مرة أخرى قبل الخروج'; badge.style.color='var(--red)'; badge.style.display='block'; }
 }
 
+// fetch every category key from Firebase in parallel, shaped like buildPayload()'s
+// output, ready to feed straight into applyPayload()
+async function fetchRemotePayload(){
+  const entries = await Promise.all(Object.keys(STORAGE_KEYS).map(async cat=>{
+    try{ return [cat, await firebaseGetRaw(STORAGE_KEYS[cat])]; }
+    catch(e){ return [cat, null]; }
+  }));
+  const payload = {};
+  entries.forEach(([cat, val])=>{ if(val!==null) payload[cat]=val; });
+  return payload;
+}
+
 async function attemptPersist(){
-  // fetch-latest-merge-save: pull whatever the shared record currently holds and merge it
-  // into our local model FIRST, so our snapshot (built fresh below) carries everyone else's
-  // edits too — this is what actually prevents one saver's write from clobbering another's,
-  // rather than just detecting the clash after the fact.
   if(usingFirebase){
-    try{
-      const remoteStr = await firebaseGet('arhami:family_data');
-      if(remoteStr) applyPayload(JSON.parse(remoteStr));
-    }catch(e){ /* nothing remote yet, or unreachable — proceed with local-only snapshot */ }
-  }
-  const json = JSON.stringify(buildPayload());
-  await storageAdapter.set('arhami:family_data', json);
-  // verify the write actually round-trips on Firebase itself — a 200 OK response isn't
-  // proof it stuck, and checking via storageAdapter.get() could be fooled by the local
-  // cache already holding the same value, so hit Firebase directly here.
-  if(usingFirebase){
-    const verifyStr = await firebaseGet('arhami:family_data');
-    if(verifyStr !== json){
-      throw new Error('التحقق فشل: القيمة المحفوظة على Firebase لا تطابق ما أرسلناه');
-    }
+    // fetch-latest-merge-save, per category key: pull whatever each key currently
+    // holds and merge it into our local model FIRST, so our snapshot (built fresh
+    // below) carries everyone else's edits too — this is what actually prevents one
+    // saver's write from clobbering another's, rather than just detecting the clash
+    // after the fact.
+    const remote = await fetchRemotePayload();
+    applyPayload(remote);
+    const local = buildPayload();
+    await Promise.all(Object.keys(STORAGE_KEYS).map(cat=>
+      firebaseSetRaw(STORAGE_KEYS[cat], local[cat])
+    ));
+  } else {
+    const json = JSON.stringify(buildPayload());
+    await storageAdapter.set('arhami:family_data', json);
   }
 }
 
@@ -1470,7 +1470,7 @@ function persistState(){
         render(); // reflect any changes merged in from another saver just now
         return;
       }catch(e){
-        // a mismatch here usually just means someone else saved in the same instant —
+        // usually just means someone else saved the same key at the same instant —
         // re-merging and retrying resolves it silently most of the time
         if(attempt<MAX_ATTEMPTS){ await new Promise(res=>setTimeout(res, 400*attempt)); continue; }
         storageAvailable = false;
@@ -1485,9 +1485,15 @@ function persistState(){
 
 async function testStorage(){
   try{
-    await storageAdapter.set('arhami:_probe', String(Date.now()));
-    const r = await storageAdapter.get('arhami:_probe');
-    storageAvailable = !!(r && r.value);
+    if(usingFirebase){
+      await firebaseSetRaw('arhami:_probe', String(Date.now()));
+      const v = await firebaseGetRaw('arhami:_probe');
+      storageAvailable = !!v;
+    } else {
+      await storageAdapter.set('arhami:_probe', String(Date.now()));
+      const r = await storageAdapter.get('arhami:_probe');
+      storageAvailable = !!(r && r.value);
+    }
   }catch(e){
     storageAvailable = false;
     lastFirebaseError = e.message;
@@ -1497,9 +1503,21 @@ async function testStorage(){
 async function restoreState(){
   await testStorage();
   try{
-    const res = await storageAdapter.get('arhami:family_data');
-    if(res && res.value){
-      applyPayload(JSON.parse(res.value));
+    if(usingFirebase){
+      const remote = await fetchRemotePayload();
+      if(Object.keys(remote).length){
+        applyPayload(remote);
+      } else {
+        // nothing under the new per-category keys yet — fall back to the old
+        // single-blob key so existing family data from before this migration isn't lost
+        try{
+          const legacy = await firebaseGetRaw(LEGACY_BLOB_KEY);
+          applyPayload(typeof legacy==='string' ? JSON.parse(legacy) : legacy);
+        }catch(e2){ /* no legacy data either — fresh start */ }
+      }
+    } else {
+      const res = await storageAdapter.get('arhami:family_data');
+      if(res && res.value) applyPayload(JSON.parse(res.value));
     }
   }catch(e){ /* first run or storage unavailable */ }
   const autoMerged = quickSafeMerge();
