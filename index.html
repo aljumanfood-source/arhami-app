@@ -1434,28 +1434,50 @@ function updateSyncBadge(state){
   else if(state==='failed'){ badge.textContent='⚠️ فشل الحفظ — حاول مرة أخرى قبل الخروج'; badge.style.color='var(--red)'; badge.style.display='block'; }
 }
 
-function persistState(){
+async function attemptPersist(){
+  // fetch-latest-merge-save: pull whatever the shared record currently holds and merge it
+  // into our local model FIRST, so our snapshot (built fresh below) carries everyone else's
+  // edits too — this is what actually prevents one saver's write from clobbering another's,
+  // rather than just detecting the clash after the fact.
+  if(usingFirebase){
+    try{
+      const remoteStr = await firebaseGet('arhami:family_data');
+      if(remoteStr) applyPayload(JSON.parse(remoteStr));
+    }catch(e){ /* nothing remote yet, or unreachable — proceed with local-only snapshot */ }
+  }
   const json = JSON.stringify(buildPayload());
+  await storageAdapter.set('arhami:family_data', json);
+  // verify the write actually round-trips on Firebase itself — a 200 OK response isn't
+  // proof it stuck, and checking via storageAdapter.get() could be fooled by the local
+  // cache already holding the same value, so hit Firebase directly here.
+  if(usingFirebase){
+    const verifyStr = await firebaseGet('arhami:family_data');
+    if(verifyStr !== json){
+      throw new Error('التحقق فشل: القيمة المحفوظة على Firebase لا تطابق ما أرسلناه');
+    }
+  }
+}
+
+function persistState(){
   updateSyncBadge('saving');
   persistQueue = persistQueue.then(async ()=>{
-    try{
-      await storageAdapter.set('arhami:family_data', json);
-      // verify the write actually round-trips on Firebase itself — a 200 OK response isn't
-      // proof it stuck, and checking via storageAdapter.get() could be fooled by the local
-      // cache already holding the same value, so hit Firebase directly here.
-      if(usingFirebase){
-        const verifyStr = await firebaseGet('arhami:family_data');
-        if(verifyStr !== json){
-          throw new Error('التحقق فشل: القيمة المحفوظة على Firebase لا تطابق ما أرسلناه');
-        }
+    const MAX_ATTEMPTS = 3;
+    for(let attempt=1; attempt<=MAX_ATTEMPTS; attempt++){
+      try{
+        await attemptPersist();
+        storageAvailable = true;
+        updateSyncBadge('saved');
+        render(); // reflect any changes merged in from another saver just now
+        return;
+      }catch(e){
+        // a mismatch here usually just means someone else saved in the same instant —
+        // re-merging and retrying resolves it silently most of the time
+        if(attempt<MAX_ATTEMPTS){ await new Promise(res=>setTimeout(res, 400*attempt)); continue; }
+        storageAvailable = false;
+        lastFirebaseError = e.message;
+        showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
+        updateSyncBadge('failed');
       }
-      storageAvailable = true;
-      updateSyncBadge('saved');
-    }catch(e){
-      storageAvailable = false;
-      lastFirebaseError = e.message;
-      showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
-      updateSyncBadge('failed');
     }
   });
   return persistQueue;
