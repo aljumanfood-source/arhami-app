@@ -1417,6 +1417,26 @@ const storageAdapter = usingFirebase ? null : {
 
 let storageAvailable = null; // null = unknown yet, true/false once tested
 let persistQueue = Promise.resolve();
+let pendingSaveCount = 0; // >0 while any save is still talking to Firebase
+
+/* THE ACTUAL BUG: a save is several network round-trips (fetch each key, merge, write each
+   key — sometimes retried), so it can easily still be in flight when the user exits. The
+   phone's hardware back button was never intercepted, so it just navigated the whole tab
+   away — the browser cancels any in-flight requests the instant that happens, silently
+   dropping whatever hadn't finished writing yet. That's exactly why some added names would
+   "disappear" right after leaving: whichever request was still in transit at that moment.
+   Fix: hold the exit open (re-push history state, and warn on tab close/refresh too) for as
+   long as pendingSaveCount>0, so a save always gets to finish before the page can unload. */
+window.history.pushState({arhamiGuard:true}, '', location.href);
+window.addEventListener('popstate', function(){
+  if(pendingSaveCount>0){
+    window.history.pushState({arhamiGuard:true}, '', location.href);
+    showToast('⏳ لسّه يحفظ... لحظة قبل ما تطلع عشان ما تضيع الأسماء');
+  }
+});
+window.addEventListener('beforeunload', function(e){
+  if(pendingSaveCount>0){ e.preventDefault(); e.returnValue=''; }
+});
 
 function buildPayload(){
   return {
@@ -1471,25 +1491,30 @@ async function attemptPersist(){
 }
 
 function persistState(){
+  pendingSaveCount++;
   updateSyncBadge('saving');
   persistQueue = persistQueue.then(async ()=>{
     const MAX_ATTEMPTS = 3;
-    for(let attempt=1; attempt<=MAX_ATTEMPTS; attempt++){
-      try{
-        await attemptPersist();
-        storageAvailable = true;
-        updateSyncBadge('saved');
-        render(); // reflect any changes merged in from another saver just now
-        return;
-      }catch(e){
-        // usually just means someone else saved the same key at the same instant —
-        // re-merging and retrying resolves it silently most of the time
-        if(attempt<MAX_ATTEMPTS){ await new Promise(res=>setTimeout(res, 400*attempt)); continue; }
-        storageAvailable = false;
-        lastFirebaseError = e.message;
-        showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
-        updateSyncBadge('failed');
+    try{
+      for(let attempt=1; attempt<=MAX_ATTEMPTS; attempt++){
+        try{
+          await attemptPersist();
+          storageAvailable = true;
+          updateSyncBadge('saved');
+          render(); // reflect any changes merged in from another saver just now
+          return;
+        }catch(e){
+          // usually just means someone else saved the same key at the same instant —
+          // re-merging and retrying resolves it silently most of the time
+          if(attempt<MAX_ATTEMPTS){ await new Promise(res=>setTimeout(res, 400*attempt)); continue; }
+          storageAvailable = false;
+          lastFirebaseError = e.message;
+          showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
+          updateSyncBadge('failed');
+        }
       }
+    } finally {
+      pendingSaveCount--; // always release the exit-guard, whether the save succeeded or not
     }
   });
   return persistQueue;
