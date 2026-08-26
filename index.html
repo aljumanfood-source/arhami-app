@@ -1365,22 +1365,32 @@ function armDelete(btn, personId){
    Once this file is deployed as a real website, fall back to the browser's own
    localStorage so each visitor still gets reliable persistence across visits. */
 const FIREBASE_URL = 'https://ibra-quran-default-rtdb.asia-southeast1.firebasedatabase.app';
-const storageAdapter = (typeof window!=='undefined' && window.storage && typeof window.storage.get==='function')
-  ? {
-      async get(key){ return window.storage.get(key, true); },
-      async set(key, value){ return window.storage.set(key, value, true); }
-    }
-  : {
+const usingFirebase = !(typeof window!=='undefined' && window.storage && typeof window.storage.get==='function');
+let lastFirebaseError = null;
+
+async function firebaseGet(key){
+  const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json?t=' + Date.now(), { cache:'no-store' });
+  if(!r.ok) throw new Error('firebase GET HTTP '+r.status);
+  const v = await r.json();
+  if(v===null || v===undefined) throw new Error('not found');
+  return typeof v === 'string' ? v : JSON.stringify(v);
+}
+async function firebaseSet(key, value){
+  let parsed; try{ parsed = JSON.parse(value); }catch(e){ parsed = value; }
+  const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json', {
+    method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(parsed), cache:'no-store'
+  });
+  if(!r.ok) throw new Error('firebase PUT HTTP '+r.status);
+}
+
+const storageAdapter = usingFirebase ? {
       async get(key){
         try{
-          const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json?t=' + Date.now(), { cache:'no-store' });
-          if(!r.ok) throw new Error('firebase fetch failed');
-          const v = await r.json();
-          if(v===null || v===undefined) throw new Error('not found');
-          const str = typeof v === 'string' ? v : JSON.stringify(v);
+          const str = await firebaseGet(key);
           try{ localStorage.setItem(key, str); }catch(e){}
           return {key, value:str};
         }catch(e){
+          lastFirebaseError = e.message;
           const v = localStorage.getItem(key);
           if(v===null) throw new Error('not found');
           return {key, value:v};
@@ -1388,14 +1398,16 @@ const storageAdapter = (typeof window!=='undefined' && window.storage && typeof 
       },
       async set(key, value){
         try{ localStorage.setItem(key, value); }catch(e){}
-        let parsed; try{ parsed = JSON.parse(value); }catch(e){ parsed = value; }
-        try{
-          await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json', {
-            method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(parsed), cache:'no-store'
-          });
-        }catch(e){ /* localStorage already saved as a local fallback */ }
+        // the shared save MUST reach Firebase — if it fails, this throws so the caller
+        // (persistState) knows the save did not actually sync, instead of assuming success
+        // because the local cache write happened to work.
+        await firebaseSet(key, value);
         return {key, value};
       }
+    }
+  : {
+      async get(key){ return window.storage.get(key, true); },
+      async set(key, value){ return window.storage.set(key, value, true); }
     };
 
 let storageAvailable = null; // null = unknown yet, true/false once tested
@@ -1422,7 +1434,8 @@ function persistState(){
       storageAvailable = true;
     }catch(e){
       storageAvailable = false;
-      showToast('⚠️ تعذّر الحفظ الدائم — انسخ نسخة احتياطية من زر "نسخ احتياطي" أسفل شريط البحث');
+      lastFirebaseError = e.message;
+      showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
     }
   });
   return persistQueue;
@@ -1435,6 +1448,7 @@ async function testStorage(){
     storageAvailable = !!(r && r.value);
   }catch(e){
     storageAvailable = false;
+    lastFirebaseError = e.message;
   }
 }
 
@@ -1610,8 +1624,8 @@ function openBackupPanel(){
   panel.className = 'add-form';
   panel.style.margin = '10px 18px 0';
   const statusLine = storageAvailable===false
-    ? '⚠️ الحفظ الدائم غير متاح حاليًا في هذا المتصفح — احفظ نسخة يدويًا بين فترة وأخرى.'
-    : (storageAvailable===true ? '✅ الحفظ الدائم يعمل — هذه النسخة اليدوية احتياط إضافي فقط.' : 'جارٍ التحقق من حالة الحفظ...');
+    ? `⚠️ الحفظ المشترك (Firebase) غير متاح حاليًا${lastFirebaseError ? ' — السبب: '+lastFirebaseError : ''}. البيانات محفوظة محليًا بمتصفحك فقط حاليًا.`
+    : (storageAvailable===true ? '✅ الحفظ المشترك يعمل — بياناتك تصل لكل من يفتح نفس الرابط.' : 'جارٍ التحقق من حالة الحفظ...');
   panel.innerHTML = `
     <p class="section-note" style="margin-top:0;">${statusLine}</p>
     <button class="btn-approve" id="exportBtn" style="margin-bottom:10px;">نسخ البيانات الحالية (نسخ احتياطي)</button>
