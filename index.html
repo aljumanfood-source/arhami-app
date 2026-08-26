@@ -1407,6 +1407,8 @@ async function restoreState(){
       applyPayload(JSON.parse(res.value));
     }
   }catch(e){ /* first run or storage unavailable */ }
+  const autoMerged = quickSafeMerge();
+  if(autoMerged>0) persistState();
   render();
 }
 
