@@ -953,8 +953,7 @@ function renderHome(){
     return;
   }
   const results = Object.values(P).filter(p=>{
-    const own = q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
-    return own && p.layer>=8;
+    return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
     main.innerHTML = `<div class="empty-state">
