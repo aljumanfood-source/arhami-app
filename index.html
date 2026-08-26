@@ -1464,6 +1464,22 @@ function applyPayload(payload){
 }
 
 /* manual backup — a safety net in case this device/session can't reach persistent storage */
+function quickSafeMerge(){
+  const groups = findDuplicateGroups();
+  let mergedCount = 0;
+  groups.forEach(ids=>{
+    const stubIds = ids.filter(id=>P[id].isSpouseStub || id.startsWith('spouse_'));
+    const realIds = ids.filter(id=>!(P[id].isSpouseStub || id.startsWith('spouse_')));
+    // only safe to auto-resolve when the group is exactly one real person plus one or more
+    // stub duplicates of them — never touch a group of multiple non-stub (organically added) people,
+    // since those can legitimately be two different real people sharing a name
+    if(realIds.length===1 && stubIds.length>=1){
+      stubIds.forEach(stubId=>{ mergeOneDuplicate(realIds[0], stubId); mergedCount++; });
+    }
+  });
+  return mergedCount;
+}
+
 function openMergeDuplicatesPanel(){
   const existing = document.getElementById('mergePanel');
   if(existing){ existing.remove(); }
@@ -1482,7 +1498,16 @@ function openMergeDuplicatesPanel(){
     return;
   }
 
-  panel.innerHTML = `<p class="section-note" style="margin-top:0;">وُجد ${groups.length} حالة بنفس النسب الكامل تمامًا. راجع كل حالة: لو كانوا فعلًا نفس الشخص، اختر أيهم تحتفظ به وادمج الباقي فيه. لو كانوا شخصين حقيقيين مختلفين بنفس الاسم (مثل أخوين لأب من أمهات مختلفتين بنفس الاسم)، اضغط "ليسوا نفس الشخص".</p>`;
+  panel.innerHTML = `<p class="section-note" style="margin-top:0;">وُجد ${groups.length} حالة بنفس النسب الكامل تمامًا. راجع كل حالة: لو كانوا فعلًا نفس الشخص، اختر أيهم تحتفظ به وادمج الباقي فيه. لو كانوا شخصين حقيقيين مختلفين بنفس الاسم (مثل أخوين لأب من أمهات مختلفتين بنفس الاسم)، اضغط "ليسوا نفس الشخص".</p>
+    <button class="btn-approve" id="quickMergeBtn" style="margin-bottom:12px;">دمج تلقائي للحالات الواضحة فقط</button>`;
+  document.getElementById('quickMergeBtn').onclick = ()=>{
+    const count = quickSafeMerge();
+    if(count===0){ showToast('لا توجد حالات واضحة للدمج التلقائي — راجع القائمة تحت يدويًا'); return; }
+    persistState();
+    showToast(`تم دمج ${count} حالة تلقائيًا`);
+    panel.remove();
+    openMergeDuplicatesPanel();
+  };
   const listWrap = document.createElement('div');
   panel.appendChild(listWrap);
   const closeBtn = document.createElement('button');
