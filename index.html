@@ -563,6 +563,14 @@ function childrenOf(personId, gender){
 
 function isAlive(id){ return !!(P[id] && !P[id].isDeceased); }
 
+function shortChain(person){
+  const tokens = person.chain.split(' ');
+  if(tokens.length<=8) return person.chain; // already 4 names or fewer — show as-is
+  const head = tokens.slice(0,7); // 4 names + 3 connectors
+  const tribal = tokens[tokens.length-1];
+  return head.join(' ') + ' ' + tribal;
+}
+
 function computeHeirs(personId){
   const p = P[personId];
   if(!p) return [];
@@ -955,7 +963,7 @@ function renderHome(){
   }
   main.innerHTML = results.map(p=>`
     <div class="result-card">
-      <div class="rname">${p.chain}</div>
+      <div class="rname">${shortChain(p)}</div>
       <div class="rlayer"><span class="badge">الطبقة ${p.layer}</span></div>
       <button class="btn-approve" data-id="${p.id}">موافق</button>
       <button class="btn-wasiyya" data-id="${p.id}">📜 وصية الأقربين</button>
