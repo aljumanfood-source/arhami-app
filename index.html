@@ -1364,6 +1364,7 @@ function armDelete(btn, personId){
 /* storage adapter — window.storage exists only inside Claude's artifact preview.
    Once this file is deployed as a real website, fall back to the browser's own
    localStorage so each visitor still gets reliable persistence across visits. */
+const FIREBASE_URL = 'https://ibra-quran-default-rtdb.asia-southeast1.firebasedatabase.app';
 const storageAdapter = (typeof window!=='undefined' && window.storage && typeof window.storage.get==='function')
   ? {
       async get(key){ return window.storage.get(key, true); },
@@ -1371,12 +1372,28 @@ const storageAdapter = (typeof window!=='undefined' && window.storage && typeof 
     }
   : {
       async get(key){
-        const v = localStorage.getItem(key);
-        if(v===null) throw new Error('not found');
-        return {key, value:v};
+        try{
+          const r = await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json?t=' + Date.now(), { cache:'no-store' });
+          if(!r.ok) throw new Error('firebase fetch failed');
+          const v = await r.json();
+          if(v===null || v===undefined) throw new Error('not found');
+          const str = typeof v === 'string' ? v : JSON.stringify(v);
+          try{ localStorage.setItem(key, str); }catch(e){}
+          return {key, value:str};
+        }catch(e){
+          const v = localStorage.getItem(key);
+          if(v===null) throw new Error('not found');
+          return {key, value:v};
+        }
       },
       async set(key, value){
-        localStorage.setItem(key, value);
+        try{ localStorage.setItem(key, value); }catch(e){}
+        let parsed; try{ parsed = JSON.parse(value); }catch(e){ parsed = value; }
+        try{
+          await fetch(FIREBASE_URL + '/' + encodeURIComponent(key) + '.json', {
+            method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(parsed), cache:'no-store'
+          });
+        }catch(e){ /* localStorage already saved as a local fallback */ }
         return {key, value};
       }
     };
