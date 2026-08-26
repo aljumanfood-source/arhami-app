@@ -166,6 +166,14 @@
     background:transparent;color:var(--red);font-family:'Tajawal';font-weight:700;font-size:13.5px;
     cursor:pointer;margin-top:10px;transition:background .15s, color .15s;
   }
+  .alt-names-section{margin:12px 0;padding:10px;background:var(--paper-deep);border-radius:10px;}
+  .alt-names-label{font-size:12px;color:var(--ink-soft);margin:0 0 6px;}
+  .alt-names-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .alt-name-tag{
+    background:var(--card);border:1px solid var(--gold-rich);border-radius:999px;
+    padding:4px 10px;font-size:12.5px;color:var(--ink);display:inline-flex;align-items:center;gap:6px;
+  }
+  .alt-name-remove{color:var(--red);cursor:pointer;font-weight:700;}
 
   /* relation grid */
   .rel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
@@ -507,6 +515,7 @@ const addedByUser = new Set();
 const renameLog = {};       // { personId: newName } — applied on top of seed or added data
 const spouseLog = {};       // { personId: spouseName } — husband/wife name recorded from the sons/daughters page
 const deceasedLog = {};     // { personId: true/false } — deceased flag set from the edit panel
+const altNamesLog = {};     // { personId: [altName, ...] } — additional names added without replacing the main name
 const amountsLog = {};      // { ownerId: { relativeId: amountString } } — wasiyya amounts per relative
 const deletedIds = new Set(); // ids removed by any user of this link
 let idCounter = 1;
@@ -681,21 +690,17 @@ function describeSubtree(node){
 function addTargetFor(personId, relKey){
   const person = P[personId];
   if(!person) return null;
-  if(relKey==='sons' || relKey==='daughters'){
-    const g = relKey==='sons' ? 'm' : 'f';
+  if(relKey==='children'){
     if(person.gender==='f'){
       // a child is never nasab-linked to the mother — must go through her registered husband
       if(!person.spouseId || !P[person.spouseId]) return null;
-      return {parentId:person.spouseId, motherId:personId, gender:g};
+      return {parentId:person.spouseId, motherId:personId, gender:'m'};
     }
-    return {parentId:personId, gender:g};
+    return {parentId:personId, gender:'m'};
   }
-  if(relKey==='brothers') return person.fatherId ? {parentId:person.fatherId, gender:'m'} : null;
-  if(relKey==='sisters') return person.fatherId ? {parentId:person.fatherId, gender:'f'} : null;
-  if(relKey==='uncles') return (person.fatherId && P[person.fatherId] && P[person.fatherId].fatherId) ? {parentId:P[person.fatherId].fatherId, gender:'m'} : null;
-  if(relKey==='aunts') return (person.fatherId && P[person.fatherId] && P[person.fatherId].fatherId) ? {parentId:P[person.fatherId].fatherId, gender:'f'} : null;
-  if(relKey==='maternal_uncles') return (person.motherId && P[person.motherId] && P[person.motherId].fatherId) ? {parentId:P[person.motherId].fatherId, gender:'m'} : null;
-  if(relKey==='maternal_aunts') return (person.motherId && P[person.motherId] && P[person.motherId].fatherId) ? {parentId:P[person.motherId].fatherId, gender:'f'} : null;
+  if(relKey==='siblings') return person.fatherId ? {parentId:person.fatherId, gender:'m'} : null;
+  if(relKey==='paternal') return (person.fatherId && P[person.fatherId] && P[person.fatherId].fatherId) ? {parentId:P[person.fatherId].fatherId, gender:'m'} : null;
+  if(relKey==='maternal') return (person.motherId && P[person.motherId] && P[person.motherId].fatherId) ? {parentId:P[person.motherId].fatherId, gender:'m'} : null;
   return null;
 }
 
@@ -730,6 +735,21 @@ function setDeceased(personId, val){
   if(!person) return;
   person.isDeceased = val;
   deceasedLog[personId] = val;
+}
+
+function addAltName(personId, name){
+  const person = P[personId];
+  if(!person || !name) return;
+  if(!person.altNames) person.altNames = [];
+  if(!person.altNames.includes(name)) person.altNames.push(name);
+  altNamesLog[personId] = person.altNames.slice();
+}
+
+function removeAltName(personId, name){
+  const person = P[personId];
+  if(!person || !person.altNames) return;
+  person.altNames = person.altNames.filter(n=>n!==name);
+  altNamesLog[personId] = person.altNames.slice();
 }
 
 function setWillAmount(ownerId, relativeId, amount){
@@ -850,7 +870,7 @@ function renderHome(){
     return;
   }
   const results = Object.values(P).filter(p=>{
-    const own = q.includes(' ') ? p.chain.startsWith(q) : p.name.startsWith(q);
+    const own = q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
     return own && p.layer>=8;
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
@@ -876,14 +896,17 @@ function renderHome(){
 }
 
 const RELATIONS = [
-  {key:'brothers', label:'إخوتي', noun:'إخوة', icon:'👬', fn:(id)=>siblingsOf(id,'m')},
-  {key:'sisters', label:'أخواتي', noun:'أخوات', icon:'👭', fn:(id)=>siblingsOf(id,'f')},
-  {key:'uncles', label:'أعمامي', noun:'أعمام', icon:'🧔', fn:(id)=>unclesAuntsOf(id,'m')},
-  {key:'aunts', label:'عماتي', noun:'عمات', icon:'👩‍🦳', fn:(id)=>unclesAuntsOf(id,'f')},
-  {key:'maternal_uncles', label:'أخوالي', noun:'أخوال', icon:'🧔🏽', fn:(id)=>unclesAuntsMotherOf(id,'m')},
-  {key:'maternal_aunts', label:'خالاتي', noun:'خالات', icon:'👩🏽', fn:(id)=>unclesAuntsMotherOf(id,'f')},
-  {key:'sons', label:'أبنائي', noun:'أبناء', icon:'👦', fn:(id)=>childrenOf(id,'m')},
-  {key:'daughters', label:'بناتي', noun:'بنات', icon:'👧', fn:(id)=>childrenOf(id,'f')},
+  {key:'maternal', label:'أمي وأخوالي', noun:'أمي وأخوال', icon:'👪', fn:(id)=>{
+    const p = P[id];
+    const list = [];
+    if(p && p.motherId && P[p.motherId]) list.push(P[p.motherId]);
+    list.push(...unclesAuntsMotherOf(id,'m'));
+    list.push(...unclesAuntsMotherOf(id,'f'));
+    return list;
+  }},
+  {key:'siblings', label:'إخواني', noun:'إخوة', icon:'👬', fn:(id)=>siblingsOf(id,'m').concat(siblingsOf(id,'f'))},
+  {key:'paternal', label:'أعمامي وعماتي', noun:'أعمام وعمات', icon:'🧔', fn:(id)=>unclesAuntsOf(id,'m').concat(unclesAuntsOf(id,'f'))},
+  {key:'children', label:'أولادي', noun:'أولاد', icon:'👶', fn:(id)=>childrenOf(id,'m').concat(childrenOf(id,'f'))},
 ];
 
 function renderProfile(id){
@@ -896,6 +919,7 @@ function renderProfile(id){
     <div class="profile-hero">
       ${renderChain(p)}
       <div class="profile-name">${p.chain}</div>
+      ${(p.altNames && p.altNames.length) ? `<p class="section-note" style="margin-top:6px;">يُعرف أيضًا بـ: ${p.altNames.join('، ')}</p>` : ''}
       <div class="profile-meta"><span class="badge">الطبقة ${p.layer}</span>${addedByUser.has(id)?'<span class="badge" style="background:#E7D3A3;color:#6B4A15;">أُضيف حديثًا</span>':''}</div>
       <div class="profile-actions">
         <button id="editSelfBtn">✏️ تعديل الاسم</button>
@@ -1034,7 +1058,7 @@ function renderRelation(personId, relKey){
     </div>
   `;
 
-  if((relKey==='sons' || relKey==='daughters') && p.gender==='f'){
+  if(relKey==='children' && p.gender==='f'){
     renderSpousePanel(p);
   }
 
@@ -1150,12 +1174,22 @@ function openEditPanel(personId){
   const panel = document.createElement('div');
   panel.id = 'editPanel';
   panel.className = 'add-form';
+  const altNames = person.altNames || [];
+  const altNamesTags = altNames.map(n=>`<span class="alt-name-tag">${n} <span class="alt-name-remove" data-name="${n}">×</span></span>`).join('');
   panel.innerHTML = `
     <input type="text" id="editNameInput" value="${person.name}">
     <label style="display:flex;align-items:center;gap:8px;margin:10px 2px;font-size:14px;color:var(--ink-soft);cursor:pointer;">
       <input type="checkbox" id="deceasedCheck" ${person.isDeceased ? 'checked' : ''} style="width:16px;height:16px;">
       توفاه الله
     </label>
+    <div class="alt-names-section">
+      <p class="alt-names-label">أسماء أخرى يُعرف بها (إضافة، بدون حذف الاسم الأساسي)</p>
+      <div class="alt-names-tags" id="altNamesTags">${altNamesTags}</div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input type="text" id="altNameInput" placeholder="اسم إضافي" style="flex:1;">
+        <button class="spouse-save" id="addAltNameBtn">إضافة</button>
+      </div>
+    </div>
     <div class="add-form-actions">
       <button class="save" id="saveEdit">حفظ التعديل</button>
       <button class="cancel" id="cancelEdit">إلغاء</button>
@@ -1164,6 +1198,32 @@ function openEditPanel(personId){
   `;
   main.appendChild(panel);
   panel.scrollIntoView({behavior:'smooth', block:'center'});
+
+  function wireRemoveButtons(){
+    panel.querySelectorAll('.alt-name-remove').forEach(btn=>{
+      btn.onclick = ()=>{
+        removeAltName(personId, btn.dataset.name);
+        persistState();
+        btn.parentElement.remove();
+      };
+    });
+  }
+  wireRemoveButtons();
+
+  document.getElementById('addAltNameBtn').onclick = ()=>{
+    const val = document.getElementById('altNameInput').value.trim();
+    if(!val){ showToast('اكتب اسمًا أولًا'); return; }
+    addAltName(personId, val);
+    persistState();
+    document.getElementById('altNameInput').value = '';
+    const tagsWrap = document.getElementById('altNamesTags');
+    const tag = document.createElement('span');
+    tag.className = 'alt-name-tag';
+    tag.innerHTML = `${val} <span class="alt-name-remove" data-name="${val}">×</span>`;
+    tagsWrap.appendChild(tag);
+    wireRemoveButtons();
+    showToast('تمت الإضافة');
+  };
 
   document.getElementById('cancelEdit').onclick = ()=>panel.remove();
   document.getElementById('saveEdit').onclick = ()=>{
@@ -1232,6 +1292,7 @@ function buildPayload(){
     renames: Object.assign({}, renameLog),
     spouses: Object.assign({}, spouseLog),
     deceased: Object.assign({}, deceasedLog),
+    altNames: JSON.parse(JSON.stringify(altNamesLog)),
     amounts: JSON.parse(JSON.stringify(amountsLog)),
     deletes: Array.from(deletedIds)
   };
@@ -1281,6 +1342,7 @@ function applyPayload(payload){
       if(it.motherId && P[it.motherId] && !P[it.motherId].childIds.includes(it.id)) P[it.motherId].childIds.push(it.id);
       if(it.spouseName){ P[it.id].spouseName = it.spouseName; }
       if(it.isDeceased){ P[it.id].isDeceased = true; }
+      if(it.altNames && it.altNames.length){ P[it.id].altNames = it.altNames.slice(); }
     }
   });
   idCounter = Math.max(idCounter, (payload.adds||[]).length + 1);
@@ -1293,6 +1355,12 @@ function applyPayload(payload){
     if(P[id]){
       P[id].isDeceased = payload.deceased[id];
       deceasedLog[id] = payload.deceased[id];
+    }
+  });
+  Object.keys(payload.altNames||{}).forEach(id=>{
+    if(P[id]){
+      P[id].altNames = (payload.altNames[id]||[]).slice();
+      altNamesLog[id] = P[id].altNames.slice();
     }
   });
   Object.keys(payload.amounts||{}).forEach(ownerId=>{
