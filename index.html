@@ -343,6 +343,7 @@
   <div id="backupAnchor"></div>
   <main id="main"></main>
   <div class="toast" id="toast"></div>
+  <div id="syncBadge" style="display:none;position:fixed;bottom:12px;right:50%;transform:translateX(50%);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;z-index:60;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;"></div>
 </div>
 
 <script>
@@ -1426,16 +1427,36 @@ function buildPayload(){
   };
 }
 
+function updateSyncBadge(state){
+  const badge = document.getElementById('syncBadge');
+  if(!badge) return;
+  if(state==='saving'){ badge.textContent='🔄 جارٍ الحفظ... لا تغلق الصفحة'; badge.style.display='block'; badge.style.color='var(--gold-rich)'; }
+  else if(state==='saved'){ badge.textContent='✅ تم الحفظ بأمان'; badge.style.color='var(--green-deep)'; setTimeout(()=>{ if(badge.textContent==='✅ تم الحفظ بأمان') badge.style.display='none'; }, 2500); }
+  else if(state==='failed'){ badge.textContent='⚠️ فشل الحفظ — حاول مرة أخرى قبل الخروج'; badge.style.color='var(--red)'; badge.style.display='block'; }
+}
+
 function persistState(){
   const json = JSON.stringify(buildPayload());
+  updateSyncBadge('saving');
   persistQueue = persistQueue.then(async ()=>{
     try{
       await storageAdapter.set('arhami:family_data', json);
+      // verify the write actually round-trips on Firebase itself — a 200 OK response isn't
+      // proof it stuck, and checking via storageAdapter.get() could be fooled by the local
+      // cache already holding the same value, so hit Firebase directly here.
+      if(usingFirebase){
+        const verifyStr = await firebaseGet('arhami:family_data');
+        if(verifyStr !== json){
+          throw new Error('التحقق فشل: القيمة المحفوظة على Firebase لا تطابق ما أرسلناه');
+        }
+      }
       storageAvailable = true;
+      updateSyncBadge('saved');
     }catch(e){
       storageAvailable = false;
       lastFirebaseError = e.message;
       showToast('⚠️ لم يصل الحفظ المشترك — سبب الخطأ: '+e.message);
+      updateSyncBadge('failed');
     }
   });
   return persistQueue;
