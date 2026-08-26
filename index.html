@@ -512,6 +512,8 @@ Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
 ['hamood_father','sulaiman_u2','sultan_u3','nasir_u3','khalfan_u1'].forEach(id=>{ if(P[id]) P[id].isDeceased = true; });
 P.shanoona.spouseId = 'saif_ahmad';
 P.shanoona.spouseName = P.saif_ahmad.chain;
+P.nemah_mother.spouseId = 'hamood_father';
+P.nemah_mother.spouseName = P.hamood_father.chain;
 add('haitham_saif','هيثم','m','saif_ahmad','shanoona',9,'هيثم بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 P.saif_ahmad.childIds.push('haitham_saif');
 P.shanoona.childIds.push('haitham_saif');
