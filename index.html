@@ -351,6 +351,11 @@
 // Each person: id, name (given), gender 'm'/'f', fatherId, motherId, layer, chain (full nasab string), childIds[]
 let P = {};
 function add(id, name, gender, fatherId, motherId, layer, chain){
+  // guard against the exact corruption found in production: this used to unconditionally
+  // overwrite P[id], so an id collision (e.g. the old, non-random counter reusing someone's
+  // real id) would silently DESTROY that person's entire record. Never allow that again —
+  // an id that's already a real, populated person is left alone.
+  if(P[id]){ console.error('add(): refused to overwrite existing person', id); return; }
   P[id] = {id, name, gender, fatherId: fatherId||null, motherId: motherId||null, layer, chain, childIds:[]};
 }
 function link(){ // establish childIds from fatherId/motherId
@@ -1562,7 +1567,7 @@ async function restoreState(){
       if(res && res.value) applyPayload(JSON.parse(res.value));
     }
   }catch(e){ /* first run or storage unavailable */ }
-  const repaired = repairParentLinks();
+  const repaired = repairFamilyLinks();
   const autoMerged = quickSafeMerge();
   if(repaired>0 || autoMerged>0) persistState();
   render();
@@ -1626,20 +1631,57 @@ function applyPayload(payload){
   });
 }
 
-/* one-time repair pass: fixes the specific data corruption caused by the openAddForm bug above —
-   a child whose id was reused (linked instead of duplicated) but whose OWN motherId/fatherId field
-   was never actually set, even though the parent's childIds list already includes them. Runs on
-   every load; harmless no-op once the live data is healed. */
-function repairParentLinks(){
+/* general repair pass — fixes the pattern behind two real bugs found in production:
+   (1) the one-directional-link bug (a reused id's own motherId/fatherId never got set), and
+   (2) a worse one: add(id,...) fully OVERWRITES P[id] with no check the id already belongs
+   to someone else. Under the old counter-based ids (before the random-id fix), the counter
+   could reuse a REAL PERSON's own id for an unrelated new person, silently destroying that
+   person's entire record — this is exactly what happened to a "فاطمة" in production: her id
+   got reassigned to one of her own sons, and her actual children were left pointing at a
+   family record.
+   This can't be fixed by "fill in if missing" alone since the corrupted target id still
+   exists (as someone else's valid record) — it needs a broader, still-safe pass: */
+function repairFamilyLinks(){
   let fixedCount = 0;
-  Object.values(P).forEach(parent=>{
-    (parent.childIds||[]).forEach(childId=>{
-      const child = P[childId];
-      if(!child) return;
-      if(parent.gender==='f' && !child.motherId){ child.motherId = parent.id; fixedCount++; }
-      if(parent.gender==='m' && !child.fatherId){ child.fatherId = parent.id; fixedCount++; }
-    });
+
+  // Pass 1: clear relationships that are logically impossible no matter the context —
+  // nobody can be their own parent, their own child, or married to their own parent.
+  // These are unambiguous corruption markers, safe to fix anywhere in the tree.
+  Object.values(P).forEach(p=>{
+    if(p.motherId===p.id){ p.motherId=null; fixedCount++; }
+    if(p.fatherId===p.id){ p.fatherId=null; fixedCount++; }
+    if(p.spouseId && (p.spouseId===p.fatherId || p.spouseId===p.motherId)){ p.spouseId=null; p.spouseName=null; fixedCount++; }
   });
+
+  // Pass 2: using the (possibly stale) childIds arrays as hints for who actually claims a
+  // child, fix any motherId/fatherId that's missing, dangling (points to someone who no
+  // longer exists), or has the wrong gender (a mother can't be male, a father can't be
+  // female — always invalid, always safe to correct without risking a legitimate case).
+  Object.values(P).forEach(p=>{
+    const motherBroken = !p.motherId || !P[p.motherId] || P[p.motherId].gender!=='f';
+    if(motherBroken){
+      const realMother = Object.values(P).find(m=>m.gender==='f' && m.id!==p.id && (m.childIds||[]).includes(p.id));
+      if(realMother && p.motherId!==realMother.id){ p.motherId = realMother.id; fixedCount++; }
+    }
+    const fatherBroken = !p.fatherId || !P[p.fatherId] || P[p.fatherId].gender!=='m';
+    if(fatherBroken){
+      const realFather = Object.values(P).find(f=>f.gender==='m' && f.id!==p.id && (f.childIds||[]).includes(p.id));
+      if(realFather && p.fatherId!==realFather.id){ p.fatherId = realFather.id; fixedCount++; }
+    }
+  });
+
+  // Pass 3: childIds should always be a pure reflection of everyone's motherId/fatherId —
+  // rebuild it from scratch now that those fields are corrected, instead of trusting
+  // whatever independent (and possibly stale/inconsistent) array was stored per person.
+  const before = JSON.stringify(Object.values(P).map(p=>[p.id,(p.childIds||[]).slice().sort()]));
+  Object.values(P).forEach(p=>{ p.childIds = []; });
+  Object.values(P).forEach(p=>{
+    if(p.fatherId && P[p.fatherId]) P[p.fatherId].childIds.push(p.id);
+    if(p.motherId && P[p.motherId]) P[p.motherId].childIds.push(p.id);
+  });
+  const after = JSON.stringify(Object.values(P).map(p=>[p.id,(p.childIds||[]).slice().sort()]));
+  if(before!==after) fixedCount++;
+
   return fixedCount;
 }
 
