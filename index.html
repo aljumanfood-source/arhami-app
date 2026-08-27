@@ -412,6 +412,23 @@ add('musaad_u3','مسعود','m','humaid_abdullah','zwaina_numaniyah',8,'مسع�
 add('nasra_bint_humaid','نصرا','f','humaid_abdullah','zwaina_numaniyah',8,'نصرا بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('zeena','زينة','f','humaid_abdullah','zwaina_numaniyah',8,'زينة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 
+// أصيلة بنت حميد's husband and daughter
+add('abdulrahman_aseela_h','عبدالرحمن الطوقي','m',null,null,8,'عبدالرحمن الطوقي');
+P.aseela.spouseId = 'abdulrahman_aseela_h';
+P.aseela.spouseName = P.abdulrahman_aseela_h.chain;
+add('amal_aseela','أمل','f','abdulrahman_aseela_h','aseela',9,'أمل بنت عبدالرحمن الطوقية');
+
+// زينة بنت حميد's husband and children
+add('salim_alhussaini_z','سالم الحسيني','m',null,null,8,'سالم الحسيني');
+P.zeena.spouseId = 'salim_alhussaini_z';
+P.zeena.spouseName = P.salim_alhussaini_z.chain;
+add('bassam_zeena','بسام','m','salim_alhussaini_z','zeena',9,'بسام بن سالم الحسيني');
+add('husam_zeena','حسام','m','salim_alhussaini_z','zeena',9,'حسام بن سالم الحسيني');
+add('hamad_zeena','حمد','m','salim_alhussaini_z','zeena',9,'حمد بن سالم الحسيني');
+add('bailasan_zeena','بيلسان','f','salim_alhussaini_z','zeena',9,'بيلسان بنت سالم الحسينية');
+add('tameem_zeena','تميم','m','salim_alhussaini_z','zeena',9,'تميم بن سالم الحسيني');
+// "الباس" pending: confirmed spelling and gender before adding
+
 /* ---- Mother's side: حسين lineage (العيسرية) ---- */
 add('hussain','حسين','m',null,null,1,'حسين العيسري');
 add('saeed_hussain','سعيد','m','hussain',null,2,'سعيد بن حسين العيسري');
