@@ -1349,9 +1349,12 @@ function renderProfile(id){
 }
 
 // clickable name chip used throughout the family summary — routes straight to that
-// person's own profile, same as tapping their card anywhere else in the app
-function nameLink(person){
-  return `<span class="name-link" data-id="${person.id}">${person.chain}</span>`;
+// person's own profile, same as tapping their card anywhere else in the app.
+// full=true shows the complete nasab chain; false shows just the short given name —
+// only الأم and the shared father named once above الأخوال use the full chain; every
+// other name in the summary (الأخوال themselves, الأعمام, الأولاد والأحفاد) is short.
+function nameLink(person, full){
+  return `<span class="name-link" data-id="${person.id}">${full ? person.chain : person.name}</span>`;
 }
 function wireNameLinks(container){
   container.querySelectorAll('.name-link').forEach(el=>{
@@ -1372,19 +1375,21 @@ function renderFamilySummary(id){
   const paternalUncles = unclesAuntsOf(id,'m').concat(unclesAuntsOf(id,'f'));
   const children = childrenOf(id,'m').concat(childrenOf(id,'f'));
 
-  // full chains are long, so each name gets its own line here rather than being
-  // comma-joined into a single dense paragraph — same list-block style as أولادي below
-  const nameList = list => list.map(person=>`<div class="name-block">${nameLink(person)}</div>`).join('');
-
   const rows = [];
   if(mother){
-    rows.push(['الأم', `<div class="name-block">${nameLink(mother)}</div>`]);
+    rows.push(['الأم', `<div class="name-block">${nameLink(mother, true)}</div>`]);
   }
   if(maternalUncles.length){
-    rows.push(['الأخوال', nameList(maternalUncles)]);
+    // short names together, then the shared father's full chain named once — matches
+    // how the user actually wants this read: "عبدالله وشريفة وميا أولاد راشد بن سلطان..."
+    const grandfather = (mother && mother.fatherId && P[mother.fatherId]) ? P[mother.fatherId] : null;
+    const namesLine = maternalUncles.map(u=>nameLink(u,false)).join('، ');
+    rows.push(['الأخوال', grandfather
+      ? `<div>${namesLine} أولاد ${nameLink(grandfather, true)}</div>`
+      : `<div>${namesLine}</div>`]);
   }
   if(paternalUncles.length){
-    rows.push(['الأعمام', nameList(paternalUncles)]);
+    rows.push(['الأعمام', `<div>${paternalUncles.map(u=>nameLink(u,false)).join('، ')}</div>`]);
   }
   if(!rows.length && !children.length) return; // nothing to summarize — keep the page clean
 
@@ -1394,9 +1399,9 @@ function renderFamilySummary(id){
       children.map(child=>{
         const grandkids = childrenOf(child.id,'m').concat(childrenOf(child.id,'f'));
         const gkHtml = grandkids.length
-          ? `<div class="grandkids">↳ ${nameList(grandkids)}</div>`
+          ? `<div class="grandkids">↳ ${grandkids.map(gk=>nameLink(gk,false)).join('، ')}</div>`
           : '';
-        return `<div class="child-block">${nameLink(child)}${gkHtml}</div>`;
+        return `<div class="child-block">${nameLink(child,false)}${gkHtml}</div>`;
       }).join('') +
     `</div></div>`;
   }
