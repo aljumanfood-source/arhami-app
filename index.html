@@ -432,6 +432,43 @@ add('salim_khalid_marwa','سالم','m','khalid_abdullah_salim_marwa','marwa_sal
 add('mahra_khalid_marwa','مهرة','f','khalid_abdullah_salim_marwa','marwa_salim_shamsa',10,'مهرة بنت خالد بن عبدالله بن سالم العيسرية');
 add('aseela','أصيلة','f','humaid_abdullah','fatima_abdullah_hamad',8,'أصيلة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('aziza','عزيزة','f','humaid_abdullah','fatima_abdullah_hamad',8,'عزيزة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+// عزيزة's first husband سعيد بن سلطان (divorced — no spouse link either direction, per the
+// established divorced-couple convention) and their 2 children أحمد وحنان
+add('saeed_sultan_aziza','سعيد بن سلطان بن سالم العيسري','m',null,null,8,'سعيد بن سلطان بن سالم العيسري');
+add('ahmad_saeed_aziza','أحمد','m','saeed_sultan_aziza','aziza',9,'أحمد بن سعيد بن سلطان بن سالم العيسري');
+add('lujain_ahmad_aziza','لجين','f','ahmad_saeed_aziza',null,10,'لجين بنت أحمد بن سعيد بن سلطان بن سالم العيسرية');
+add('sultan_ahmad_aziza','سلطان','m','ahmad_saeed_aziza',null,10,'سلطان بن أحمد بن سعيد بن سلطان بن سالم العيسري');
+add('aya_ahmad_aziza','آيه','f','ahmad_saeed_aziza',null,10,'آيه بنت أحمد بن سعيد بن سلطان بن سالم العيسرية');
+add('hanan_saeed_aziza','حنان','f','saeed_sultan_aziza','aziza',9,'حنان بنت سعيد بن سلطان بن سالم العيسرية');
+// حنان's own ex-husband (no spouse link, divorced) and their son سالم
+add('hamd_salim_hanan','حمد بن سالم بن حمد بن سالم الطوقي','m',null,null,9,'حمد بن سالم بن حمد بن سالم الطوقي');
+add('salim_hamd_hanan','سالم','m','hamd_salim_hanan','hanan_saeed_aziza',10,'سالم بن حمد بن سالم بن حمد بن سالم الطوقي');
+
+// عزيزة's second husband نجيب بن محمد بن عمير المرهوبي (normal marriage) and their 3 children
+add('najeeb_muhammad_aziza','نجيب بن محمد بن عمير المرهوبي','m',null,null,8,'نجيب بن محمد بن عمير المرهوبي');
+P.aziza.spouseId = 'najeeb_muhammad_aziza';
+P.aziza.spouseName = P.najeeb_muhammad_aziza.chain;
+P.najeeb_muhammad_aziza.spouseId = 'aziza';
+P.najeeb_muhammad_aziza.spouseName = P.aziza.chain;
+add('rahima_najeeb_aziza','رحيمة','f','najeeb_muhammad_aziza','aziza',9,'رحيمة بنت نجيب بن محمد بن عمير المرهوبية');
+add('mohsin_ali_rahima','محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثي','m',null,null,9,'محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثي');
+P.rahima_najeeb_aziza.spouseId = 'mohsin_ali_rahima';
+P.rahima_najeeb_aziza.spouseName = P.mohsin_ali_rahima.chain;
+add('jood_mohsin_rahima','جود','f','mohsin_ali_rahima','rahima_najeeb_aziza',10,'جود بنت محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثية');
+add('jori_mohsin_rahima','جوري','f','mohsin_ali_rahima','rahima_najeeb_aziza',10,'جوري بنت محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثية');
+add('janna_mohsin_rahima','جنة','f','mohsin_ali_rahima','rahima_najeeb_aziza',10,'جنة بنت محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثية');
+add('nusra_mohsin_rahima','نصرة','f','mohsin_ali_rahima','rahima_najeeb_aziza',10,'نصرة بنت محسن بن علي بن عبدالله بن حمد بن هلال بن عامر بن سلطان بن محسن الحارثية');
+add('karima_najeeb_aziza','كريمة','f','najeeb_muhammad_aziza','aziza',9,'كريمة بنت نجيب بن محمد بن عمير المرهوبية');
+add('saeed_ali_karima','سعيد بن علي بن سليم بن حميد الجهضمي','m',null,null,9,'سعيد بن علي بن سليم بن حميد الجهضمي');
+P.karima_najeeb_aziza.spouseId = 'saeed_ali_karima';
+P.karima_najeeb_aziza.spouseName = P.saeed_ali_karima.chain;
+add('lateen_saeed_karima','لتين','f','saeed_ali_karima','karima_najeeb_aziza',10,'لتين بنت سعيد بن علي بن سليم بن حميد الجهضمية');
+add('izz_saeed_karima','عز','f','saeed_ali_karima','karima_najeeb_aziza',10,'عز بنت سعيد بن علي بن سليم بن حميد الجهضمية');
+add('wateen_saeed_karima','وتين','f','saeed_ali_karima','karima_najeeb_aziza',10,'وتين بنت سعيد بن علي بن سليم بن حميد الجهضمية');
+add('muhammad_najeeb_aziza','محمد','m','najeeb_muhammad_aziza','aziza',9,'محمد بن نجيب بن محمد بن عمير المرهوبي');
+add('talal_muhammad_aziza','طلال','m','muhammad_najeeb_aziza',null,10,'طلال بن محمد بن نجيب بن محمد بن عمير المرهوبي');
+add('atiqa_muhammad_aziza','عتيقه','f','muhammad_najeeb_aziza',null,10,'عتيقه بنت محمد بن نجيب بن محمد بن عمير المرهوبية');
+add('fahad_muhammad_aziza','فهد','m','muhammad_najeeb_aziza',null,10,'فهد بن محمد بن نجيب بن محمد بن عمير المرهوبي');
 add('husna','حسنى','f','humaid_abdullah','fatima_abdullah_hamad',8,'حسنى بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 // حسنى's deceased husband محمد بن سعيد بن محمد بن سليمان... and their 5 children
 add('muhammad_saeed_husna','محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي','m',null,null,8,'محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
