@@ -402,7 +402,13 @@ add('aziz_muhammad_shamsa','عزيز','m','muhammad_salim_shamsa',null,10,'عز�
 add('adam_hamood_shamsa','ادم','m','hamood_salim_shamsa',null,10,'ادم بن حمود بن سالم بن علي بن محمد الطوقي');
 add('ali_hamood_shamsa','علي','m','hamood_salim_shamsa',null,10,'علي بن حمود بن سالم بن علي بن محمد الطوقي');
 add('laith_hamood_shamsa','ليث','m','hamood_salim_shamsa',null,10,'ليث بن حمود بن سالم بن علي بن محمد الطوقي');
-// مروة's children (عبدالله، سالم، مهرة) pending: her husband's name needed for their chain
+// مروة's husband and children (خالد بن عبدالله بن سالم العيسري)
+add('khalid_abdullah_salim_marwa','خالد بن عبدالله بن سالم العيسري','m',null,null,9,'خالد بن عبدالله بن سالم العيسري');
+P.marwa_salim_shamsa.spouseId = 'khalid_abdullah_salim_marwa';
+P.marwa_salim_shamsa.spouseName = P.khalid_abdullah_salim_marwa.chain;
+add('abdullah_khalid_marwa','عبدالله','m','khalid_abdullah_salim_marwa','marwa_salim_shamsa',10,'عبدالله بن خالد بن عبدالله بن سالم العيسري');
+add('salim_khalid_marwa','سالم','m','khalid_abdullah_salim_marwa','marwa_salim_shamsa',10,'سالم بن خالد بن عبدالله بن سالم العيسري');
+add('mahra_khalid_marwa','مهرة','f','khalid_abdullah_salim_marwa','marwa_salim_shamsa',10,'مهرة بنت خالد بن عبدالله بن سالم العيسرية');
 add('aseela','أصيلة','f','humaid_abdullah','fatima_abdullah_hamad',8,'أصيلة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('aziza','عزيزة','f','humaid_abdullah','fatima_abdullah_hamad',8,'عزيزة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('husna','حسنى','f','humaid_abdullah','fatima_abdullah_hamad',8,'حسنى بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -420,6 +426,55 @@ add('ziyana_bint_humaid','زيانة','f','humaid_abdullah','riya_muhammad_w2',8
 add('abdullah_azza','عبدالله','m','rashid_sultan_brother','azza',9,'عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sharifa_azza','شريفة','f','rashid_sultan_brother','azza',9,'شريفة بنت راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('mia_azza','ميا','f','rashid_sultan_brother','azza',9,'ميا بنت راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+// عبدالله بن راشد بن سلطان's (abdullah_azza) 10 children
+add('alharith_abdullah_azza','الحارث','m','abdullah_azza',null,10,'الحارث بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('abdullah_alharith_azza','عبدالله','m','alharith_abdullah_azza',null,11,'عبدالله بن الحارث بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('alwarith_abdullah_azza','الوارث','m','abdullah_azza',null,10,'الوارث بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('rashid_abdullah_azza','راشد','m','abdullah_azza',null,10,'راشد بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('miqdad_abdullah_azza','مقداد','m','abdullah_azza',null,10,'مقداد بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('alsilt_abdullah_azza','الصلت','m','abdullah_azza',null,10,'الصلت بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('alzahra_abdullah_azza','الزهراء','f','abdullah_azza',null,10,'الزهراء بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+// الزهراء's daughter ألين pending: her husband's name needed for the child's chain
+add('shahd_abdullah_azza','شهد','f','abdullah_azza',null,10,'شهد بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('iafaa_abdullah_azza','إعفاء','f','abdullah_azza',null,10,'إعفاء بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('rital_abdullah_azza','رتال','f','abdullah_azza',null,10,'رتال بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('khawla_abdullah_azza','خولة','f','abdullah_azza',null,10,'خولة بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// شريفة's husband (سالم بن خلفان بن سيف الطوقي) and children
+add('salim_khalfan_sharifa','سالم بن خلفان بن سيف الطوقي','m',null,null,9,'سالم بن خلفان بن سيف الطوقي');
+P.sharifa_azza.spouseId = 'salim_khalfan_sharifa';
+P.sharifa_azza.spouseName = P.salim_khalfan_sharifa.chain;
+add('ibtisam_salim_sharifa','ابتسام','f','salim_khalfan_sharifa','sharifa_azza',10,'ابتسام بنت سالم بن خلفان بن سيف الطوقية');
+add('hamood_muhammad_ibtisam','حمود بن محمد بن سيف الحارثي','m',null,null,10,'حمود بن محمد بن سيف الحارثي');
+P.ibtisam_salim_sharifa.spouseId = 'hamood_muhammad_ibtisam';
+P.ibtisam_salim_sharifa.spouseName = P.hamood_muhammad_ibtisam.chain;
+add('lama_hamood_ibtisam','لمى','f','hamood_muhammad_ibtisam','ibtisam_salim_sharifa',11,'لمى بنت حمود بن محمد بن سيف الحارثية');
+add('muhammad_hamood_ibtisam','محمد','m','hamood_muhammad_ibtisam','ibtisam_salim_sharifa',11,'محمد بن حمود بن محمد بن سيف الحارثي');
+add('tameem_hamood_ibtisam','تميم','m','hamood_muhammad_ibtisam','ibtisam_salim_sharifa',11,'تميم بن حمود بن محمد بن سيف الحارثي');
+add('azza2_salim_sharifa','عزا','f','salim_khalfan_sharifa','sharifa_azza',10,'عزا بنت سالم بن خلفان بن سيف الطوقية');
+add('zakaria_yahya_azza2','زكريا بن يحيى بن ناصر الحارثي','m',null,null,10,'زكريا بن يحيى بن ناصر الحارثي');
+P.azza2_salim_sharifa.spouseId = 'zakaria_yahya_azza2';
+P.azza2_salim_sharifa.spouseName = P.zakaria_yahya_azza2.chain;
+add('yahya_zakaria_azza2','يحيى','m','zakaria_yahya_azza2','azza2_salim_sharifa',11,'يحيى بن زكريا بن يحيى بن ناصر الحارثي');
+add('zaid_zakaria_azza2','زيد','m','zakaria_yahya_azza2','azza2_salim_sharifa',11,'زيد بن زكريا بن يحيى بن ناصر الحارثي');
+add('asma_salim_sharifa','أسماء','f','salim_khalfan_sharifa','sharifa_azza',10,'أسماء بنت سالم بن خلفان بن سيف الطوقية');
+add('sultan_salim_sharifa','سلطان','m','salim_khalfan_sharifa','sharifa_azza',10,'سلطان بن سالم بن خلفان بن سيف الطوقي');
+add('saif_salim_sharifa','سيف','m','salim_khalfan_sharifa','sharifa_azza',10,'سيف بن سالم بن خلفان بن سيف الطوقي');
+add('ismail_salim_sharifa','إسماعيل','m','salim_khalfan_sharifa','sharifa_azza',10,'إسماعيل بن سالم بن خلفان بن سيف الطوقي');
+// ياسر ويسرى (أبناء سالم بن خلفان من زوجة أخرى غير شريفة) وأولادهما — بانتظار تأكيد هل هو نفس سالم أعلاه
+
+// ميا's husband (خلفان بن مسلم المعمري) and children
+add('khalfan_muslim_mia','خلفان بن مسلم المعمري','m',null,null,9,'خلفان بن مسلم المعمري');
+P.mia_azza.spouseId = 'khalfan_muslim_mia';
+P.mia_azza.spouseName = P.khalfan_muslim_mia.chain;
+add('rafida_khalfan_mia','رفيده','f','khalfan_muslim_mia','mia_azza',10,'رفيده بنت خلفان بن مسلم المعمرية');
+add('munjid_khalfan_mia','منجد','m','khalfan_muslim_mia','mia_azza',10,'منجد بن خلفان بن مسلم المعمري');
+add('muayyad_khalfan_mia','مؤيد','m','khalfan_muslim_mia','mia_azza',10,'مؤيد بن خلفان بن مسلم المعمري');
+add('muhannad_khalfan_mia','مهند','m','khalfan_muslim_mia','mia_azza',10,'مهند بن خلفان بن مسلم المعمري');
+add('mutasim_khalfan_mia','معتصم','m','khalfan_muslim_mia','mia_azza',10,'معتصم بن خلفان بن مسلم المعمري');
+add('rawaa_khalfan_mia','رواء','f','khalfan_muslim_mia','mia_azza',10,'رواء بنت خلفان بن مسلم المعمرية');
+add('muhammad_khalfan_mia','محمد','m','khalfan_muslim_mia','mia_azza',10,'محمد بن خلفان بن مسلم المعمري');
+
 add('nasir_u3','ناصر','m','humaid_abdullah','zwaina_numaniyah',8,'ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sultan_u3','سلطان','m','humaid_abdullah','zwaina_numaniyah',8,'سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif_u3','سيف','m','humaid_abdullah','zwaina_numaniyah',8,'سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
