@@ -603,6 +603,66 @@ add('hamood_m2','حمود','m','muhammad_sulaiman',null,7,'حمود بن محم�
 add('aamir_riya','عامر','m','sultan_m',null,8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_sultan_brother','راشد','m','sultan_m',null,8,'راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي'); // أخو عامر بن سلطان، زوج عزا بنت حميد
 
+// خديجة: سليمان بن محمد بن سليمان's daughter, راشد بن سلطان's SECOND wife (besides عزا بنت حميد)
+add('khadija_sulaiman_m2','خديجة','f','sulaiman_m2',null,8,'خديجة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+P.khadija_sulaiman_m2.spouseId = 'rashid_sultan_brother';
+P.khadija_sulaiman_m2.spouseName = P.rashid_sultan_brother.chain;
+if(!P.rashid_sultan_brother.spouseId){ P.rashid_sultan_brother.spouseId = 'azza'; P.rashid_sultan_brother.spouseName = P.azza.chain; }
+// راشد+خديجة's daughter أسماء — married حمد بن حميد بن عبدالله (her father's paternal cousin's
+// generation), later divorced; no spouseId link either direction per the divorced-couple
+// convention already used elsewhere, but the child still carries حمد's lineage
+add('asma_rashid_khadija','أسماء','f','rashid_sultan_brother','khadija_sulaiman_m2',9,'أسماء بنت راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('abdullah_hamd_asma','عبدالله','m','hamd_u','asma_rashid_khadija',9,'عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+
+// حمد بن حميد's other (deceased) wife زوينة بنت عامر, and their 12 children
+add('zwaina_aamir_hamd','زوينة بنت عامر بن محمد بن سعيد بن حسين العيسرية','f',null,null,8,'زوينة بنت عامر بن محمد بن سعيد بن حسين العيسرية');
+P.zwaina_aamir_hamd.isDeceased = true;
+P.zwaina_aamir_hamd.spouseId = 'hamd_u';
+P.zwaina_aamir_hamd.spouseName = P.hamd_u.chain;
+if(!P.hamd_u.spouseId){ P.hamd_u.spouseId = 'zwaina_aamir_hamd'; P.hamd_u.spouseName = P.zwaina_aamir_hamd.chain; }
+add('humaid3_hamd_zwaina','حميد','m','hamd_u','zwaina_aamir_hamd',9,'حميد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saeed3_hamd_zwaina','سعيد','m','hamd_u','zwaina_aamir_hamd',9,'سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salim2_hamd_zwaina','سالم','m','hamd_u','zwaina_aamir_hamd',9,'سالم بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('aamir2_hamd_zwaina','عامر','m','hamd_u','zwaina_aamir_hamd',9,'عامر بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('muhammad3_hamd_zwaina','محمد','m','hamd_u','zwaina_aamir_hamd',9,'محمد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('hamood3_hamd_zwaina','حمود','m','hamd_u','zwaina_aamir_hamd',9,'حمود بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman3_hamd_zwaina','سليمان','m','hamd_u','zwaina_aamir_hamd',9,'سليمان بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('azza3_hamd_zwaina','عزا','f','hamd_u','zwaina_aamir_hamd',9,'عزا بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('shaikha_hamd_zwaina','شيخة','f','hamd_u','zwaina_aamir_hamd',9,'شيخة بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('nasra2_hamd_zwaina','نصرى','f','hamd_u','zwaina_aamir_hamd',9,'نصرى بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('fatima3_hamd_zwaina','فاطمة','f','hamd_u','zwaina_aamir_hamd',9,'فاطمة بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('husna2_hamd_zwaina','حسنى','f','hamd_u','zwaina_aamir_hamd',9,'حسنى بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// عبدالله بن حمد بن حميد's children (from أسماء)
+add('ahmad_abdullah_hamd','احمد','m','abdullah_hamd_asma',null,10,'احمد بن عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('tasneem_ahmad_abdullah','تسنيم','f','ahmad_abdullah_hamd',null,11,'تسنيم بنت احمد بن عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('raneem_ahmad_abdullah','رنيم','f','ahmad_abdullah_hamd',null,11,'رنيم بنت احمد بن عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('asma2_abdullah_hamd','أسماء','f','abdullah_hamd_asma',null,10,'أسماء بنت عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('sara_abdullah_hamd','سارة','f','abdullah_hamd_asma',null,10,'سارة بنت عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saeed_sulaiman_sara','سعيد بن سليمان بن علي بن سليمان البحري','m',null,null,10,'سعيد بن سليمان بن علي بن سليمان البحري');
+P.sara_abdullah_hamd.spouseId = 'saeed_sulaiman_sara';
+P.sara_abdullah_hamd.spouseName = P.saeed_sulaiman_sara.chain;
+add('sulaiman_saeed_sara','سليمان','m','saeed_sulaiman_sara','sara_abdullah_hamd',11,'سليمان بن سعيد بن سليمان بن علي بن سليمان البحري');
+add('hamd2_abdullah_hamd','حمد','m','abdullah_hamd_asma',null,10,'حمد بن عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('humaid4_abdullah_hamd','حميد','m','abdullah_hamd_asma',null,10,'حميد بن عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('khadija2_abdullah_hamd','خديجة','f','abdullah_hamd_asma',null,10,'خديجة بنت عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// سعيد بن حمد بن حميد's children
+add('hamd3_saeed_hamd','حمد','m','saeed3_hamd_zwaina',null,10,'حمد بن سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('tamadhur_saeed_hamd','تماضر','f','saeed3_hamd_zwaina',null,10,'تماضر بنت سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('afnan_saeed_hamd','افنان','f','saeed3_hamd_zwaina',null,10,'افنان بنت سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('janan_saeed_hamd','جنان','f','saeed3_hamd_zwaina',null,10,'جنان بنت سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zwaina2_saeed_hamd','زوينة','f','saeed3_hamd_zwaina',null,10,'زوينة بنت سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('sultan_hilal_zwaina2','سلطان بن هلال بن سيف الطوقي','m',null,null,10,'سلطان بن هلال بن سيف الطوقي');
+P.zwaina2_saeed_hamd.spouseId = 'sultan_hilal_zwaina2';
+P.zwaina2_saeed_hamd.spouseName = P.sultan_hilal_zwaina2.chain;
+add('misk_sultan_zwaina2','مسك','f','sultan_hilal_zwaina2','zwaina2_saeed_hamd',11,'مسك بنت سلطان بن هلال بن سيف الطوقية');
+add('faris_sultan_zwaina2','فارس','m','sultan_hilal_zwaina2','zwaina2_saeed_hamd',11,'فارس بن سلطان بن هلال بن سيف الطوقي');
+add('hafsa_saeed_hamd','حفصة','f','saeed3_hamd_zwaina',null,10,'حفصة بنت سعيد بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad_nasir_hafsa','محمد بن ناصر اللمكي','m',null,null,10,'محمد بن ناصر اللمكي');
+P.hafsa_saeed_hamd.spouseId = 'muhammad_nasir_hafsa';
+P.hafsa_saeed_hamd.spouseName = P.muhammad_nasir_hafsa.chain;
+
 /* ---- الأخت ريا (شقيقة، من نعمة) وأولادها من عامر ---- */
 add('buthaina','بثينة','f','aamir_riya','riya_sister',10,'بثينة بنت عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('ahmad_nasir','أحمد','m','nasir_u3',null,9,'أحمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
