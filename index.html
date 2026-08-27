@@ -393,7 +393,15 @@ add('salim_rashid','سليم','m','rashid_ali',null,3,'سليم بن راشد ب
 add('khalfan_salim','خلفان','m','salim_rashid',null,4,'خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_khalfan','راشد','m','khalfan_salim',null,5,'راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('abdullah_rashid','عبدالله','m','rashid_khalfan',null,6,'عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('humaid_abdullah','حميد','m','abdullah_rashid',null,7,'حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// عبدالله بن راشد's two wives — his 6 children (حميد/شمسة/خولة/سليمة/حسينة/حسنى) already existed
+// in the seed data but with no motherId set; adding the wives here and linking them below
+add('shanoona_salim_azeez','شنونة بنت سالم بن عزيز','f',null,null,6,'شنونة بنت سالم بن عزيز');
+P.abdullah_rashid.spouseId = 'shanoona_salim_azeez';
+P.abdullah_rashid.spouseName = P.shanoona_salim_azeez.chain;
+P.shanoona_salim_azeez.spouseId = 'abdullah_rashid';
+P.shanoona_salim_azeez.spouseName = P.abdullah_rashid.chain;
+add('aziza_sultan_abdullah_rashid','عزيزة','f',null,null,6,'عزيزة بنت سلطان بن احمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('humaid_abdullah','حميد','m','abdullah_rashid','shanoona_salim_azeez',7,'حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // حميد's three wives
 add('fatima_abdullah_hamad','فاطمة','f',null,null,7,'فاطمة بنت عبدالله بن حمد الطوقية');
@@ -749,11 +757,11 @@ add('ziyanah_mother','زيانة','f','saeed_khalfan_grandfather','fatima_grandm
 /* ---- User's father's wives ---- */
 add('nemah_mother','نعمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'نعمة بنت سعيد بن راشد بن شنين الطوقية');
 add('saeed_rashid_shanin','سعيد','m',null,null,7,'سعيد بن راشد بن شنين الطوقي');
-add('shamsa_bint_abdullah','شمسة','f','abdullah_rashid',null,7,'شمسة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('khawla_bint_abdullah','خولة','f','abdullah_rashid',null,7,'خولة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('salima_bint_abdullah','سليمة','f','abdullah_rashid',null,7,'سليمة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('husaina_bint_abdullah','حسينة','f','abdullah_rashid',null,7,'حسينة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('husna_bint_abdullah','حسنى','f','abdullah_rashid',null,7,'حسنى بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('shamsa_bint_abdullah','شمسة','f','abdullah_rashid','shanoona_salim_azeez',7,'شمسة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('khawla_bint_abdullah','خولة','f','abdullah_rashid','shanoona_salim_azeez',7,'خولة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('salima_bint_abdullah','سليمة','f','abdullah_rashid','shanoona_salim_azeez',7,'سليمة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('husaina_bint_abdullah','حسينة','f','abdullah_rashid','aziza_sultan_abdullah_rashid',7,'حسينة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('husna_bint_abdullah','حسنى','f','abdullah_rashid','aziza_sultan_abdullah_rashid',7,'حسنى بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('rahma_mother','رحمة','f',null,null,8,'رحمة بنت سيف بن عزيز الطوقية');
 
 /* ---- حمد (المستخدم) وإخوته ---- */
