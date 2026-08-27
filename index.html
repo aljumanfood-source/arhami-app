@@ -190,6 +190,20 @@
   .rel-btn .label{font-weight:700;font-size:13.5px;}
   .rel-btn .count{font-size:11px;color:var(--muted);}
 
+  /* inline family summary — الأم/الأخوال/الأعمام/الأولاد والأحفاد shown directly on the
+     profile page instead of requiring a tap into each relation category */
+  .family-summary{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin-top:16px;display:flex;flex-direction:column;gap:10px;
+  }
+  .summary-row{display:flex;flex-direction:column;gap:4px;}
+  .summary-label{font-size:12.5px;font-weight:700;color:var(--green-deep);}
+  .summary-value{font-size:13.5px;line-height:1.9;color:var(--ink);}
+  .name-link{color:var(--gold-rich);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+  .name-link:active{opacity:.7;}
+  .child-block{display:inline-block;margin-inline-end:14px;margin-bottom:4px;}
+  .grandkids{font-size:12px;color:var(--muted);margin-inline-start:14px;}
+
   /* back nav */
   .subheader{display:flex;align-items:flex-start;gap:10px;margin-top:14px;margin-bottom:2px;}
   .back-btn{flex-shrink:0;margin-top:1px;}
@@ -1310,10 +1324,12 @@ function renderProfile(id){
         <button id="deleteSelfBtn" class="danger">🗑 حذف</button>
       </div>
     </div>
+    <div id="familySummary"></div>
     <div class="rel-grid" id="relGrid"></div>
     ${p.isDeceased ? `<button class="btn-approve" id="wasiyyaBtn" style="margin-top:16px;">📜 مستحقو وصية الأرحام</button>` : ''}
     <p class="section-note">اضغط على أي بطاقة لعرض القائمة، ويمكن إضافة اسم جديد بعلامة (+) إن لم يكن مسجلًا بعد.</p>
   `;
+  renderFamilySummary(id);
   const grid = document.getElementById('relGrid');
   RELATIONS.forEach(r=>{
     const list = r.fn(id);
@@ -1329,6 +1345,62 @@ function renderProfile(id){
   if(p.isDeceased){
     document.getElementById('wasiyyaBtn').onclick = ()=>{ goTo({view:'wasiyya', personId:id}); };
   }
+}
+
+// clickable name chip used throughout the family summary — routes straight to that
+// person's own profile, same as tapping their card anywhere else in the app
+function nameLink(person){
+  return `<span class="name-link" data-id="${person.id}">${person.name}</span>`;
+}
+function wireNameLinks(container){
+  container.querySelectorAll('.name-link').forEach(el=>{
+    el.onclick = ()=>{ goTo({view:'profile', personId: el.dataset.id}); };
+  });
+}
+
+// the improvement requested: instead of making the user tap into each relation
+// category one at a time just to see who's in it, show الأم/الأخوال/الأعمام and
+// الأولاد+الأحفاد (two generations deep) directly on the page, wherever it's reached
+// from — search, a relation list, anywhere a person's card is tapped.
+function renderFamilySummary(id){
+  const p = P[id];
+  const holder = document.getElementById('familySummary');
+  if(!holder) return;
+  const mother = (p.motherId && P[p.motherId]) ? P[p.motherId] : null;
+  const maternalUncles = unclesAuntsMotherOf(id,'m').concat(unclesAuntsMotherOf(id,'f'));
+  const paternalUncles = unclesAuntsOf(id,'m').concat(unclesAuntsOf(id,'f'));
+  const children = childrenOf(id,'m').concat(childrenOf(id,'f'));
+
+  const rows = [];
+  if(mother){
+    rows.push(['الأم', nameLink(mother)]);
+  }
+  if(maternalUncles.length){
+    rows.push(['الأخوال', maternalUncles.map(nameLink).join('، ')]);
+  }
+  if(paternalUncles.length){
+    rows.push(['الأعمام', paternalUncles.map(nameLink).join('، ')]);
+  }
+  if(!rows.length && !children.length) return; // nothing to summarize — keep the page clean
+
+  let childrenHtml = '';
+  if(children.length){
+    childrenHtml = `<div class="summary-row"><div class="summary-label">الأولاد والأحفاد</div><div class="summary-value">` +
+      children.map(child=>{
+        const grandkids = childrenOf(child.id,'m').concat(childrenOf(child.id,'f'));
+        const gkHtml = grandkids.length
+          ? `<div class="grandkids">↳ ${grandkids.map(nameLink).join('، ')}</div>`
+          : '';
+        return `<div class="child-block">${nameLink(child)}${gkHtml}</div>`;
+      }).join('') +
+    `</div></div>`;
+  }
+
+  holder.innerHTML = `<div class="family-summary">` +
+    rows.map(([label,val])=>`<div class="summary-row"><div class="summary-label">${label}</div><div class="summary-value">${val}</div></div>`).join('') +
+    childrenHtml +
+  `</div>`;
+  wireNameLinks(holder);
 }
 
 function arrowIcon(){
