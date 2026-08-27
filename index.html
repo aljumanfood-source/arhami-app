@@ -433,6 +433,27 @@ add('mahra_khalid_marwa','مهرة','f','khalid_abdullah_salim_marwa','marwa_sal
 add('aseela','أصيلة','f','humaid_abdullah','fatima_abdullah_hamad',8,'أصيلة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('aziza','عزيزة','f','humaid_abdullah','fatima_abdullah_hamad',8,'عزيزة بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('husna','حسنى','f','humaid_abdullah','fatima_abdullah_hamad',8,'حسنى بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+// حسنى's deceased husband محمد بن سعيد بن محمد بن سليمان... and their 5 children
+add('muhammad_saeed_husna','محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي','m',null,null,8,'محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+P.muhammad_saeed_husna.isDeceased = true;
+P.husna.spouseId = 'muhammad_saeed_husna';
+P.husna.spouseName = P.muhammad_saeed_husna.chain;
+P.muhammad_saeed_husna.spouseId = 'husna';
+P.muhammad_saeed_husna.spouseName = P.husna.chain;
+add('saeed_muhammad_husna','سعيد','m','muhammad_saeed_husna','husna',9,'سعيد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('layan_saeed_husna','ليان','f','saeed_muhammad_husna',null,10,'ليان بنت سعيد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('lina_saeed_husna','لينا','f','saeed_muhammad_husna',null,10,'لينا بنت سعيد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad_saeed2_husna','محمد','m','saeed_muhammad_husna',null,10,'محمد بن سعيد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('waleed_muhammad_husna','وليد','m','muhammad_saeed_husna','husna',9,'وليد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('muhammad_waleed_husna','محمد','m','waleed_muhammad_husna',null,10,'محمد بن وليد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('khulood_muhammad_husna','خلود','f','muhammad_saeed_husna','husna',9,'خلود بنت محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('usama_nasir_khulood','أسامة بن ناصر المنذري','m',null,null,9,'أسامة بن ناصر المنذري');
+P.khulood_muhammad_husna.spouseId = 'usama_nasir_khulood';
+P.khulood_muhammad_husna.spouseName = P.usama_nasir_khulood.chain;
+add('wisam_usama_khulood','وسام','m','usama_nasir_khulood','khulood_muhammad_husna',10,'وسام بن أسامة بن ناصر المنذري');
+add('husam_usama_khulood','حسام','m','usama_nasir_khulood','khulood_muhammad_husna',10,'حسام بن أسامة بن ناصر المنذري');
+add('asad_muhammad_husna','أسعد','m','muhammad_saeed_husna','husna',9,'أسعد بن محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('fatima4_muhammad_husna','فاطمة','f','muhammad_saeed_husna','husna',9,'فاطمة بنت محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // wife 2 children (with ريا بنت محمد)
 add('sulaiman_u2','سليمان','m','humaid_abdullah','riya_muhammad_w2',8,'سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -1382,6 +1403,15 @@ function renderFamilySummary(id){
   const rows = [];
   if(mother){
     rows.push(['الأم', `<div class="name-block">${nameLink(mother, true)}</div>`]);
+  }
+  const maternalGrandmother = (mother && mother.motherId && P[mother.motherId]) ? P[mother.motherId] : null;
+  if(maternalGrandmother){
+    rows.push(['جدته لأمه', `<div class="name-block">${nameLink(maternalGrandmother, true)}</div>`]);
+  }
+  const father = (p.fatherId && P[p.fatherId]) ? P[p.fatherId] : null;
+  const paternalGrandmother = (father && father.motherId && P[father.motherId]) ? P[father.motherId] : null;
+  if(paternalGrandmother){
+    rows.push(['جدته لأبيه', `<div class="name-block">${nameLink(paternalGrandmother, true)}</div>`]);
   }
   if(maternalUncles.length){
     // short names together, then the shared father's full chain named once — matches
