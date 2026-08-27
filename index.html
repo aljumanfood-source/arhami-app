@@ -837,6 +837,28 @@ add('muhammad_khalfan_mia','محمد','m','khalfan_muslim_mia','mia_azza',10,'م
 
 add('nasir_u3','ناصر','m','humaid_abdullah','zwaina_numaniyah',8,'ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sultan_u3','سلطان','m','humaid_abdullah','zwaina_numaniyah',8,'سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// سلطان بن حميد's wife عائشة بنت سالم النعمانية وأولادهما الثلاثة
+add('aisha_salim_sultan_u3','عائشة بنت سالم النعمانية','f',null,null,8,'عائشة بنت سالم النعمانية');
+P.sultan_u3.spouseId = 'aisha_salim_sultan_u3';
+P.sultan_u3.spouseName = P.aisha_salim_sultan_u3.chain;
+P.aisha_salim_sultan_u3.spouseId = 'sultan_u3';
+P.aisha_salim_sultan_u3.spouseName = P.sultan_u3.chain;
+add('humaid11_sultan_u3','حميد','m','sultan_u3','aisha_salim_sultan_u3',9,'حميد بن سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('misk3_humaid11','مسك','f','humaid11_sultan_u3',null,10,'مسك بنت حميد بن سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('azza4_sultan_u3','عزا','f','sultan_u3','aisha_salim_sultan_u3',9,'عزا بنت سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('khalid_alharithi_azza4','خالد الحارثي','m',null,null,9,'خالد الحارثي');
+P.azza4_sultan_u3.spouseId = 'khalid_alharithi_azza4';
+P.azza4_sultan_u3.spouseName = P.khalid_alharithi_azza4.chain;
+add('milk_khalid_azza4','ملك','f','khalid_alharithi_azza4','azza4_sultan_u3',10,'ملك بنت خالد الحارثية');
+add('salim5_khalid_azza4','سالم','m','khalid_alharithi_azza4','azza4_sultan_u3',10,'سالم بن خالد الحارثي');
+add('saeed6_khalid_azza4','سعيد','m','khalid_alharithi_azza4','azza4_sultan_u3',10,'سعيد بن خالد الحارثي');
+add('sultan2_khalid_azza4','سلطان','m','khalid_alharithi_azza4','azza4_sultan_u3',10,'سلطان بن خالد الحارثي');
+add('zwaina7_sultan_u3','زوينة','f','sultan_u3','aisha_salim_sultan_u3',9,'زوينة بنت سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saeed_alnumani_zwaina7','سعيد النعماني','m',null,null,9,'سعيد النعماني');
+P.zwaina7_sultan_u3.spouseId = 'saeed_alnumani_zwaina7';
+P.zwaina7_sultan_u3.spouseName = P.saeed_alnumani_zwaina7.chain;
+add('saif2_saeed_zwaina7','سيف','m','saeed_alnumani_zwaina7','zwaina7_sultan_u3',10,'سيف بن سعيد النعماني');
+add('sultan3_saif2','سلطان','m','saif2_saeed_zwaina7',null,11,'سلطان بن سيف بن سعيد النعماني');
 add('saif_u3','سيف','m','humaid_abdullah','zwaina_numaniyah',8,'سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saeed_u3','سعيد','m','humaid_abdullah','zwaina_numaniyah',8,'سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('musaad_u3','مسعود','m','humaid_abdullah','zwaina_numaniyah',8,'مسعود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
