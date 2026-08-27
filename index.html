@@ -861,6 +861,43 @@ add('saif2_saeed_zwaina7','سيف','m','saeed_alnumani_zwaina7','zwaina7_sultan_
 add('sultan3_saif2','سلطان','m','saif2_saeed_zwaina7',null,11,'سلطان بن سيف بن سعيد النعماني');
 add('saif_u3','سيف','m','humaid_abdullah','zwaina_numaniyah',8,'سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saeed_u3','سعيد','m','humaid_abdullah','zwaina_numaniyah',8,'سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// سعيد بن حميد's wife آسية الحبسية — حميد وجوخة (أولاده) مرتبطون أصلًا في مكان آخر، نضيف باقي
+// أولاده الثمانية هنا فقط
+add('asiya_alhabsiya_saeed_u3','آسية الحبسية','f',null,null,8,'آسية الحبسية');
+P.saeed_u3.spouseId = 'asiya_alhabsiya_saeed_u3';
+P.saeed_u3.spouseName = P.asiya_alhabsiya_saeed_u3.chain;
+P.asiya_alhabsiya_saeed_u3.spouseId = 'saeed_u3';
+P.asiya_alhabsiya_saeed_u3.spouseName = P.saeed_u3.chain;
+add('ahmad4_saeed_u3','احمد','m','saeed_u3','asiya_alhabsiya_saeed_u3',9,'احمد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('asya_ahmad4','آسيا','f','ahmad4_saeed_u3',null,10,'آسيا بنت احمد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('shamma_ahmad4','شمّا','f','ahmad4_saeed_u3',null,10,'شمّا بنت احمد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saeed8_ahmad4','سعيد','m','ahmad4_saeed_u3',null,10,'سعيد بن احمد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// زوينة تزوجت سعيد بن محمد بن سعيد بن راشد بن شنين (u_1) — نعمة بنت سعيد بن راشد بن شنين
+// (nemah_mother) عمته أخت أبوه، لأن محمد بن سعيد بن راشد بن شنين (u_1) هو أخوها
+add('zwaina8_saeed_u3','زوينة','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'زوينة بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saeed9_muhammad_u1','سعيد بن محمد بن سعيد الطوقي','m','u_1',null,9,'سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+P.zwaina8_saeed_u3.spouseId = 'saeed9_muhammad_u1';
+P.zwaina8_saeed_u3.spouseName = P.saeed9_muhammad_u1.chain;
+add('muhammad12_saeed9','محمد','m','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'محمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('asya2_saeed9','آسيا','f','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'آسيا بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
+add('nasir6_saeed9','ناصر','m','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'ناصر بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('ahmad5_saeed9','أحمد','m','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'أحمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('noura2_saeed9','نورة','f','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'نورة بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
+add('alaa4_saeed_u3','آلاء','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'آلاء بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('adil_ali_alaa4','عادل بن علي بن خلفان الحراصي','m',null,null,9,'عادل بن علي بن خلفان الحراصي');
+P.alaa4_saeed_u3.spouseId = 'adil_ali_alaa4';
+P.alaa4_saeed_u3.spouseName = P.adil_ali_alaa4.chain;
+add('muhammad13_saeed_u3','محمد','m','saeed_u3','asiya_alhabsiya_saeed_u3',9,'محمد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// نور تزوجت ابن عمها عبدالله بن سيف بن حميد (لم يكن مسجلًا كابن لسيف من قبل، نضيفه هنا)
+add('noor5_saeed_u3','نور','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'نور بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('abdullah13_saif_u3','عبدالله','m','saif_u3',null,9,'عبدالله بن سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+P.noor5_saeed_u3.spouseId = 'abdullah13_saif_u3';
+P.noor5_saeed_u3.spouseName = P.abdullah13_saif_u3.chain;
+// حور تزوجت ابن عمها عبدالله بن مسعود (يُعرَّف لاحقًا في الملف — نستخدم الربط المؤجل الآمن)
+add('hoor3_saeed_u3','حور','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'حور بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+queueSpouseLink('hoor3_saeed_u3', 'abdullah10_musaad_u3');
+add('nasr_saeed_u3','نصر','m','saeed_u3','asiya_alhabsiya_saeed_u3',9,'نصر بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ilyas3_saeed_u3','الياس','m','saeed_u3','asiya_alhabsiya_saeed_u3',9,'الياس بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('musaad_u3','مسعود','m','humaid_abdullah','zwaina_numaniyah',8,'مسعود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('humaid10_musaad_u3','حميد','m','musaad_u3',null,9,'حميد بن مسعود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('abdullah10_musaad_u3','عبدالله','m','musaad_u3',null,9,'عبدالله بن مسعود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -984,7 +1021,7 @@ add('almirdas_nusair_thurayya','المرداس','m','nusair_khalfan_thurayya','t
 add('hujood_nusair_thurayya','هجود','f','nusair_khalfan_thurayya','thurayya',10,'هجود بنت نصير بن خلفان الجابرية');
 
 // جهينة (بنت حمود من نعمة) وزوجها حميد بن سعيد بن حميد الحارثي (ابن عمها)
-add('humaid12_saeed_juhaina','حميد بن سعيد بن حميد الحارثي','m',null,null,9,'حميد بن سعيد بن حميد الحارثي');
+add('humaid12_saeed_juhaina','حميد','m','saeed_u3','asiya_alhabsiya_saeed_u3',9,'حميد بن سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 P.juhaina.spouseId = 'humaid12_saeed_juhaina';
 P.juhaina.spouseName = P.humaid12_saeed_juhaina.chain;
 add('saeed7_humaid12_juhaina','سعيد','m','humaid12_saeed_juhaina','juhaina',10,'سعيد بن حميد بن سعيد بن حميد الحارثي');
@@ -1110,7 +1147,7 @@ add('fatima3_hamd_zwaina','فاطمة','f','hamd_u','zwaina_aamir_hamd',9,'فا�
 add('husna2_hamd_zwaina','حسنى','f','hamd_u','zwaina_aamir_hamd',9,'حسنى بنت حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // جوخة بنت سعيد بن حميد بن عبدالله — needed below as سليمان بن حمد's wife
-add('jawkha_saeed_u3','جوخة','f','saeed_u3',null,9,'جوخة بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('jawkha_saeed_u3','جوخة','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'جوخة بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // حميد بن حمد's wife دليلة النعمانية وأولادهما السبعة
 add('dalila_alnumaniya_humaid3','دليلة النعمانية','f',null,null,9,'دليلة النعمانية');
