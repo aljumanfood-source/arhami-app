@@ -440,6 +440,10 @@ add('rashid_abdullah_azza','راشد','m','abdullah_azza',null,10,'راشد بن
 add('miqdad_abdullah_azza','مقداد','m','abdullah_azza',null,10,'مقداد بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('alsilt_abdullah_azza','الصلت','m','abdullah_azza',null,10,'الصلت بن عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('alzahra_abdullah_azza','الزهراء','f','abdullah_azza',null,10,'الزهراء بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('abdullah_muhammad_alzahra','عبدالله بن محمد الزيدي','m',null,null,10,'عبدالله بن محمد الزيدي');
+P.alzahra_abdullah_azza.spouseId = 'abdullah_muhammad_alzahra';
+P.alzahra_abdullah_azza.spouseName = P.abdullah_muhammad_alzahra.chain;
+add('aleen_abdullah_alzahra','ألين','f','abdullah_muhammad_alzahra','alzahra_abdullah_azza',11,'ألين بنت عبدالله بن محمد الزيدية');
 // الزهراء's daughter ألين pending: her husband's name needed for the child's chain
 add('shahd_abdullah_azza','شهد','f','abdullah_azza',null,10,'شهد بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('iafaa_abdullah_azza','إعفاء','f','abdullah_azza',null,10,'إعفاء بنت عبدالله بن راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -723,7 +727,12 @@ add('saif_ahmad_shanoona2','سيف','m','u_23',null,10,'سيف بن أحمد ب�
 add('eilaf_ahmad_shanoona2','ايلاف','f','u_23',null,10,'ايلاف بنت أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('haitham_ahmad_shanoona2','هيثم','m','u_23',null,10,'هيثم بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('wael_ahmad_shanoona2','وائل','m','u_23',null,10,'وائل بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-// أولاد اسماء بنت شنونة (u_25) بانتظار اسم زوجها
+add('hamood_salim_asma_shanoona','حمود بن سالم السناوي','m',null,null,9,'حمود بن سالم السناوي');
+queueSpouseLink('u_25', 'hamood_salim_asma_shanoona');
+add('ammar_hamood_asma_shanoona','عمار','m','hamood_salim_asma_shanoona','u_25',10,'عمار بن حمود بن سالم السناوي');
+add('afraa_hamood_asma_shanoona','عفراء','f','hamood_salim_asma_shanoona','u_25',10,'عفراء بنت حمود بن سالم السناوية');
+add('salim_hamood_asma_shanoona','سالم','m','hamood_salim_asma_shanoona','u_25',10,'سالم بن حمود بن سالم السناوي');
+add('ahmad_hamood_asma_shanoona','احمد','m','hamood_salim_asma_shanoona','u_25',10,'احمد بن حمود بن سالم السناوي');
 P.saif_ahmad.childIds.push('haitham_saif');
 P.shanoona.childIds.push('haitham_saif');
 
