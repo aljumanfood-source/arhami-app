@@ -2877,17 +2877,35 @@ function repairFamilyLinks(){
 
   // Pass 2: using the (possibly stale) childIds arrays as hints for who actually claims a
   // child, fix any motherId/fatherId that's missing, dangling (points to someone who no
-  // longer exists), or has the wrong gender (a mother can't be male, a father can't be
-  // female — always invalid, always safe to correct without risking a legitimate case).
+  // longer exists), has the wrong gender (a mother can't be male, a father can't be female),
+  // or points to one of the child's own siblings (a sibling can never be your parent — this
+  // catches the corruption pattern where a reused id left one sibling's own record pointing
+  // at another sibling instead of the real parent).
   Object.values(P).forEach(p=>{
-    const motherBroken = !p.motherId || !P[p.motherId] || P[p.motherId].gender!=='f';
+    const motherIsSibling = p.motherId && P[p.motherId] && p.fatherId && P[p.motherId].fatherId===p.fatherId;
+    const motherBroken = !p.motherId || !P[p.motherId] || P[p.motherId].gender!=='f' || motherIsSibling;
     if(motherBroken){
-      const realMother = Object.values(P).find(m=>m.gender==='f' && m.id!==p.id && (m.childIds||[]).includes(p.id));
+      // primary signal: an existing female record that already claims this child in her own
+      // childIds list
+      let realMother = Object.values(P).find(m=>m.gender==='f' && m.id!==p.id && (m.childIds||[]).includes(p.id));
+      // fallback signal: if the father has exactly one wife on record (via her spouseId
+      // pointing back to him), she's almost certainly the mother — this covers cases where
+      // the corruption also kept the true mother's own childIds list incomplete, so the
+      // primary signal above finds nothing
+      if(!realMother && p.fatherId){
+        const wives = Object.values(P).filter(w=>w.gender==='f' && w.spouseId===p.fatherId);
+        if(wives.length===1) realMother = wives[0];
+      }
       if(realMother && p.motherId!==realMother.id){ p.motherId = realMother.id; fixedCount++; }
     }
-    const fatherBroken = !p.fatherId || !P[p.fatherId] || P[p.fatherId].gender!=='m';
+    const fatherIsSibling = p.fatherId && P[p.fatherId] && p.motherId && P[p.fatherId].motherId===p.motherId;
+    const fatherBroken = !p.fatherId || !P[p.fatherId] || P[p.fatherId].gender!=='m' || fatherIsSibling;
     if(fatherBroken){
-      const realFather = Object.values(P).find(f=>f.gender==='m' && f.id!==p.id && (f.childIds||[]).includes(p.id));
+      let realFather = Object.values(P).find(f=>f.gender==='m' && f.id!==p.id && (f.childIds||[]).includes(p.id));
+      if(!realFather && p.motherId){
+        const husbands = Object.values(P).filter(h=>h.gender==='m' && h.spouseId===p.motherId);
+        if(husbands.length===1) realFather = husbands[0];
+      }
       if(realFather && p.fatherId!==realFather.id){ p.fatherId = realFather.id; fixedCount++; }
     }
   });
