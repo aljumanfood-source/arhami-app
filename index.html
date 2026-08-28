@@ -1203,6 +1203,107 @@ add('ziyanah_mother','زيانة','f','saeed_khalfan_grandfather','fatima_grandm
 add('nemah_mother','نعمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'نعمة بنت سعيد بن راشد بن شنين الطوقية');
 add('saeed_rashid_shanin','سعيد','m',null,'sharifa_rashid',7,'سعيد بن راشد بن شنين الطوقي');
 add('shamsa_bint_abdullah','شمسة','f','abdullah_rashid','shanoona_salim_azeez',7,'شمسة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// شمسة+سعيد بن راشد بن شنين's remaining 2 daughters (نعمة/زيانة/شنونة already established): شريفة ورحمة
+add('sharifa3_saeed_shanin','شريفة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'شريفة بنت سعيد بن راشد بن شنين الطوقية');
+add('saeed14_hamd_sharifa3','سعيد بن حمد بن محمد المعمري','m',null,null,8,'سعيد بن حمد بن محمد المعمري');
+P.sharifa3_saeed_shanin.spouseId = 'saeed14_hamd_sharifa3';
+P.sharifa3_saeed_shanin.spouseName = P.saeed14_hamd_sharifa3.chain;
+add('thurayya2_saeed14','ثريا','f','saeed14_hamd_sharifa3','sharifa3_saeed_shanin',9,'ثريا بنت سعيد بن حمد بن محمد المعمرية');
+add('saeed15_abdullah_thurayya2','سعيد بن عبدالله بن حمد المعمري','m',null,null,9,'سعيد بن عبدالله بن حمد المعمري');
+P.thurayya2_saeed14.spouseId = 'saeed15_abdullah_thurayya2';
+P.thurayya2_saeed14.spouseName = P.saeed15_abdullah_thurayya2.chain;
+add('aseel2_saeed15','أسيل','f','saeed15_abdullah_thurayya2','thurayya2_saeed14',10,'أسيل بنت سعيد بن عبدالله بن حمد المعمرية');
+add('abdullah18_saeed15','عبدالله','m','saeed15_abdullah_thurayya2','thurayya2_saeed14',10,'عبدالله بن سعيد بن عبدالله بن حمد المعمري');
+add('safiya3_saeed15','صفية','f','saeed15_abdullah_thurayya2','thurayya2_saeed14',10,'صفية بنت سعيد بن عبدالله بن حمد المعمرية');
+add('hamd10_saeed15','حمد','m','saeed15_abdullah_thurayya2','thurayya2_saeed14',10,'حمد بن سعيد بن عبدالله بن حمد المعمري');
+
+add('samya_saeed14','سامية','f','saeed14_hamd_sharifa3','sharifa3_saeed_shanin',9,'سامية بنت سعيد بن حمد بن محمد المعمرية');
+add('shamsa5_saeed14','شمسة','f','saeed14_hamd_sharifa3','sharifa3_saeed_shanin',9,'شمسة بنت سعيد بن حمد بن محمد المعمرية');
+
+add('hamd11_saeed14','حمد','m','saeed14_hamd_sharifa3','sharifa3_saeed_shanin',9,'حمد بن سعيد بن حمد بن محمد المعمري');
+add('hanan_saeed14','حنان','f','saeed14_hamd_sharifa3','sharifa3_saeed_shanin',9,'حنان بنت سعيد بن حمد بن محمد المعمرية');
+add('mansour2_humaid_hanan','منصور بن حميد الخمبشي','m',null,null,9,'منصور بن حميد الخمبشي');
+P.hanan_saeed14.spouseId = 'mansour2_humaid_hanan';
+P.hanan_saeed14.spouseName = P.mansour2_humaid_hanan.chain;
+add('alaa5_mansour2','الاء','f','mansour2_humaid_hanan','hanan_saeed14',10,'الاء بنت منصور بن حميد الخمبشية');
+add('mahra2_mansour2','مهرة','f','mansour2_humaid_hanan','hanan_saeed14',10,'مهرة بنت منصور بن حميد الخمبشية');
+add('maitha_mansour2','ميثة','f','mansour2_humaid_hanan','hanan_saeed14',10,'ميثة بنت منصور بن حميد الخمبشية');
+
+// رحمة بنت سعيد بن راشد بن شنين — زوجها الأول عبدالله بن سعيد الصقري (طلقها)، وابنتهما فاطمة
+add('rahma9_saeed_shanin','رحمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'رحمة بنت سعيد بن راشد بن شنين الطوقية');
+add('abdullah19_saeed_rahma9','عبدالله بن سعيد الصقري','m',null,null,8,'عبدالله بن سعيد الصقري');
+add('fatima13_abdullah_rahma9','فاطمة','f','abdullah19_saeed_rahma9','rahma9_saeed_shanin',9,'فاطمة بنت عبدالله بن سعيد الصقرية');
+
+// فاطمة تزوجت محمد بن سليمان (muhammad_sulaiman، موجود أصلًا) — أولادهما رويدة وبشرى، وسليمان
+// (=sulaiman_m2 الموجود أصلًا بزوجته ساجدة وولديه محمد وجُمان) نصحح أمه فقط
+queueSpouseLink('fatima13_abdullah_rahma9', 'muhammad_sulaiman');
+add('ruwaida_muhammad_fatima13','رويدة','f','muhammad_sulaiman','fatima13_abdullah_rahma9',7,'رويدة بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('bushra5_muhammad_fatima13','بشرى','f','muhammad_sulaiman','fatima13_abdullah_rahma9',7,'بشرى بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hamood12_nasir_bushra5','حمود بن ناصر بن حمود الرواحي','m',null,null,7,'حمود بن ناصر بن حمود الرواحي');
+P.bushra5_muhammad_fatima13.spouseId = 'hamood12_nasir_bushra5';
+P.bushra5_muhammad_fatima13.spouseName = P.hamood12_nasir_bushra5.chain;
+add('nasir18_hamood12_bushra5','ناصر','m','hamood12_nasir_bushra5','bushra5_muhammad_fatima13',8,'ناصر بن حمود بن ناصر بن حمود الرواحي');
+add('ahmad11_hamood12_bushra5','أحمد','m','hamood12_nasir_bushra5','bushra5_muhammad_fatima13',8,'أحمد بن حمود بن ناصر بن حمود الرواحي');
+add('awwab3_hamood12_bushra5','أواب','m','hamood12_nasir_bushra5','bushra5_muhammad_fatima13',8,'أواب بن حمود بن ناصر بن حمود الرواحي');
+add('aya3_hamood12_bushra5','آيه','f','hamood12_nasir_bushra5','bushra5_muhammad_fatima13',8,'آيه بنت حمود بن ناصر بن حمود الرواحية');
+add('hiba_hamood12_bushra5','هبة','f','hamood12_nasir_bushra5','bushra5_muhammad_fatima13',8,'هبة بنت حمود بن ناصر بن حمود الرواحية');
+
+// حمد بن سعيد بن حمد المعمري (أعلاه) تزوج رويدة، وأولادهما
+P.hamd11_saeed14.spouseId = 'ruwaida_muhammad_fatima13';
+P.hamd11_saeed14.spouseName = P.ruwaida_muhammad_fatima13.chain;
+add('joud_hamd11_ruwaida','جود','f','hamd11_saeed14','ruwaida_muhammad_fatima13',10,'جود بنت حمد بن سعيد بن حمد بن محمد المعمرية');
+add('saeed16_hamd11_ruwaida','سعيد','m','hamd11_saeed14','ruwaida_muhammad_fatima13',10,'سعيد بن حمد بن سعيد بن حمد بن محمد المعمري');
+add('raghad4_hamd11_ruwaida','رغد','f','hamd11_saeed14','ruwaida_muhammad_fatima13',10,'رغد بنت حمد بن سعيد بن حمد بن محمد المعمرية');
+add('dana_hamd11_ruwaida','دانه','f','hamd11_saeed14','ruwaida_muhammad_fatima13',10,'دانه بنت حمد بن سعيد بن حمد بن محمد المعمرية');
+
+// رحمة's second husband خلفان بن سعيد الطوقي — ابنتهما أمل، وابنهما سادات (يتزوج سامية أعلاه)
+add('khalfan4_saeed_rahma9','خلفان بن سعيد الطوقي','m',null,null,8,'خلفان بن سعيد الطوقي');
+add('amal_khalfan4','أمل','f','khalfan4_saeed_rahma9','rahma9_saeed_shanin',9,'أمل بنت خلفان بن سعيد الطوقية');
+add('saif10_rashid_amal','سيف بن راشد بن علي الهاشمي','m',null,null,9,'سيف بن راشد بن علي الهاشمي');
+P.amal_khalfan4.spouseId = 'saif10_rashid_amal';
+P.amal_khalfan4.spouseName = P.saif10_rashid_amal.chain;
+add('suhaib2_saif10_amal','صهيب','m','saif10_rashid_amal','amal_khalfan4',10,'صهيب بن سيف بن راشد بن علي الهاشمي');
+add('saja_saif10_amal','سجى','f','saif10_rashid_amal','amal_khalfan4',10,'سجى بنت سيف بن راشد بن علي الهاشمية');
+add('atheer_saif10_amal','أثير','f','saif10_rashid_amal','amal_khalfan4',10,'أثير بنت سيف بن راشد بن علي الهاشمية');
+add('ithar2_saif10_amal','إيثار','f','saif10_rashid_amal','amal_khalfan4',10,'إيثار بنت سيف بن راشد بن علي الهاشمية');
+add('maryam5_saif10_amal','مريم','f','saif10_rashid_amal','amal_khalfan4',10,'مريم بنت سيف بن راشد بن علي الهاشمية');
+add('sadat_khalfan4_rahma9','سادات','m','khalfan4_saeed_rahma9','rahma9_saeed_shanin',9,'سادات بن خلفان بن سعيد الطوقي');
+P.samya_saeed14.spouseId = 'sadat_khalfan4_rahma9';
+P.samya_saeed14.spouseName = P.sadat_khalfan4_rahma9.chain;
+
+// محمد بن سعيد بن راشد بن شنين (u_1، موجود أصلًا) — زوجته نورة تبيّن أنها نفسها نورة بنت أحمد
+// الحبسي (noora_ahmad_jawkha) اللي أضفناها قبل شوي كابنة جوخة
+queueSpouseLink('u_1', 'noora_ahmad_jawkha');
+add('saeed17_u1_noora','سعيد','m','u_1','noora_ahmad_jawkha',9,'سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('zwaina11_saeed17','زوينة بنت سعيد بن حميد الحارثي','f',null,null,9,'زوينة بنت سعيد بن حميد الحارثي');
+P.saeed17_u1_noora.spouseId = 'zwaina11_saeed17';
+P.saeed17_u1_noora.spouseName = P.zwaina11_saeed17.chain;
+add('muhammad29_saeed17','محمد','m','saeed17_u1_noora','zwaina11_saeed17',10,'محمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('nasir19_saeed17','ناصر','m','saeed17_u1_noora','zwaina11_saeed17',10,'ناصر بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('ahmad12_saeed17','أحمد','m','saeed17_u1_noora','zwaina11_saeed17',10,'أحمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('asya4_saeed17','آسيه','f','saeed17_u1_noora','zwaina11_saeed17',10,'آسيه بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
+add('noora2_saeed17','نورة','f','saeed17_u1_noora','zwaina11_saeed17',10,'نورة بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
+add('ahmad13_u1_noora','أحمد','m','u_1','noora_ahmad_jawkha',9,'أحمد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('mihab2_u1_noora','مهاب','m','u_1','noora_ahmad_jawkha',9,'مهاب بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('asaad_u1_noora','اسعد','m','u_1','noora_ahmad_jawkha',9,'اسعد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('hanaa_u1_noora','هناء','f','u_1','noora_ahmad_jawkha',9,'هناء بنت محمد بن سعيد بن راشد بن شنين الطوقية');
+add('salim7_muhammad_hanaa','سالم بن محمد بن حميد الطوقي','m',null,null,9,'سالم بن محمد بن حميد الطوقي');
+P.hanaa_u1_noora.spouseId = 'salim7_muhammad_hanaa';
+P.hanaa_u1_noora.spouseName = P.salim7_muhammad_hanaa.chain;
+add('muhammad30_salim7_hanaa','محمد','m','salim7_muhammad_hanaa','hanaa_u1_noora',10,'محمد بن سالم بن محمد بن حميد الطوقي');
+add('amjad_salim7_hanaa','أمجد','m','salim7_muhammad_hanaa','hanaa_u1_noora',10,'أمجد بن سالم بن محمد بن حميد الطوقي');
+add('aya4_salim7_hanaa','آيه','f','salim7_muhammad_hanaa','hanaa_u1_noora',10,'آيه بنت سالم بن محمد بن حميد الطوقية');
+add('alaa6_salim7_hanaa','الآء','f','salim7_muhammad_hanaa','hanaa_u1_noora',10,'الآء بنت سالم بن محمد بن حميد الطوقية');
+add('shamsa6_u1_noora','شمسة','f','u_1','noora_ahmad_jawkha',9,'شمسة بنت محمد بن سعيد بن راشد بن شنين الطوقية');
+add('wafaa2_u1_noora','وفاء','f','u_1','noora_ahmad_jawkha',9,'وفاء بنت محمد بن سعيد بن راشد بن شنين الطوقية');
+add('rajaa_u1_noora','رجاء','f','u_1','noora_ahmad_jawkha',9,'رجاء بنت محمد بن سعيد بن راشد بن شنين الطوقية');
+add('abdullah20_yahya_rajaa','عبدالله بن يحيى الخروصي','m',null,null,9,'عبدالله بن يحيى الخروصي');
+P.rajaa_u1_noora.spouseId = 'abdullah20_yahya_rajaa';
+P.rajaa_u1_noora.spouseName = P.abdullah20_yahya_rajaa.chain;
+add('eelaf2_abdullah20_rajaa','إيلاف','f','abdullah20_yahya_rajaa','rajaa_u1_noora',10,'إيلاف بنت عبدالله بن يحيى الخروصية');
+add('thanaa_u1_noora','ثناء','f','u_1','noora_ahmad_jawkha',9,'ثناء بنت محمد بن سعيد بن راشد بن شنين الطوقية');
+add('naqaa_u1_noora','نقاء','f','u_1','noora_ahmad_jawkha',9,'نقاء بنت محمد بن سعيد بن راشد بن شنين الطوقية');
 add('khawla_bint_abdullah','خولة','f','abdullah_rashid','shanoona_salim_azeez',7,'خولة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 // خولة بنت عبدالله's husband سليمان بن محمد بن سليمان بن سليم بن راشد، وابنتهما زيانة، اللي
 // تزوجت خلفان بن محمد بن سعيد وأنجبت سعيد وخولة ورحمة — ورحمة كان لها زوج سابق سعود بن محمد بن
@@ -1400,7 +1501,7 @@ add('fatima_m','فاطمة','f','muhammad_sulaiman','sharifa_rashid',7,'فاطم
 // إخوة سلطان من زوجة أخرى لمحمد بن سليمان
 add('riya_m2','ريا','f','muhammad_sulaiman',null,7,'ريا بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('saeed_m2','سعيد','m','muhammad_sulaiman',null,7,'سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-add('sulaiman_m2','سليمان','m','muhammad_sulaiman',null,7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman_m2','سليمان','m','muhammad_sulaiman','fatima13_abdullah_rahma9',7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('hamood_m2','حمود','m','muhammad_sulaiman',null,7,'حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
 add('aamir_riya','عامر','m','sultan_m',null,8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -3010,26 +3111,40 @@ function repairFamilyLinks(){
   // at another sibling instead of the real parent).
   Object.values(P).forEach(p=>{
     const motherIsSibling = p.motherId && P[p.motherId] && p.fatherId && P[p.motherId].fatherId===p.fatherId;
-    const motherBroken = !p.motherId || !P[p.motherId] || P[p.motherId].gender!=='f' || motherIsSibling;
+    const motherDangling = p.motherId && !P[p.motherId];
+    const motherWrongGender = p.motherId && P[p.motherId] && P[p.motherId].gender!=='f';
+    // "definitely wrong" (dangling/wrong-gender/sibling) always gets the marriage-record
+    // fallback below — those can only be corruption. A merely MISSING motherId is different:
+    // that's often just "we never learned who the mother was", a legitimate, permanent state
+    // (not every child in this tree has a recorded mother) — guessing her from a single
+    // recorded wife would silently assert a fact nobody actually confirmed, and that guess
+    // would re-assert itself forever since repairFamilyLinks() reruns on every load. So a
+    // plain missing motherId only gets fixed by the childIds-hint (someone actively claims
+    // this child), never by the marriage-record fallback.
+    const motherDefinitelyWrong = motherDangling || motherWrongGender || motherIsSibling;
+    const motherBroken = !p.motherId || motherDefinitelyWrong;
     if(motherBroken){
       // primary signal: an existing female record that already claims this child in her own
-      // childIds list
+      // childIds list — safe to use whether motherId is missing or definitely wrong
       let realMother = Object.values(P).find(m=>m.gender==='f' && m.id!==p.id && (m.childIds||[]).includes(p.id));
-      // fallback signal: if the father has exactly one wife on record (via her spouseId
-      // pointing back to him), she's almost certainly the mother — this covers cases where
-      // the corruption also kept the true mother's own childIds list incomplete, so the
-      // primary signal above finds nothing
-      if(!realMother && p.fatherId){
+      // fallback signal (only when motherId is definitely wrong, not just unrecorded): if the
+      // father has exactly one wife on record (via her spouseId pointing back to him), she's
+      // almost certainly the mother — covers cases where the true mother's own childIds list
+      // was also left incomplete by the same corruption, so the primary signal finds nothing
+      if(!realMother && motherDefinitelyWrong && p.fatherId){
         const wives = Object.values(P).filter(w=>w.gender==='f' && w.spouseId===p.fatherId);
         if(wives.length===1) realMother = wives[0];
       }
       if(realMother && p.motherId!==realMother.id){ p.motherId = realMother.id; fixedCount++; }
     }
     const fatherIsSibling = p.fatherId && P[p.fatherId] && p.motherId && P[p.fatherId].motherId===p.motherId;
-    const fatherBroken = !p.fatherId || !P[p.fatherId] || P[p.fatherId].gender!=='m' || fatherIsSibling;
+    const fatherDangling = p.fatherId && !P[p.fatherId];
+    const fatherWrongGender = p.fatherId && P[p.fatherId] && P[p.fatherId].gender!=='m';
+    const fatherDefinitelyWrong = fatherDangling || fatherWrongGender || fatherIsSibling;
+    const fatherBroken = !p.fatherId || fatherDefinitelyWrong;
     if(fatherBroken){
       let realFather = Object.values(P).find(f=>f.gender==='m' && f.id!==p.id && (f.childIds||[]).includes(p.id));
-      if(!realFather && p.motherId){
+      if(!realFather && fatherDefinitelyWrong && p.motherId){
         const husbands = Object.values(P).filter(h=>h.gender==='m' && h.spouseId===p.motherId);
         if(husbands.length===1) realFather = husbands[0];
       }
