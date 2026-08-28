@@ -1116,9 +1116,11 @@ add('saeed8_ahmad4','سعيد','m','ahmad4_saeed_u3',null,10,'سعيد بن اح
 // زوينة تزوجت سعيد بن محمد بن سعيد بن راشد بن شنين (u_1) — نعمة بنت سعيد بن راشد بن شنين
 // (nemah_mother) عمته أخت أبوه، لأن محمد بن سعيد بن راشد بن شنين (u_1) هو أخوها
 add('zwaina8_saeed_u3','زوينة','f','saeed_u3','asiya_alhabsiya_saeed_u3',9,'زوينة بنت سعيد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('saeed9_muhammad_u1','سعيد بن محمد بن سعيد الطوقي','m','u_1',null,9,'سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
+add('saeed9_muhammad_u1','سعيد بن محمد بن سعيد الطوقي','m','u_1','noora_ahmad_jawkha',9,'سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
 P.zwaina8_saeed_u3.spouseId = 'saeed9_muhammad_u1';
 P.zwaina8_saeed_u3.spouseName = P.saeed9_muhammad_u1.chain;
+P.saeed9_muhammad_u1.spouseId = 'zwaina8_saeed_u3';
+P.saeed9_muhammad_u1.spouseName = P.zwaina8_saeed_u3.chain;
 add('muhammad12_saeed9','محمد','m','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'محمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
 add('asya2_saeed9','آسيا','f','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'آسيا بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
 add('nasir6_saeed9','ناصر','m','saeed9_muhammad_u1','zwaina8_saeed_u3',10,'ناصر بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
@@ -1275,15 +1277,9 @@ P.samya_saeed14.spouseName = P.sadat_khalfan4_rahma9.chain;
 // محمد بن سعيد بن راشد بن شنين (u_1، موجود أصلًا) — زوجته نورة تبيّن أنها نفسها نورة بنت أحمد
 // الحبسي (noora_ahmad_jawkha) اللي أضفناها قبل شوي كابنة جوخة
 queueSpouseLink('u_1', 'noora_ahmad_jawkha');
-add('saeed17_u1_noora','سعيد','m','u_1','noora_ahmad_jawkha',9,'سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
-add('zwaina11_saeed17','زوينة بنت سعيد بن حميد الحارثي','f',null,null,9,'زوينة بنت سعيد بن حميد الحارثي');
-P.saeed17_u1_noora.spouseId = 'zwaina11_saeed17';
-P.saeed17_u1_noora.spouseName = P.zwaina11_saeed17.chain;
-add('muhammad29_saeed17','محمد','m','saeed17_u1_noora','zwaina11_saeed17',10,'محمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
-add('nasir19_saeed17','ناصر','m','saeed17_u1_noora','zwaina11_saeed17',10,'ناصر بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
-add('ahmad12_saeed17','أحمد','m','saeed17_u1_noora','zwaina11_saeed17',10,'أحمد بن سعيد بن محمد بن سعيد بن راشد بن شنين الطوقي');
-add('asya4_saeed17','آسيه','f','saeed17_u1_noora','zwaina11_saeed17',10,'آسيه بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
-add('noora2_saeed17','نورة','f','saeed17_u1_noora','zwaina11_saeed17',10,'نورة بنت سعيد بن محمد بن سعيد بن راشد بن شنين الطوقية');
+// سعيد بن محمد (ابن u_1) — محذوف من هنا لأنه مكرر مع saeed9_muhammad_u1 الموجود أصلًا (بنفس
+// الزوجة تقريبًا ونفس الأولاد الخمسة)؛ ربطنا الأصلي بأمه نورة بدلًا من إعادة إنشائه
+
 add('ahmad13_u1_noora','أحمد','m','u_1','noora_ahmad_jawkha',9,'أحمد بن محمد بن سعيد بن راشد بن شنين الطوقي');
 add('mihab2_u1_noora','مهاب','m','u_1','noora_ahmad_jawkha',9,'مهاب بن محمد بن سعيد بن راشد بن شنين الطوقي');
 add('asaad_u1_noora','اسعد','m','u_1','noora_ahmad_jawkha',9,'اسعد بن محمد بن سعيد بن راشد بن شنين الطوقي');
