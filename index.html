@@ -1899,10 +1899,26 @@ function chainNodes(person){
 
 function siblingsOf(personId, gender){
   const p = P[personId];
-  if(!p || !p.fatherId) return [];
-  return P[p.fatherId].childIds
-    .map(id=>P[id])
-    .filter(s=>s.id!==personId && s.gender===gender);
+  if(!p) return [];
+  // union of paternal half-siblings (share fatherId) and maternal half-siblings (share
+  // motherId) — a full sibling shares both and would appear in each set, so dedupe by id.
+  // Previously this only checked the father's side, so anyone whose mother remarried and had
+  // more children was silently missing those maternal half-siblings from "إخواني" everywhere.
+  const seen = new Set();
+  const result = [];
+  if(p.fatherId && P[p.fatherId]){
+    P[p.fatherId].childIds.forEach(id=>{
+      const s = P[id];
+      if(s && s.id!==personId && s.gender===gender && !seen.has(s.id)){ seen.add(s.id); result.push(s); }
+    });
+  }
+  if(p.motherId && P[p.motherId]){
+    P[p.motherId].childIds.forEach(id=>{
+      const s = P[id];
+      if(s && s.id!==personId && s.gender===gender && !seen.has(s.id)){ seen.add(s.id); result.push(s); }
+    });
+  }
+  return result;
 }
 function unclesAuntsOf(personId, gender){ // father's siblings
   const p = P[personId];
