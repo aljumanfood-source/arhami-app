@@ -312,6 +312,17 @@
   }
   .section-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.8;}
   .verse-block{margin-top:44px;text-align:center;padding:0 12px;}
+
+  /* الفروع الثلاثة: خلفان/محمد/شنين — اختيار فرع يحصر نتائج البحث في ذريته فقط */
+  .branch-boxes{display:flex;flex-direction:column;gap:10px;padding:20px 16px 8px;}
+  .branch-box{
+    background:var(--card);border:2px solid var(--gold-rich);border-radius:14px;
+    padding:16px;text-align:center;font-weight:700;font-size:15px;color:var(--green-deep);
+    cursor:pointer;
+  }
+  .branch-box:active{opacity:.8;}
+  .branch-box.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+  .branch-box.branch-clear{border-style:dashed;font-weight:500;font-size:13px;color:var(--muted);}
   .verse-text{
     font-family:'Amiri','Markazi Text',serif;font-size:19px;line-height:2.2;
     color:var(--green-deep);font-weight:700;
@@ -2275,7 +2286,27 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null};
+const BRANCH_ROOTS = [
+  {id:'khalfan_salim', label:'خلفان بن سليم'},
+  {id:'muhammad_salim', label:'محمد بن سليم'},
+  {id:'shanin_salim', label:'شنين بن سليم'}
+];
+// true if walking up the father chain from id reaches rootId (or id IS rootId) — used to
+// keep search results limited to actual blood descendants of the three sons of سليم, and to
+// scope results to one specific branch when the user picks one of the three boxes
+function belongsToBranch(id, rootId){
+  let cur = id, guard = 0;
+  while(cur && guard<40){
+    if(cur===rootId) return true;
+    cur = P[cur] ? P[cur].fatherId : null;
+    guard++;
+  }
+  return false;
+}
+function isBloodDescendant(id){
+  return BRANCH_ROOTS.some(b=>belongsToBranch(id, b.id));
+}
 let history = [];
 function goTo(next){
   history.push(JSON.parse(JSON.stringify(state)));
@@ -2307,6 +2338,15 @@ function render(){
   else if(state.view==='wasiyya') renderWasiyya(state.personId);
 }
 
+function wireBranchBoxes(){
+  main.querySelectorAll('.branch-box').forEach(el=>{
+    el.onclick = ()=>{
+      state.branchId = el.dataset.branch || null;
+      render();
+    };
+  });
+}
+
 function renderChain(person){
   const nodes = chainNodes(person).reverse(); // root -> person
   let html = '<div class="chain-scroll">';
@@ -2325,11 +2365,16 @@ function renderChain(person){
 
 function renderHome(){
   const q = searchInput.value.trim();
+  const branchBoxesHtml = `<div class="branch-boxes">` +
+    BRANCH_ROOTS.map(b=>`<div class="branch-box ${state.branchId===b.id?'active':''}" data-branch="${b.id}">${b.label}</div>`).join('') +
+    (state.branchId ? `<div class="branch-box branch-clear" data-branch="">كل الفروع</div>` : '') +
+  `</div>`;
   if(!q){
     main.innerHTML = `<div class="verse-block">
       <p class="verse-text">وَأُولُو الْأَرْحَامِ بَعْضُهُمْ أَوْلَىٰ بِبَعْضٍ فِي كِتَابِ اللَّهِ مِنَ الْمُؤْمِنِينَ وَالْمُهَاجِرِينَ إِلَّا أَن تَفْعَلُوا إِلَىٰ أَوْلِيَائِكُم مَّعْرُوفًا ۚ كَانَ ذَٰلِكَ فِي الْكِتَابِ مَسْطُورًا</p>
       <p class="verse-ref">سورة الأحزاب: ٦</p>
-    </div>`;
+    </div>` + branchBoxesHtml;
+    wireBranchBoxes();
     return;
   }
   const results = Object.values(P).filter(p=>{
@@ -2338,15 +2383,21 @@ function renderHome(){
     // deliberately still checks every layer (including ancestors) so duplicates keep getting
     // linked instead of recreated, regardless of what shows up here
     if(p.layer<8) return false;
+    // only actual blood descendants of the three sons of سليم — never in-laws/married-in
+    // spouses (who have no tracked father chain reaching one of the three roots)
+    if(!isBloodDescendant(p.id)) return false;
+    // if the user picked one of the three branch boxes, narrow further to just that branch
+    if(state.branchId && !belongsToBranch(p.id, state.branchId)) return false;
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
-    main.innerHTML = `<div class="empty-state">
+    main.innerHTML = branchBoxesHtml + `<div class="empty-state">
       <p>لا توجد نتائج لهذا الاسم بعد.<br>يمكن إضافته لاحقًا من صفحة أحد أقاربه.</p>
     </div>`;
+    wireBranchBoxes();
     return;
   }
-  main.innerHTML = results.map(p=>`
+  main.innerHTML = branchBoxesHtml + results.map(p=>`
     <div class="result-card">
       <div class="rname">${shortChain(p)}</div>
       <div class="rlayer"><span class="badge">الطبقة ${p.layer}</span></div>
@@ -2354,6 +2405,7 @@ function renderHome(){
       <button class="btn-wasiyya" data-id="${p.id}">📜 وصية الأقربين</button>
     </div>
   `).join('');
+  wireBranchBoxes();
   main.querySelectorAll('.btn-approve').forEach(b=>{
     b.onclick = ()=>{ goTo({view:'profile', personId:b.dataset.id}); };
   });
