@@ -957,6 +957,126 @@ add('rawaa_khalfan_mia','رواء','f','khalfan_muslim_mia','mia_azza',10,'رو�
 add('muhammad_khalfan_mia','محمد','m','khalfan_muslim_mia','mia_azza',10,'محمد بن خلفان بن مسلم المعمري');
 
 add('nasir_u3','ناصر','m','humaid_abdullah','zwaina_numaniyah',8,'ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// ناصر's two wives: زيانة بنت خلفان بن سيف الطوقية، وجوخة بنت خالد بن سعيد بن محمد العيسرية
+// (جوخة كانت متزوجة أولًا من أحمد الحبسي، توفاه الله، ثم تزوجها ناصر)
+add('ziyana7_khalfan_saif','زيانة بنت خلفان بن سيف الطوقية','f',null,null,8,'زيانة بنت خلفان بن سيف الطوقية');
+add('jawkha2_khalid_saeed','جوخة بنت خالد بن سعيد بن محمد العيسرية','f',null,null,8,'جوخة بنت خالد بن سعيد بن محمد العيسرية');
+queueSpouseLink('nasir_u3', 'ziyana7_khalfan_saif');
+queueSpouseLink('nasir_u3', 'jawkha2_khalid_saeed');
+
+// جوخة's first (deceased) husband أحمد الحبسي وأولادهما الأربعة
+add('ahmad_muhammad_alhabsi','أحمد بن محمد بن حمود بن بشير بن مسلم بن حافظ بن سالم بن سيف بن هاشم الحبسي','m',null,null,8,'أحمد بن محمد بن حمود بن بشير بن مسلم بن حافظ بن سالم بن سيف بن هاشم الحبسي');
+P.ahmad_muhammad_alhabsi.isDeceased = true;
+P.jawkha2_khalid_saeed.spouseId = 'ahmad_muhammad_alhabsi';
+P.jawkha2_khalid_saeed.spouseName = P.ahmad_muhammad_alhabsi.chain;
+P.ahmad_muhammad_alhabsi.spouseId = 'jawkha2_khalid_saeed';
+P.ahmad_muhammad_alhabsi.spouseName = P.jawkha2_khalid_saeed.chain;
+add('noora_ahmad_jawkha','نورة','f','ahmad_muhammad_alhabsi','jawkha2_khalid_saeed',9,'نورة بنت أحمد الحبسية');
+add('asya3_ahmad_jawkha','آسية','f','ahmad_muhammad_alhabsi','jawkha2_khalid_saeed',9,'آسية بنت أحمد الحبسية');
+add('muhammad23_ahmad_jawkha','محمد','m','ahmad_muhammad_alhabsi','jawkha2_khalid_saeed',9,'محمد بن أحمد الحبسي');
+add('khalifa_ahmad_jawkha','خليفة','m','ahmad_muhammad_alhabsi','jawkha2_khalid_saeed',9,'خليفة بن أحمد الحبسي');
+
+// أولاد ناصر من زيانة: حميد، محمد، خلفان، يحيى، صدام، نصرى، أسماء، زوينة، أصيلة
+add('humaid17_nasir_ziyana7','حميد','m','nasir_u3','ziyana7_khalfan_saif',9,'حميد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('jouri_humaid17','جوري','f','humaid17_nasir_ziyana7',null,10,'جوري بنت حميد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('bilqis_humaid17','بلقيس','f','humaid17_nasir_ziyana7',null,10,'بلقيس بنت حميد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('salsabeel_humaid17','سلسبيل','f','humaid17_nasir_ziyana7',null,10,'سلسبيل بنت حميد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('asma7_humaid17','أسماء','f','humaid17_nasir_ziyana7',null,10,'أسماء بنت حميد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+
+add('muhammad24_nasir_ziyana7','محمد','m','nasir_u3','ziyana7_khalfan_saif',9,'محمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('nasir9_muhammad24','ناصر','m','muhammad24_nasir_ziyana7',null,10,'ناصر بن محمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('khadija3_muhammad24','خديجة','f','muhammad24_nasir_ziyana7',null,10,'خديجة بنت محمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('ridwan_muhammad24','رضوان','m','muhammad24_nasir_ziyana7',null,10,'رضوان بن محمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+
+add('khalfan3_nasir_ziyana7','خلفان','m','nasir_u3','ziyana7_khalfan_saif',9,'خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ziyana8_khalfan3','زيانة','f','khalfan3_nasir_ziyana7',null,10,'زيانة بنت خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('nasir10_khalfan3','ناصر','m','khalfan3_nasir_ziyana7',null,10,'ناصر بن خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ali3_khalfan3','علي','m','khalfan3_nasir_ziyana7',null,10,'علي بن خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('raheeq2_khalfan3','رحيق','f','khalfan3_nasir_ziyana7',null,10,'رحيق بنت خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('lateen2_khalfan3','لتين','f','khalfan3_nasir_ziyana7',null,10,'لتين بنت خلفان بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+
+add('yahya3_nasir_ziyana7','يحيى','m','nasir_u3','ziyana7_khalfan_saif',9,'يحيى بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saddam_nasir_ziyana7','صدام','m','nasir_u3','ziyana7_khalfan_saif',9,'صدام بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+
+add('nasra5_nasir_ziyana7','نصرى','f','nasir_u3','ziyana7_khalfan_saif',9,'نصرى بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+P.nasra5_nasir_ziyana7.spouseId = 'khalifa_ahmad_jawkha';
+P.nasra5_nasir_ziyana7.spouseName = P.khalifa_ahmad_jawkha.chain;
+add('ghufran_khalifa','غفران','f','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'غفران بنت خليفة بن أحمد الحبسية');
+add('ziyana9_khalifa','زيانة','f','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'زيانة بنت خليفة بن أحمد الحبسية');
+add('albatool_khalifa','البتول','f','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'البتول بنت خليفة بن أحمد الحبسية');
+add('alfurqan_khalifa','الفرقان','m','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'الفرقان بن خليفة بن أحمد الحبسي');
+add('alfarooq_khalifa','الفاروق','m','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'الفاروق بن خليفة بن أحمد الحبسي');
+add('nasir12_khalifa','ناصر','m','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'ناصر بن خليفة بن أحمد الحبسي');
+add('ahmad9_khalifa','أحمد','m','khalifa_ahmad_jawkha','nasra5_nasir_ziyana7',10,'أحمد بن خليفة بن أحمد الحبسي');
+
+add('asma8_nasir_ziyana7','أسماء','f','nasir_u3','ziyana7_khalfan_saif',9,'أسماء بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad26_asma8','محمد','m',null,null,9,'محمد');
+P.asma8_nasir_ziyana7.spouseId = 'muhammad26_asma8';
+P.asma8_nasir_ziyana7.spouseName = P.muhammad26_asma8.chain;
+add('jawkha3_asma8','جوخة','f','muhammad26_asma8','asma8_nasir_ziyana7',10,'جوخة بنت محمد');
+add('ziyana10_asma8','زيانة','f','muhammad26_asma8','asma8_nasir_ziyana7',10,'زيانة بنت محمد');
+add('nasir13_asma8','ناصر','m','muhammad26_asma8','asma8_nasir_ziyana7',10,'ناصر بن محمد');
+add('ahmad10_asma8','أحمد','m','muhammad26_asma8','asma8_nasir_ziyana7',10,'أحمد بن محمد');
+add('almamoon_asma8','المأمون','m','muhammad26_asma8','asma8_nasir_ziyana7',10,'المأمون بن محمد');
+add('kahlan_asma8','كهلان','m','muhammad26_asma8','asma8_nasir_ziyana7',10,'كهلان بن محمد');
+
+add('zwaina10_nasir_ziyana7','زوينة','f','nasir_u3','ziyana7_khalfan_saif',9,'زوينة بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('humaid18_zwaina10','حميد','m',null,null,9,'حميد');
+P.zwaina10_nasir_ziyana7.spouseId = 'humaid18_zwaina10';
+P.zwaina10_nasir_ziyana7.spouseName = P.humaid18_zwaina10.chain;
+add('nasir14_zwaina10','ناصر','m','humaid18_zwaina10','zwaina10_nasir_ziyana7',10,'ناصر بن حميد');
+add('ziyana11_zwaina10','زيانة','f','humaid18_zwaina10','zwaina10_nasir_ziyana7',10,'زيانة بنت حميد');
+add('sireen_zwaina10','سيرين','f','humaid18_zwaina10','zwaina10_nasir_ziyana7',10,'سيرين بنت حميد');
+add('rashid5_zwaina10','راشد','m','humaid18_zwaina10','zwaina10_nasir_ziyana7',10,'راشد بن حميد');
+add('alasbat2_zwaina10','الأسباط','m','humaid18_zwaina10','zwaina10_nasir_ziyana7',10,'الأسباط بن حميد');
+
+add('aseela7_nasir_ziyana7','أصيلة','f','nasir_u3','ziyana7_khalfan_saif',9,'أصيلة بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saif8_aseela7','سيف','m',null,null,9,'سيف');
+P.aseela7_nasir_ziyana7.spouseId = 'saif8_aseela7';
+P.aseela7_nasir_ziyana7.spouseName = P.saif8_aseela7.chain;
+add('malak_saif8','ملاك','f','saif8_aseela7','aseela7_nasir_ziyana7',10,'ملاك بنت سيف');
+add('muhammad27_saif8','محمد','m','saif8_aseela7','aseela7_nasir_ziyana7',10,'محمد بن سيف');
+add('alsadiq_saif8','الصادق','m','saif8_aseela7','aseela7_nasir_ziyana7',10,'الصادق بن سيف');
+add('ziyana12_saif8','زيانة','f','saif8_aseela7','aseela7_nasir_ziyana7',10,'زيانة بنت سيف');
+add('alyaman2_saif8','اليمان','m','saif8_aseela7','aseela7_nasir_ziyana7',10,'اليمان بن سيف');
+add('nasra6_saif8','نصرى','f','saif8_aseela7','aseela7_nasir_ziyana7',10,'نصرى بنت سيف');
+add('nasir15_saif8','ناصر','m','saif8_aseela7','aseela7_nasir_ziyana7',10,'ناصر بن سيف');
+
+// أولاد ناصر من جوخة: عبدالله، أحمد (موجود)، خالد (موجود)، عزيزة، رحاب، هند
+add('abdullah17_nasir_jawkha2','عبدالله','m','nasir_u3','jawkha2_khalid_saeed',9,'عبدالله بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('jawkha4_abdullah17','جوخة','f','abdullah17_nasir_jawkha2',null,10,'جوخة بنت عبدالله بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('riya5_abdullah17','ريا','f','abdullah17_nasir_jawkha2',null,10,'ريا بنت عبدالله بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('haitham2_abdullah17','هيثم','m','abdullah17_nasir_jawkha2',null,10,'هيثم بن عبدالله بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+
+add('izza7_nasir_jawkha2','هند','f','nasir_u3','jawkha2_khalid_saeed',9,'هند بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('masaad2_izza7','مسعود','m',null,null,9,'مسعود');
+P.izza7_nasir_jawkha2.spouseId = 'masaad2_izza7';
+P.izza7_nasir_jawkha2.spouseName = P.masaad2_izza7.chain;
+add('tamara_masaad2','تمارا','f','masaad2_izza7','izza7_nasir_jawkha2',10,'تمارا بنت مسعود');
+add('reem5_masaad2','ريم','f','masaad2_izza7','izza7_nasir_jawkha2',10,'ريم بنت مسعود');
+add('nada_masaad2','ندى','f','masaad2_izza7','izza7_nasir_jawkha2',10,'ندى بنت مسعود');
+add('nasir16_masaad2','ناصر','m','masaad2_izza7','izza7_nasir_jawkha2',10,'ناصر بن مسعود');
+
+add('rihab2_nasir_jawkha2','رحاب','f','nasir_u3','jawkha2_khalid_saeed',9,'رحاب بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saif9_rihab2','سيف','m',null,null,9,'سيف');
+P.rihab2_nasir_jawkha2.spouseId = 'saif9_rihab2';
+P.rihab2_nasir_jawkha2.spouseName = P.saif9_rihab2.chain;
+add('abteel2_saif9','أبتيل','f','saif9_rihab2','rihab2_nasir_jawkha2',10,'أبتيل بنت سيف');
+add('ibrahim4_saif9','إبراهيم','m','saif9_rihab2','rihab2_nasir_jawkha2',10,'إبراهيم بن سيف');
+add('aseel2_saif9','أسيل','f','saif9_rihab2','rihab2_nasir_jawkha2',10,'أسيل بنت سيف');
+add('hadeel4_saif9','هديل','f','saif9_rihab2','rihab2_nasir_jawkha2',10,'هديل بنت سيف');
+
+add('izza8_nasir_jawkha2','عزيزة','f','nasir_u3','jawkha2_khalid_saeed',9,'عزيزة بنت ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad28_izza8','محمد','m',null,null,9,'محمد');
+P.izza8_nasir_jawkha2.spouseId = 'muhammad28_izza8';
+P.izza8_nasir_jawkha2.spouseName = P.muhammad28_izza8.chain;
+add('hamood11_izza8','حمود','m','muhammad28_izza8','izza8_nasir_jawkha2',10,'حمود بن محمد');
+add('nasir17_izza8','ناصر','m','muhammad28_izza8','izza8_nasir_jawkha2',10,'ناصر بن محمد');
+add('afnan4_izza8','أفنان','f','muhammad28_izza8','izza8_nasir_jawkha2',10,'أفنان بنت محمد');
+add('adam5_izza8','آدم','m','muhammad28_izza8','izza8_nasir_jawkha2',10,'آدم بن محمد');
+add('ayoub4_izza8','أيوب','m','muhammad28_izza8','izza8_nasir_jawkha2',10,'أيوب بن محمد');
+add('alyasaa3_izza8','اليسع','m','muhammad28_izza8','izza8_nasir_jawkha2',10,'اليسع بن محمد');
+add('rahma8_izza8','رحمة','f','muhammad28_izza8','izza8_nasir_jawkha2',10,'رحمة بنت محمد');
 add('sultan_u3','سلطان','m','humaid_abdullah','zwaina_numaniyah',8,'سلطان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 // سلطان بن حميد's wife عائشة بنت سالم النعمانية وأولادهما الثلاثة
 add('aisha_salim_sultan_u3','عائشة بنت سالم النعمانية','f',null,null,8,'عائشة بنت سالم النعمانية');
@@ -1499,7 +1619,7 @@ P.hafsa_saeed_hamd.spouseName = P.muhammad_nasir_hafsa.chain;
 
 /* ---- الأخت ريا (شقيقة، من نعمة) وأولادها من عامر ---- */
 add('buthaina','بثينة','f','aamir_riya','riya_sister',10,'بثينة بنت عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-add('ahmad_nasir','أحمد','m','nasir_u3',null,9,'أحمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ahmad_nasir','أحمد','m','nasir_u3','jawkha2_khalid_saeed',9,'أحمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 P['buthaina'].spouseId = 'ahmad_nasir';
 add('nasir_buthaina','ناصر','m','ahmad_nasir','buthaina',11,'ناصر بن أحمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('maitha_buthaina','ميثا','f','ahmad_nasir','buthaina',11,'ميثا بنت أحمد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -1561,7 +1681,7 @@ add('hassan_saif_nasra','حسان','m','u_mt9ypaw3_7q9zvq',null,7,'حسان بن
 add('saeed_saif_nasra','سعيد','m','u_mt9ypaw3_7q9zvq',null,7,'سعيد بن سيف بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 // husband and children of خالد بن ناصر بن حميد بن عبدالله (زوج زينة) — first, خالد himself as
 // ناصر بن حميد's son (a real member of this branch, not an external husband)
-add('khalid_nasir_zeena2','خالد','m','nasir_u3',null,9,'خالد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('khalid_nasir_zeena2','خالد','m','nasir_u3','jawkha2_khalid_saeed',9,'خالد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // نصرى's 5 daughters' husbands and children
 add('khalfan_muhammad_khawla','خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري','m',null,null,6,'خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
