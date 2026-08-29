@@ -325,6 +325,10 @@
   .branch-box.active{background:var(--green-deep);border-color:var(--green-deep);}
   .branch-box.active .branch-box-label{color:#fff;}
   .branch-box.active .branch-box-sub{color:rgba(255,255,255,.8);}
+  .boxes-back{
+    display:inline-block;margin:16px 16px 4px;font-size:13px;color:var(--green-deep);
+    text-decoration:underline;cursor:pointer;
+  }
 
   /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح، أكورديون
      حقيقي (أخ واحد مفتوح بكل مستوى)، وشبكة مضغوطة توفّر المساحة بدل التكديس عموديًا */
@@ -2339,7 +2343,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'general'};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'general', boxesHidden:false};
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
@@ -2417,12 +2421,21 @@ function wireBranchBoxes(){
         // الفروع الثلاثة تفتح الآن شجرة تصفح تفاعلية بدل البحث المباشر
         goTo({view:'branchTree', branchRootId:el.dataset.branch, expanded:[]});
       } else {
+        // بحث عام/شامل: نخفي كل المربعات كي تظهر الأسماء بدون أي شي يحجبها، ونترك علامة رجوع
         state.searchMode = el.dataset.mode;
         state.branchId = el.dataset.branch || null;
+        state.boxesHidden = true;
         render();
       }
     };
   });
+  const backEl = main.querySelector('.boxes-back');
+  if(backEl){
+    backEl.onclick = ()=>{
+      state.boxesHidden = false;
+      render();
+    };
+  }
 }
 
 // شجرة تصفح تفاعلية لفرع واحد: مربع أخضر بأعلى فيه اسم الجد كاملًا، الضغط عليه يفتح/يطوي
@@ -2503,15 +2516,17 @@ function renderHome(){
     {mode:'general', branch:'', label:'بحث عام في الفروع', sub:'لمن لا يعرف هو من أي فرع'},
     {mode:'full', branch:'', label:'بحث شامل', sub:'يشمل أزواج البنات ومن هم من غير العائلة'}
   ];
-  const branchBoxesHtml = `<div class="branch-boxes">` +
-    boxDefs.map(b=>{
-      const isActive = state.searchMode===b.mode && (b.mode!=='branch' || state.branchId===b.branch);
-      return `<div class="branch-box ${isActive?'active':''}" data-mode="${b.mode}" data-branch="${b.branch}">
-        <div class="branch-box-label">${b.label}</div>
-        <div class="branch-box-sub">${b.sub}</div>
-      </div>`;
-    }).join('') +
-  `</div>`;
+  const branchBoxesHtml = state.boxesHidden
+    ? `<div class="boxes-back">🔙 رجوع لخيارات البحث</div>`
+    : `<div class="branch-boxes">` +
+      boxDefs.map(b=>{
+        const isActive = state.searchMode===b.mode && (b.mode!=='branch' || state.branchId===b.branch);
+        return `<div class="branch-box ${isActive?'active':''}" data-mode="${b.mode}" data-branch="${b.branch}">
+          <div class="branch-box-label">${b.label}</div>
+          <div class="branch-box-sub">${b.sub}</div>
+        </div>`;
+      }).join('') +
+    `</div>`;
   if(!q){
     main.innerHTML = `<div class="verse-block">
       <p class="verse-text">وَأُولُو الْأَرْحَامِ بَعْضُهُمْ أَوْلَىٰ بِبَعْضٍ فِي كِتَابِ اللَّهِ مِنَ الْمُؤْمِنِينَ وَالْمُهَاجِرِينَ إِلَّا أَن تَفْعَلُوا إِلَىٰ أَوْلِيَائِكُم مَّعْرُوفًا ۚ كَانَ ذَٰلِكَ فِي الْكِتَابِ مَسْطُورًا</p>
