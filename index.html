@@ -336,15 +336,16 @@
   .tree-wrap{padding:14px 16px 24px;}
   .tree-box-wrap{margin-bottom:8px;}
   .tree-children{
-    display:flex;flex-wrap:wrap;gap:8px;margin-inline-start:18px;
-    border-inline-start:2px dashed var(--gold-rich);padding-inline-start:12px;
+    display:flex;flex-wrap:wrap;gap:5px;margin-inline-start:14px;
+    border-inline-start:2px dashed var(--gold-rich);padding-inline-start:8px;
     padding-top:2px;padding-bottom:4px;margin-bottom:6px;
   }
   .tree-children > .tree-box-wrap{margin-bottom:0;flex:0 0 auto;}
   .tree-box{
-    background:var(--card);border:2px solid var(--gold-rich);border-radius:12px;
-    padding:8px 12px;font-weight:600;font-size:13px;color:var(--green-deep);
-    cursor:pointer;display:inline-block;min-width:88px;text-align:center;
+    background:var(--card);border:1.5px solid var(--gold-rich);border-radius:9px;
+    padding:6px 4px;font-weight:600;font-size:11.5px;color:var(--green-deep);
+    cursor:pointer;display:inline-block;min-width:52px;max-width:110px;text-align:center;
+    overflow-wrap:break-word;line-height:1.25;
   }
   .tree-box:active{opacity:.8;}
   .tree-box.tree-root{
@@ -2411,12 +2412,19 @@ function renderBranchTree(rootId){
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
       if(kids.length>0){
-        html += `<div class="tree-children">` + kids.map(cid=>renderLevel(cid, depth+1, false)).join('') + `</div>`;
+        html += `<div class="tree-children">` + renderSiblingGroup(kids, depth+1) + `</div>`;
       } else {
         html += `<div class="tree-empty">لا يوجد أبناء مسجّلون بعد</div>`;
       }
     }
     return html;
+  }
+  // يعرض إخوة مستوى واحد: لو أحدهم مفتوح (موجود بالمسار) يظهر هو فقط مع أولاده، وتختفي
+  // بقية إخوته تمامًا؛ لو ما فيه أحد مفتوح بعد، تظهر كل الإخوة جنبًا لجنب كشبكة مضغوطة
+  function renderSiblingGroup(ids, depth){
+    const openId = path[depth];
+    const toShow = ids.includes(openId) ? [openId] : ids;
+    return toShow.map(cid=>renderLevel(cid, depth, false)).join('');
   }
   main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>`;
   main.querySelector('.tree-back-old').onclick = ()=>{
@@ -2428,8 +2436,8 @@ function renderBranchTree(rootId){
       const depth = parseInt(el.dataset.depth, 10);
       let p = (state.expanded || []).slice(0, depth); // اقطع أي فرع مفتوح بنفس هذا المستوى أو أعمق
       if((state.expanded||[])[depth] !== id){
-        p.push(id); // فتح هذا (يستبدل أي أخ كان مفتوحًا بهذا المستوى)
-      } // وإلا خليه مقطوع = طي
+        p.push(id); // فتح هذا (يستبدل أي أخ كان مفتوحًا بهذا المستوى، ويخفيهم)
+      } // وإلا خليه مقطوع = طي (يرجّع كل الإخوة للظهور)
       state.expanded = p;
       render();
     };
