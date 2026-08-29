@@ -427,6 +427,10 @@ function add(id, name, gender, fatherId, motherId, layer, chain){
 // applies them once both sides actually exist (after Firebase data has been merged in).
 const PENDING_SPOUSE_LINKS = [];
 function queueSpouseLink(a, b){ PENDING_SPOUSE_LINKS.push([a, b]); }
+// نفس فكرة queueSpouseLink لكن لربط أب/أم بشخص موجود فقط بقاعدة البيانات الحية (غير مُعرَّف
+// بالسكربت) — لا يمكن تعديله مباشرة وقت التحميل لأنه غير موجود بعد
+const PENDING_PARENT_LINKS = [];
+function queueParentLink(childId, parentId, parentGender){ PENDING_PARENT_LINKS.push([childId, parentId, parentGender]); }
 function link(){ // establish childIds from fatherId/motherId
   Object.values(P).forEach(p=>{
     if(p.fatherId && P[p.fatherId]) P[p.fatherId].childIds.push(p.id);
@@ -1366,8 +1370,9 @@ P.ziyana6_sulaiman8.spouseId = 'khalfan2_muhammad_ziyana6';
 P.ziyana6_sulaiman8.spouseName = P.khalfan2_muhammad_ziyana6.chain;
 P.khalfan2_muhammad_ziyana6.spouseId = 'ziyana6_sulaiman8';
 P.khalfan2_muhammad_ziyana6.spouseName = P.ziyana6_sulaiman8.chain;
-// سعيد بن خلفان — محذوف: تبيّن أنه مكرر مع سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري
-// (u_26) الموجود أصلًا
+// سعيد بن خلفان — كان مكررًا مع سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري (u_26) الموجود
+// أصلًا فحذفناه، لكن نسينا حينها ربط زيانة كأمه الحقيقية — نصلحه الآن بربط مؤجل
+queueParentLink('saeed_khalfan_grandfather', 'ziyana6_sulaiman8', 'f');
 
 add('khawla3_khalfan2','خولة','f','khalfan2_muhammad_ziyana6','ziyana6_sulaiman8',9,'خولة بنت خلفان العيسرية');
 add('aamir2_saif_khawla3','عامر بن سيف بن محمد بن سعيد بن حسين','m',null,null,9,'عامر بن سيف بن محمد بن سعيد بن حسين');
@@ -3293,6 +3298,12 @@ function repairFamilyLinks(){
       if(!P[a].spouseId){ P[a].spouseId = b; P[a].spouseName = P[b].chain; fixedCount++; }
       if(!P[b].spouseId){ P[b].spouseId = a; P[b].spouseName = P[a].chain; fixedCount++; }
     }
+  });
+  PENDING_PARENT_LINKS.forEach(([childId, parentId, parentGender])=>{
+    const child = P[childId], parent = P[parentId];
+    if(!child || !parent) return;
+    if(parentGender==='f' && !child.motherId){ child.motherId = parentId; fixedCount++; }
+    if(parentGender==='m' && !child.fatherId){ child.fatherId = parentId; fixedCount++; }
   });
 
   // Pass 1: clear relationships that are logically impossible no matter the context —
