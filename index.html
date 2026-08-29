@@ -350,7 +350,12 @@
   .tree-box:active{opacity:.8;}
   .tree-box.tree-root{
     display:block;background:var(--green-deep);color:#fff;border-color:var(--green-deep);
-    font-size:15px;font-weight:700;padding:10px 14px;
+    font-size:15px;font-weight:700;padding:26px 14px 14px;position:relative;
+    max-width:none;width:100%;box-sizing:border-box;
+  }
+  .tree-root-hint{
+    position:absolute;top:6px;insert-inline-end:10px;right:10px;font-size:11px;
+    font-weight:500;color:rgba(255,255,255,.85);
   }
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-box.tree-root.open{background:var(--green-deep);}
@@ -2424,8 +2429,9 @@ function renderBranchTree(rootId){
     const isOpen = path[depth]===id;
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
     const label = isRoot ? p.chain : p.name;
+    const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
     let html = `<div class="tree-box-wrap">
-      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}" data-depth="${depth}">${label}</div>
+      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}" data-depth="${depth}">${hint}${label}</div>
     </div>`;
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
