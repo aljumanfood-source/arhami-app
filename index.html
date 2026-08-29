@@ -2695,7 +2695,7 @@ function renderSpousePanel(person){
     if(person.spouseId && P[person.spouseId]){
       document.getElementById('spouseNameLink').onclick = ()=>{ goTo({view:'profile', personId:person.spouseId}); };
     }
-    document.getElementById('spouseEditBtn').onclick = ()=>{
+    document.getElementById('spouseEditBtn').onclick = ()=>requireAdmin(()=>{
       panel.innerHTML = `
         <input type="text" id="spouseInput" value="${person.spouseName}">
         <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
@@ -2707,21 +2707,21 @@ function renderSpousePanel(person){
         persistState();
         render();
       };
-    };
+    });
   } else {
     panel.innerHTML = `
       <input type="text" id="spouseInput" placeholder="${promptLabel}">
       <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
     `;
     main.appendChild(panel);
-    document.getElementById('spouseSaveBtn').onclick = ()=>{
+    document.getElementById('spouseSaveBtn').onclick = ()=>requireAdmin(()=>{
       const val = document.getElementById('spouseInput').value.trim();
       if(!val){ showToast('اكتب الاسم أولًا'); return; }
       registerSpouse(person.id, val);
       persistState();
       showToast('تم الحفظ — الأبناء الآن يُنسبون للزوج');
       render();
-    };
+    });
     const note = document.createElement('p');
     note.className = 'section-note';
     note.textContent = 'الابن لا يُنسب لأمه أبدًا — لازم تسجّل اسم الزوج أولًا حتى تقدر تضيف الأبناء بنسبهم الصحيح.';
@@ -3494,7 +3494,7 @@ function openBackupPanel(){
   `;
   anchor.appendChild(panel);
   panel.scrollIntoView({behavior:'smooth', block:'start'});
-  document.getElementById('mergeDupBtn').onclick = ()=>openMergeDuplicatesPanel();
+  document.getElementById('mergeDupBtn').onclick = ()=>requireAdmin(()=>openMergeDuplicatesPanel());
   document.getElementById('exportBtn').onclick = ()=>{
     const json = JSON.stringify(buildPayload());
     const ta = document.getElementById('backupText');
@@ -3503,7 +3503,7 @@ function openBackupPanel(){
     try{ document.execCommand('copy'); showToast('تم النسخ — احفظه بمكان آمن'); }
     catch(e){ showToast('انسخ النص يدويًا من المربع'); }
   };
-  document.getElementById('importBtn').onclick = ()=>{
+  document.getElementById('importBtn').onclick = ()=>requireAdmin(()=>{
     const raw = document.getElementById('backupText').value.trim();
     if(!raw){ showToast('الصق نسخة احتياطية أولًا'); return; }
     try{
@@ -3514,7 +3514,7 @@ function openBackupPanel(){
       panel.remove();
       render();
     }catch(e){ showToast('النص غير صالح'); }
-  };
+  });
   document.getElementById('closeBackupBtn').onclick = ()=>panel.remove();
 }
 
