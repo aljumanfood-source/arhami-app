@@ -2927,15 +2927,14 @@ function renderWasiyya(personId){
 
   document.getElementById('backBtn').onclick = goBack;
 
-  // حفظ حقل نصي واحد بعد أي تعديل — كل حفظ يتطلب صلاحية المدير
+  // الوصية شخصية لكل مستخدم (شهود، منفذين، توقيع، ختم) — تعديلها لا يتطلب صلاحية المدير
+  // على عكس بقية التطبيق
   function bindField(elId, getPath, setPath){
     const el = document.getElementById(elId);
     if(!el) return;
     el.addEventListener('change', ()=>{
-      requireAdmin(()=>{
-        setPath(el.value);
-        persistState();
-      });
+      setPath(el.value);
+      persistState();
     });
   }
   bindField('willCivilId', null, v=>{ w.civilId = v; });
@@ -2951,30 +2950,30 @@ function renderWasiyya(personId){
   function bindDebtRow(row){
     const kind = row.dataset.kind, idx = parseInt(row.dataset.idx,10);
     const arr = kind==='owed' ? w.debtsOwed : w.debtsOwing;
-    row.querySelector('.will-debt-name').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].name = e.target.value; persistState(); }));
-    row.querySelector('.will-debt-phone').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].phone = e.target.value; persistState(); }));
-    row.querySelector('.will-debt-amount').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].amount = e.target.value; persistState(); }));
+    row.querySelector('.will-debt-name').addEventListener('change', e=>{ arr[idx].name = e.target.value; persistState(); });
+    row.querySelector('.will-debt-phone').addEventListener('change', e=>{ arr[idx].phone = e.target.value; persistState(); });
+    row.querySelector('.will-debt-amount').addEventListener('change', e=>{ arr[idx].amount = e.target.value; persistState(); });
   }
   main.querySelectorAll('.will-debt-row').forEach(bindDebtRow);
   main.querySelectorAll('.will-debt-remove').forEach(el=>{
-    el.onclick = ()=>requireAdmin(()=>{
+    el.onclick = ()=>{
       const kind = el.dataset.kind, idx = parseInt(el.dataset.idx,10);
       const arr = kind==='owed' ? w.debtsOwed : w.debtsOwing;
       arr.splice(idx,1);
       persistState();
       render();
-    });
+    };
   });
-  document.getElementById('addDebtOwed').onclick = ()=>requireAdmin(()=>{
+  document.getElementById('addDebtOwed').onclick = ()=>{
     w.debtsOwed.push({name:'',phone:'',amount:''});
     persistState();
     render();
-  });
-  document.getElementById('addDebtOwing').onclick = ()=>requireAdmin(()=>{
+  };
+  document.getElementById('addDebtOwing').onclick = ()=>{
     w.debtsOwing.push({name:'',phone:'',amount:''});
     persistState();
     render();
-  });
+  };
 }
 
 function renderRelation(personId, relKey){
