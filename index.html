@@ -372,9 +372,11 @@
 
   .will-doc{
     background:var(--card);border:1.5px solid var(--gold-rich);border-radius:16px;
-    padding:18px 16px;margin-top:14px;text-align:center;
+    padding:18px 16px;margin-top:14px;text-align:right;
   }
-  .will-title{font-family:'Aref Ruqaa','Markazi Text',serif;font-size:22px;font-weight:700;color:var(--green-deep);margin:0 0 10px;}
+  .will-title{font-family:'Aref Ruqaa','Markazi Text',serif;font-size:22px;font-weight:700;color:var(--green-deep);margin:0 0 4px;text-align:center;}
+  .will-bismillah{font-size:14px;color:var(--green-deep);text-align:center;margin:0 0 14px;}
+  .will-intro{font-size:13px;color:var(--ink);line-height:1.9;margin:10px 0;}
   .will-line{font-size:14.5px;color:var(--ink);margin:4px 0;}
   .will-narrative{margin-top:16px;}
   .will-root-line{
@@ -384,6 +386,39 @@
   .will-child-line{
     font-size:14px;color:var(--ink);line-height:1.9;margin:2px 0 2px 0;padding-right:16px;
   }
+  .will-section{
+    border-top:1.5px dashed var(--gold-rich);margin-top:16px;padding-top:14px;
+  }
+  .will-section h3{
+    font-size:15px;color:var(--green-deep);margin:0 0 10px;font-weight:700;
+  }
+  .will-field-label{
+    display:block;font-size:13px;color:var(--ink);margin:8px 0;
+  }
+  .will-field-hint{font-size:11.5px;color:var(--muted);margin:0 0 8px;}
+  .will-field-label input, .will-debt-row input, #willReligiousDuties{
+    display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:8px 10px;
+    border:1.5px solid var(--gold-rich);border-radius:8px;font-size:13.5px;
+    font-family:inherit;background:#fff;color:var(--ink);
+  }
+  #willReligiousDuties{resize:vertical;}
+  .will-debt-list{margin-bottom:8px;}
+  .will-debt-row{
+    border:1.5px solid var(--gold-rich);border-radius:10px;padding:10px;margin-bottom:8px;
+    background:rgba(255,255,255,.5);
+  }
+  .will-debt-row input{margin-bottom:6px;}
+  .will-debt-remove{
+    display:inline-block;font-size:12px;color:var(--red, #b03a2e);cursor:pointer;
+    text-decoration:underline;
+  }
+  .will-empty-note{font-size:12.5px;color:var(--muted);margin-bottom:8px;}
+  .will-add-btn{
+    background:var(--green-deep);color:#fff;border:none;border-radius:10px;
+    padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .will-sig-line{font-size:13px;color:var(--muted);margin:8px 0;}
+  .will-divider{border:none;border-top:1.5px solid var(--gold-rich);margin:16px 0;}
 </style>
 </head>
 <body>
@@ -1951,6 +1986,7 @@ const deceasedLog = {};     // { personId: true/false } — deceased flag set fr
 const altNamesLog = {};     // { personId: [altName, ...] } — additional names added without replacing the main name
 const chainLog = {};        // { personId: fullChainString } — full nasab edited directly, overrides the auto-built chain
 const amountsLog = {};      // { ownerId: { relativeId: amountString } } — wasiyya amounts per relative
+const willsLog = {};        // { personId: {...} } — full digitized "الوصية" form data per person
 const deletedIds = new Set(); // ids removed by any user of this link
 let idCounter = 1;
 
@@ -2563,7 +2599,7 @@ function renderHome(){
       <div class="rname">${shortChain(p)}</div>
       <div class="rlayer"><span class="badge">الطبقة ${p.layer}</span></div>
       <button class="btn-approve" data-id="${p.id}">موافق</button>
-      <button class="btn-wasiyya" data-id="${p.id}">📜 وصية الأقربين</button>
+      <button class="btn-wasiyya" data-id="${p.id}">📜 الوصية</button>
     </div>
   `).join('');
   wireBranchBoxes();
@@ -2608,7 +2644,7 @@ function renderProfile(id){
     </div>
     <div id="familySummary"></div>
     <div class="rel-grid" id="relGrid"></div>
-    ${p.isDeceased ? `<button class="btn-approve" id="wasiyyaBtn" style="margin-top:16px;">📜 مستحقو وصية الأرحام</button>` : ''}
+    ${p.isDeceased ? `<button class="btn-approve" id="wasiyyaBtn" style="margin-top:16px;">📜 الوصية</button>` : ''}
     <p class="section-note">اضغط على أي بطاقة لعرض القائمة، ويمكن إضافة اسم جديد بعلامة (+) إن لم يكن مسجلًا بعد.</p>
   `;
   renderFamilySummary(id);
@@ -2753,29 +2789,92 @@ function renderSpousePanel(person){
 
 function renderWasiyya(personId){
   const p = P[personId];
+  const w = willsLog[personId] || (willsLog[personId] = {
+    civilId:'', debtsOwed:[], debtsOwing:[], religiousDuties:'', bequestAmount:'',
+    charityAmount:'', executor1:{name:'',card:''}, executor2:{name:'',card:''},
+    witness1:{name:'',card:''}, witness2:{name:'',card:''}
+  });
+  // تعبئة قديمة محتملة بدون الحقول الجديدة
+  w.debtsOwed = w.debtsOwed || [];
+  w.debtsOwing = w.debtsOwing || [];
+  w.executor1 = w.executor1 || {name:'',card:''};
+  w.executor2 = w.executor2 || {name:'',card:''};
+  w.witness1 = w.witness1 || {name:'',card:''};
+  w.witness2 = w.witness2 || {name:'',card:''};
+
   const categories = computeArhamTree(personId);
   const total = countCategories(categories);
+  const order = ['brothers','sisters','uncles','aunts','maternal_uncles','maternal_aunts'];
+  const anyResults = order.some(key=>categories[key].length>0);
+  const todayStr = new Date().toLocaleDateString('ar-OM');
+
+  function debtRowsHtml(list, kind){
+    if(list.length===0) return `<p class="will-empty-note">لا يوجد ${kind==='owed'?'دائنون':'مدينون'} مسجّلون حاليًا</p>`;
+    return list.map((row,i)=>`
+      <div class="will-debt-row" data-kind="${kind}" data-idx="${i}">
+        <input type="text" class="will-debt-name" placeholder="الاسم" value="${row.name||''}">
+        <input type="tel" class="will-debt-phone" placeholder="رقم الهاتف" value="${row.phone||''}">
+        <input type="text" class="will-debt-amount" placeholder="المبلغ وقدره" value="${row.amount||''}">
+        <span class="will-debt-remove" data-kind="${kind}" data-idx="${i}">🗑 حذف</span>
+      </div>
+    `).join('');
+  }
+
   main.innerHTML = `
     <div class="subheader">
       <div class="back-btn" id="backBtn">${arrowIcon()}</div>
-      <h2>وصية الأقربين</h2>
+      <h2>الوصية</h2>
     </div>
     <div class="will-doc">
-      <p class="will-title">وصيتي للأقربين</p>
-      <p class="will-line">أنا <strong>${p.chain}</strong></p>
-      <p class="will-line">وعددهم <strong>${total}</strong></p>
+      <p class="will-title">الوَصِيّة</p>
+      <p class="will-bismillah">بسم الله الرحمن الرحيم</p>
+      <p class="will-intro">الحمد لله والصلاة والسلام على رسول الله ﷺ وعلى صحبه ومن والاه، وأشهد أن لا إله إلا الله وأن محمدًا رسول الله. قال رسول الله ﷺ: "لا يحل لامرئ مسلم له شيء يوصي به يبيت ليلتين إلا ووصيته مكتوبة عند رأسه" (رواه الربيع في مسنده)، أما بعد:</p>
+
+      <div class="will-section">
+        <h3>١. أوصي وأنا</h3>
+        <p class="will-line">الاسم: <strong>${p.chain}</strong></p>
+        <label class="will-field-label">الرقم المدني:
+          <input type="text" id="willCivilId" value="${w.civilId||''}" placeholder="اكتب الرقم المدني">
+        </label>
+      </div>
+
+      <p class="will-intro">أهلي وورثتي من بعدي (وجميع المسلمين) وأنا في حال الصحة، وتمام العقل: بتقوى الله عز وجل، وبالصبر عند موتي، وأن يقولوا خيرًا، وأن يكثروا من الاستغفار، والدعاء لي بالرحمة ودخول الجنة والنجاة من النار، وأن يكثروا من قول (إنا لله وإنا إليه راجعون)، وأوصيكم: بالإسراع في تجهيزي، وإعلام أقاربي، وتكفيني، والصلاة عليّ، وتشييع جنازتي، ودفني، والاستغفار لي، وأوصيكم: بقضاء ديني قبل دفني — إن أمكن.</p>
+
+      <div class="will-section">
+        <h3>٢. الديون التي عليّ لأصحابها (تُسدد في الحال ولو كانت مؤجلة بأجل لم يحضر)</h3>
+        <div class="will-debt-list" id="debtsOwedList">${debtRowsHtml(w.debtsOwed,'owed')}</div>
+        <button class="will-add-btn" id="addDebtOwed">+ دائن جديد</button>
+      </div>
+
+      <div class="will-section">
+        <h3>٣. مستحقات لي عند آخرين (تُسدد لورثتي حين يحل أجل سدادها)</h3>
+        <div class="will-debt-list" id="debtsOwingList">${debtRowsHtml(w.debtsOwing,'owing')}</div>
+        <button class="will-add-btn" id="addDebtOwing">+ مدين جديد</button>
+      </div>
+
+      <div class="will-section">
+        <h3>٤. الحقوق الواجبة لله تعالى</h3>
+        <p class="will-field-hint">مثال: زكاة واجبة — صوم واجب — حج واجب — عمرة واجبة — كفارات واجبة — نذور واجبة</p>
+        <textarea id="willReligiousDuties" rows="4" placeholder="اكتبها هنا...">${w.religiousDuties||''}</textarea>
+      </div>
+
+      <div class="will-section">
+        <h3>٥. الوصية الواجبة للأقربين</h3>
+        <label class="will-field-label">كما أوصي للأقربين بمبلغ وقدره:
+          <input type="text" id="willBequestAmount" value="${w.bequestAmount||''}" placeholder="المبلغ">
+        </label>
+        <p class="will-field-label" style="margin-top:10px;">وهم — عددهم <strong>${total}</strong>:</p>
+      </div>
     </div>
   `;
 
-  const order = ['brothers','sisters','uncles','aunts','maternal_uncles','maternal_aunts'];
-  const anyResults = order.some(key=>categories[key].length>0);
-
+  const doc = main.querySelector('.will-doc');
   if(!anyResults){
     const e = document.createElement('p'); e.className='section-note'; e.textContent='لا يوجد أقربون مستحقون مسجّلون بعد — أضف الأعمام والأخوال من صفحات الوالدين للحصول على قائمة كاملة.';
-    main.appendChild(e);
+    doc.appendChild(e);
   } else {
-    const doc = document.createElement('div');
-    doc.className = 'will-narrative';
+    const narrative = document.createElement('div');
+    narrative.className = 'will-narrative';
     order.forEach(key=>{
       categories[key].forEach(root=>{
         const heading = document.createElement('p');
@@ -2783,19 +2882,99 @@ function renderWasiyya(personId){
         const suffix = root.person.gender==='m' ? 'ه' : 'ها';
         const hasKids = root.children.length>0;
         heading.textContent = `${root.label} ${root.person.name}` + (hasKids ? ` وأولاد${suffix}` : '');
-        doc.appendChild(heading);
+        narrative.appendChild(heading);
         root.children.forEach(child=>{
           const line = document.createElement('p');
           line.className = 'will-child-line';
           line.textContent = describeSubtree(child);
-          doc.appendChild(line);
+          narrative.appendChild(line);
         });
       });
     });
-    main.appendChild(doc);
+    doc.appendChild(narrative);
   }
 
+  const executorHtml = document.createElement('div');
+  executorHtml.className = 'will-doc';
+  executorHtml.innerHTML = `
+    <div class="will-section">
+      <h3>٦. كما أوصي بمن يقوم بتنفيذ وصيتي</h3>
+      ${[1,2].map(n=>`
+        <p class="will-line" style="margin-top:10px;"><strong>الوصي ${n===1?'الأول':'الثاني'}:</strong></p>
+        <label class="will-field-label">الاسم: <input type="text" id="willExecutor${n}Name" value="${w['executor'+n].name||''}" placeholder="اسم الوصي"></label>
+        <label class="will-field-label">رقم البطاقة: <input type="text" id="willExecutor${n}Card" value="${w['executor'+n].card||''}" placeholder="رقم البطاقة"></label>
+        <p class="will-sig-line">التوقيع: ....................................................</p>
+      `).join('')}
+    </div>
+
+    <div class="will-section">
+      <h3>٧. الشهود</h3>
+      <p class="will-intro">كما أوصي أن يقسم مالي بين ورثتي تقسيمًا شرعيًا كما أمر الله عز وجل، وأعلمكم وأشهدكم أني قد سامحت كل إنسان لي حق عليه.</p>
+      ${[1,2].map(n=>`
+        <p class="will-line" style="margin-top:10px;"><strong>الشاهد ${n===1?'الأول':'الثاني'}:</strong></p>
+        <label class="will-field-label">الاسم: <input type="text" id="willWitness${n}Name" value="${w['witness'+n].name||''}" placeholder="اسم الشاهد"></label>
+        <label class="will-field-label">رقم البطاقة: <input type="text" id="willWitness${n}Card" value="${w['witness'+n].card||''}" placeholder="رقم البطاقة"></label>
+        <p class="will-sig-line">التوقيع: ....................................................</p>
+      `).join('')}
+      <hr class="will-divider">
+      <p class="will-line">اسم الموصي: <strong>${p.chain}</strong></p>
+      <p class="will-line">رقم البطاقة: <strong>${w.civilId || '—'}</strong></p>
+      <p class="will-sig-line">التوقيع: ....................................................</p>
+      <p class="will-line">حُررت بتاريخ: <strong>${todayStr}</strong></p>
+    </div>
+  `;
+  main.appendChild(executorHtml);
+
   document.getElementById('backBtn').onclick = goBack;
+
+  // حفظ حقل نصي واحد بعد أي تعديل — كل حفظ يتطلب صلاحية المدير
+  function bindField(elId, getPath, setPath){
+    const el = document.getElementById(elId);
+    if(!el) return;
+    el.addEventListener('change', ()=>{
+      requireAdmin(()=>{
+        setPath(el.value);
+        persistState();
+      });
+    });
+  }
+  bindField('willCivilId', null, v=>{ w.civilId = v; });
+  bindField('willReligiousDuties', null, v=>{ w.religiousDuties = v; });
+  bindField('willBequestAmount', null, v=>{ w.bequestAmount = v; });
+  [1,2].forEach(n=>{
+    bindField('willExecutor'+n+'Name', null, v=>{ w['executor'+n].name = v; });
+    bindField('willExecutor'+n+'Card', null, v=>{ w['executor'+n].card = v; });
+    bindField('willWitness'+n+'Name', null, v=>{ w['witness'+n].name = v; });
+    bindField('willWitness'+n+'Card', null, v=>{ w['witness'+n].card = v; });
+  });
+
+  function bindDebtRow(row){
+    const kind = row.dataset.kind, idx = parseInt(row.dataset.idx,10);
+    const arr = kind==='owed' ? w.debtsOwed : w.debtsOwing;
+    row.querySelector('.will-debt-name').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].name = e.target.value; persistState(); }));
+    row.querySelector('.will-debt-phone').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].phone = e.target.value; persistState(); }));
+    row.querySelector('.will-debt-amount').addEventListener('change', e=>requireAdmin(()=>{ arr[idx].amount = e.target.value; persistState(); }));
+  }
+  main.querySelectorAll('.will-debt-row').forEach(bindDebtRow);
+  main.querySelectorAll('.will-debt-remove').forEach(el=>{
+    el.onclick = ()=>requireAdmin(()=>{
+      const kind = el.dataset.kind, idx = parseInt(el.dataset.idx,10);
+      const arr = kind==='owed' ? w.debtsOwed : w.debtsOwing;
+      arr.splice(idx,1);
+      persistState();
+      render();
+    });
+  });
+  document.getElementById('addDebtOwed').onclick = ()=>requireAdmin(()=>{
+    w.debtsOwed.push({name:'',phone:'',amount:''});
+    persistState();
+    render();
+  });
+  document.getElementById('addDebtOwing').onclick = ()=>requireAdmin(()=>{
+    w.debtsOwing.push({name:'',phone:'',amount:''});
+    persistState();
+    render();
+  });
 }
 
 function renderRelation(personId, relKey){
@@ -3060,6 +3239,7 @@ const STORAGE_KEYS = {
   deceased: 'arhami:deceased',
   altNames: 'arhami:altNames',
   amounts:  'arhami:amounts',
+  wills:    'arhami:wills',
   deletes:  'arhami:deletes'
 };
 const LEGACY_BLOB_KEY = 'arhami:family_data'; // pre-migration single-key format, read once as a fallback
@@ -3116,6 +3296,7 @@ function buildPayload(){
     deceased: Object.assign({}, deceasedLog),
     altNames: JSON.parse(JSON.stringify(altNamesLog)),
     amounts: JSON.parse(JSON.stringify(amountsLog)),
+    wills: JSON.parse(JSON.stringify(willsLog)),
     deletes: Array.from(deletedIds)
   };
 }
@@ -3278,6 +3459,11 @@ function applyPayload(payload){
   Object.keys(payload.amounts||{}).forEach(ownerId=>{
     if(!amountsLog[ownerId]) amountsLog[ownerId] = {};
     Object.assign(amountsLog[ownerId], payload.amounts[ownerId]);
+  });
+  Object.keys(payload.wills||{}).forEach(personId=>{
+    // آخر نسخة محفوظة تكسب — نموذج الوصية يُعدَّل ويُحفظ كوحدة واحدة لكل شخص، لا حاجة لدمج
+    // على مستوى الحقل الواحد
+    willsLog[personId] = payload.wills[personId];
   });
   Object.keys(payload.spouses||{}).forEach(id=>{
     if(P[id]){
