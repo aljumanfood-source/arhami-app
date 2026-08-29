@@ -325,6 +325,30 @@
   .branch-box.active{background:var(--green-deep);border-color:var(--green-deep);}
   .branch-box.active .branch-box-label{color:#fff;}
   .branch-box.active .branch-box-sub{color:rgba(255,255,255,.8);}
+
+  /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح */
+  .tree-toolbar{padding:14px 16px 0;}
+  .tree-back-old{
+    display:inline-block;font-size:12px;color:var(--green-deep);text-decoration:underline;
+    cursor:pointer;
+  }
+  .tree-wrap{padding:14px 16px 24px;}
+  .tree-node{margin-bottom:8px;}
+  .tree-children{margin-inline-start:22px;border-inline-start:2px dashed var(--gold-rich);
+    padding-inline-start:14px;margin-top:8px;}
+  .tree-box{
+    background:var(--card);border:2px solid var(--gold-rich);border-radius:12px;
+    padding:10px 14px;font-weight:600;font-size:14px;color:var(--green-deep);
+    cursor:pointer;display:inline-block;min-width:120px;text-align:center;
+  }
+  .tree-box:active{opacity:.8;}
+  .tree-box.tree-root{
+    display:block;background:var(--green-deep);color:#fff;border-color:var(--green-deep);
+    font-size:15px;font-weight:700;
+  }
+  .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
+  .tree-box.tree-root.open{background:var(--green-deep);}
+  .tree-empty{font-size:12px;color:var(--muted);margin-top:6px;margin-inline-start:22px;}
   .verse-text{
     font-family:'Amiri','Markazi Text',serif;font-size:19px;line-height:2.2;
     color:var(--green-deep);font-weight:700;
@@ -2339,6 +2363,7 @@ function render(){
   document.getElementById('fullHeader').style.display = isHome ? '' : 'none';
   document.getElementById('compactHeader').style.display = isHome ? 'none' : 'flex';
   if(state.view==='home') renderHome();
+  else if(state.view==='branchTree') renderBranchTree(state.branchRootId);
   else if(state.view==='profile') renderProfile(state.personId);
   else if(state.view==='relation') renderRelation(state.personId, state.relKey);
   else if(state.view==='wasiyya') renderWasiyya(state.personId);
@@ -2347,8 +2372,55 @@ function render(){
 function wireBranchBoxes(){
   main.querySelectorAll('.branch-box').forEach(el=>{
     el.onclick = ()=>{
-      state.searchMode = el.dataset.mode;
-      state.branchId = el.dataset.branch || null;
+      if(el.dataset.mode==='branch'){
+        // الفروع الثلاثة تفتح الآن شجرة تصفح تفاعلية بدل البحث المباشر
+        goTo({view:'branchTree', branchRootId:el.dataset.branch, expanded:[]});
+      } else {
+        state.searchMode = el.dataset.mode;
+        state.branchId = el.dataset.branch || null;
+        render();
+      }
+    };
+  });
+}
+
+// شجرة تصفح تفاعلية لفرع واحد: مربع أخضر بأعلى فيه اسم الجد كاملًا، الضغط عليه يفتح/يطوي
+// أبناءه المباشرين كمربعات تحته، وكل مربع ابن يفتح/يطوي أبناءه هو بنفس الطريقة — تنازليًا بلا حد
+function renderBranchTree(rootId){
+  const expanded = new Set(state.expanded || []);
+  const root = P[rootId];
+  const backLink = `<div class="tree-toolbar">
+    <span class="tree-back-old" data-back-old="${rootId}">🔙 الرجوع للتصميم السابق (بحث داخل الفرع)</span>
+  </div>`;
+  function renderNode(id, isRoot){
+    const p = P[id];
+    if(!p) return '';
+    const isOpen = expanded.has(id);
+    const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
+    const label = isRoot ? p.chain : p.name;
+    let html = `<div class="tree-node">
+      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}">${label}</div>`;
+    if(isOpen){
+      const kids = (p.childIds||[]).filter(cid=>P[cid]);
+      if(kids.length>0){
+        html += `<div class="tree-children">` + kids.map(cid=>renderNode(cid,false)).join('') + `</div>`;
+      } else {
+        html += `<div class="tree-empty">لا يوجد أبناء مسجّلون بعد</div>`;
+      }
+    }
+    html += `</div>`;
+    return html;
+  }
+  main.innerHTML = backLink + `<div class="tree-wrap">` + renderNode(rootId, true) + `</div>`;
+  main.querySelector('.tree-back-old').onclick = ()=>{
+    goTo({view:'home', searchMode:'branch', branchId: main.querySelector('.tree-back-old').dataset.backOld});
+  };
+  main.querySelectorAll('.tree-box').forEach(el=>{
+    el.onclick = ()=>{
+      const id = el.dataset.node;
+      const exp = new Set(state.expanded || []);
+      if(exp.has(id)) exp.delete(id); else exp.add(id);
+      state.expanded = Array.from(exp);
       render();
     };
   });
