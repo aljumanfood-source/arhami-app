@@ -431,6 +431,10 @@ function queueSpouseLink(a, b){ PENDING_SPOUSE_LINKS.push([a, b]); }
 // بالسكربت) — لا يمكن تعديله مباشرة وقت التحميل لأنه غير موجود بعد
 const PENDING_PARENT_LINKS = [];
 function queueParentLink(childId, parentId, parentGender){ PENDING_PARENT_LINKS.push([childId, parentId, parentGender]); }
+// لتصحيح نسب شخص موجود فقط بقاعدة البيانات الحية (زي محمد u_1 اللي وصلتنا سلسلته ناقصة من
+// الأساس) دون إعادة إنشائه
+const PENDING_CHAIN_FIXES = [];
+function queueChainFix(id, correctChain){ PENDING_CHAIN_FIXES.push([id, correctChain]); }
 function link(){ // establish childIds from fatherId/motherId
   Object.values(P).forEach(p=>{
     if(p.fatherId && P[p.fatherId]) P[p.fatherId].childIds.push(p.id);
@@ -687,7 +691,7 @@ add('shaimaa_muhammad_u2','شيماء','f','muhammad_u2',null,9,'شيماء بن
 add('rashid_u2','راشد','m','humaid_abdullah','riya_muhammad_w2',8,'راشد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 // راشد's divorced wife زيانة بنت سعيد بن راشد بن شنين (أخت نعمة) — لا رابط زوج حالي، وأولادهما
 // الثمانية يبقون بنسبه؛ وثلاثة أولاد آخرين من أم غير مذكورة
-add('ziyana3_saeed_shanin','زيانة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'زيانة بنت سعيد بن راشد بن شنين الطوقية');
+add('ziyana3_saeed_shanin','زيانة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'زيانة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 add('abdullah15_rashid_u2','عبدالله','m','rashid_u2','ziyana3_saeed_shanin',9,'عبدالله بن راشد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('humaid14_abdullah15','حميد','m','abdullah15_rashid_u2',null,10,'حميد بن عبدالله بن راشد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('muhammad17_abdullah15','محمد','m','abdullah15_rashid_u2',null,10,'محمد بن عبدالله بن راشد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -1247,12 +1251,12 @@ add('ziyanah_mother','زيانة','f','saeed_khalfan_grandfather','fatima_grandm
 // (نصرا بنت حميد already added above as second wife of سعيد بن خلفان — no children of that union given yet)
 
 /* ---- User's father's wives ---- */
-add('nemah_mother','نعمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'نعمة بنت سعيد بن راشد بن شنين الطوقية');
-add('saeed_rashid_shanin','سعيد','m','rashid_shanin','sharifa_rashid',7,'سعيد بن راشد بن شنين الطوقي');
+add('nemah_mother','نعمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'نعمة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('saeed_rashid_shanin','سعيد','m','rashid_shanin','sharifa_rashid',7,'سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('shamsa_bint_abdullah','شمسة','f','abdullah_rashid','shanoona_salim_azeez',7,'شمسة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // شمسة+سعيد بن راشد بن شنين's remaining 2 daughters (نعمة/زيانة/شنونة already established): شريفة ورحمة
-add('sharifa3_saeed_shanin','شريفة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'شريفة بنت سعيد بن راشد بن شنين الطوقية');
+add('sharifa3_saeed_shanin','شريفة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'شريفة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 add('saeed14_hamd_sharifa3','سعيد بن حمد بن محمد المعمري','m',null,null,8,'سعيد بن حمد بن محمد المعمري');
 P.sharifa3_saeed_shanin.spouseId = 'saeed14_hamd_sharifa3';
 P.sharifa3_saeed_shanin.spouseName = P.saeed14_hamd_sharifa3.chain;
@@ -1278,7 +1282,10 @@ add('mahra2_mansour2','مهرة','f','mansour2_humaid_hanan','hanan_saeed14',10,
 add('maitha_mansour2','ميثة','f','mansour2_humaid_hanan','hanan_saeed14',10,'ميثة بنت منصور بن حميد الخمبشية');
 
 // رحمة بنت سعيد بن راشد بن شنين — زوجها الأول عبدالله بن سعيد الصقري (طلقها)، وابنتهما فاطمة
-add('rahma9_saeed_shanin','رحمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'رحمة بنت سعيد بن راشد بن شنين الطوقية');
+add('rahma9_saeed_shanin','رحمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'رحمة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+// محمد (u_1) — أخو زيانة ونعمة وشريفة ورحمة، سلسلته بقاعدة البيانات الحية كانت ناقصة (تنتهي
+// عند "الطوقي" مباشرة) بعكس أخواته؛ نصححها بنفس الامتداد الكامل
+queueChainFix('u_1', 'محمد بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('abdullah19_saeed_rahma9','عبدالله بن سعيد الصقري','m',null,null,8,'عبدالله بن سعيد الصقري');
 add('fatima13_abdullah_rahma9','فاطمة','f','abdullah19_saeed_rahma9','rahma9_saeed_shanin',9,'فاطمة بنت عبدالله بن سعيد الصقرية');
 
@@ -3304,6 +3311,9 @@ function repairFamilyLinks(){
     if(!child || !parent) return;
     if(parentGender==='f' && !child.motherId){ child.motherId = parentId; fixedCount++; }
     if(parentGender==='m' && !child.fatherId){ child.fatherId = parentId; fixedCount++; }
+  });
+  PENDING_CHAIN_FIXES.forEach(([id, correctChain])=>{
+    if(P[id] && P[id].chain !== correctChain){ P[id].chain = correctChain; fixedCount++; }
   });
 
   // Pass 1: clear relationships that are logically impossible no matter the context —
