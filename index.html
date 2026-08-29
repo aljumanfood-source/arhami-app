@@ -313,16 +313,18 @@
   .section-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.8;}
   .verse-block{margin-top:44px;text-align:center;padding:0 12px;}
 
-  /* الفروع الثلاثة: خلفان/محمد/شنين — اختيار فرع يحصر نتائج البحث في ذريته فقط */
+  /* الفروع الخمسة: ٣ فروع محددة + بحث عام + بحث شامل — كل خيار له تسمية وشرح مختصر تحتها */
   .branch-boxes{display:flex;flex-direction:column;gap:10px;padding:20px 16px 8px;}
   .branch-box{
     background:var(--card);border:2px solid var(--gold-rich);border-radius:14px;
-    padding:16px;text-align:center;font-weight:700;font-size:15px;color:var(--green-deep);
-    cursor:pointer;
+    padding:12px 16px;text-align:center;cursor:pointer;
   }
+  .branch-box-label{font-weight:700;font-size:15px;color:var(--green-deep);}
+  .branch-box-sub{font-size:12px;color:var(--muted);margin-top:3px;}
   .branch-box:active{opacity:.8;}
-  .branch-box.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
-  .branch-box.branch-clear{border-style:dashed;font-weight:500;font-size:13px;color:var(--muted);}
+  .branch-box.active{background:var(--green-deep);border-color:var(--green-deep);}
+  .branch-box.active .branch-box-label{color:#fff;}
+  .branch-box.active .branch-box-sub{color:rgba(255,255,255,.8);}
   .verse-text{
     font-family:'Amiri','Markazi Text',serif;font-size:19px;line-height:2.2;
     color:var(--green-deep);font-weight:700;
@@ -2296,7 +2298,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'general'};
 const BRANCH_ROOTS = [
   {id:'khalfan_salim', label:'خلفان بن سليم'},
   {id:'muhammad_salim', label:'محمد بن سليم'},
@@ -2351,6 +2353,7 @@ function render(){
 function wireBranchBoxes(){
   main.querySelectorAll('.branch-box').forEach(el=>{
     el.onclick = ()=>{
+      state.searchMode = el.dataset.mode;
       state.branchId = el.dataset.branch || null;
       render();
     };
@@ -2375,9 +2378,19 @@ function renderChain(person){
 
 function renderHome(){
   const q = searchInput.value.trim();
+  const boxDefs = [
+    ...BRANCH_ROOTS.map(b=>({mode:'branch', branch:b.id, label:b.label, sub:'بحث في نفس الفرع'})),
+    {mode:'general', branch:'', label:'بحث عام في الفروع', sub:'لمن لا يعرف هو من أي فرع'},
+    {mode:'full', branch:'', label:'بحث شامل', sub:'يشمل أزواج البنات ومن هم من غير العائلة'}
+  ];
   const branchBoxesHtml = `<div class="branch-boxes">` +
-    BRANCH_ROOTS.map(b=>`<div class="branch-box ${state.branchId===b.id?'active':''}" data-branch="${b.id}">${b.label}</div>`).join('') +
-    (state.branchId ? `<div class="branch-box branch-clear" data-branch="">كل الفروع</div>` : '') +
+    boxDefs.map(b=>{
+      const isActive = state.searchMode===b.mode && (b.mode!=='branch' || state.branchId===b.branch);
+      return `<div class="branch-box ${isActive?'active':''}" data-mode="${b.mode}" data-branch="${b.branch}">
+        <div class="branch-box-label">${b.label}</div>
+        <div class="branch-box-sub">${b.sub}</div>
+      </div>`;
+    }).join('') +
   `</div>`;
   if(!q){
     main.innerHTML = `<div class="verse-block">
@@ -2393,11 +2406,14 @@ function renderHome(){
     // deliberately still checks every layer (including ancestors) so duplicates keep getting
     // linked instead of recreated, regardless of what shows up here
     if(p.layer<8) return false;
-    // only actual blood descendants of the three sons of سليم — never in-laws/married-in
-    // spouses (who have no tracked father chain reaching one of the three roots)
-    if(!isBloodDescendant(p.id)) return false;
-    // if the user picked one of the three branch boxes, narrow further to just that branch
-    if(state.branchId && !belongsToBranch(p.id, state.branchId)) return false;
+    // "بحث شامل" (searchMode==='full') is the only mode that includes in-laws/outsiders —
+    // both "بحث عام في الفروع" (all three branches) and a specific branch box stay limited to
+    // actual blood descendants
+    if(state.searchMode==='branch'){
+      if(!belongsToBranch(p.id, state.branchId)) return false;
+    } else if(state.searchMode==='general'){
+      if(!isBloodDescendant(p.id)) return false;
+    } // else 'full': no blood-line restriction at all
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
