@@ -2156,29 +2156,54 @@ function countCategories(categories){
          countTreeNodes(categories.uncles) + countTreeNodes(categories.aunts) +
          countTreeNodes(categories.maternal_uncles) + countTreeNodes(categories.maternal_aunts);
 }
-function flattenByDepth(node){
-  let levels = [];
-  let current = [node];
-  while(current.length>0){
-    let next = [];
-    current.forEach(n=>{ next.push(...n.children); });
-    if(next.length===0) break;
-    levels.push(next.map(n=>n.person.name));
-    current = next;
-  }
-  return levels;
-}
-function describeSubtree(node){
-  const levels = flattenByDepth(node);
-  if(levels.length===0) return node.person.name;
-  const suffix = node.person.gender==='m' ? 'ه' : 'ها';
-  const labelWords = ['أولاد','أحفاد','أبناء أحفاد','أحفاد أحفاد'];
-  let parts = [node.person.name];
-  levels.forEach((names, idx)=>{
-    const labelBase = labelWords[idx] || ('الجيل ' + (idx+2));
-    parts.push(`و${labelBase}${suffix} ` + names.join(' و'));
+// كل الأحفاد الذين تحت عقدة معيّنة (بغض النظر عن عمقهم)، أسماء فقط — تُستخدم لتجميع "ولد
+// حفيده/حفيدتها" دون تفصيل أعمق من ذلك
+function flattenAllDescendants(node){
+  let names = [];
+  (node.children||[]).forEach(c=>{
+    names.push(c.person.name);
+    names.push(...flattenAllDescendants(c));
   });
-  return parts.join(' ');
+  return names;
+}
+// يصف طفلًا واحدًا من أولاد الجد الأعلى (root) الذي له أحفاد خاصون به: يذكر اسمه، ثم أحفاد
+// الجد الأعلى عبره (أي أبناء هذا الطفل) — من له نسل يوصف فرديًا بـ"حفيده/حفيدته [اسمه] وولد
+// حفيده/حفيدتها([أسماء نسله])"، ومن ليس له نسل يُجمع في النهاية ضمن "وأحفاده/أحفادها [الأسماء]"
+function describeComplexChild(child){
+  const simpleGrandkids = [];
+  const complexParts = [];
+  child.children.forEach(gc=>{
+    if(!gc.children || gc.children.length===0){
+      simpleGrandkids.push(gc.person.name);
+    } else {
+      const term = gc.person.gender==='m' ? 'حفيده' : 'حفيدته';
+      const descendants = flattenAllDescendants(gc);
+      complexParts.push(`${term} ${gc.person.name}` + (descendants.length ? ` وولد ${term}(${descendants.join('-')})` : ''));
+    }
+  });
+  let result = child.person.name;
+  if(complexParts.length) result += ' و' + complexParts.join(' ');
+  if(simpleGrandkids.length){
+    const suffix = child.person.gender==='m' ? 'ه' : 'ها';
+    result += ` وأحفاد${suffix} ` + simpleGrandkids.join(' و');
+  }
+  return result;
+}
+// يبني الجملة الكاملة لأولاد الجد الأعلى (root): البسطاء (بلا نسل) تُجمع بجملة واحدة، ومن له
+// نسل يوصف فرديًا عبر describeComplexChild — كل هذا تحت "وأولاده/وأولادها" واحدة
+function narrateRootChildren(root){
+  const simple = [];
+  const complex = [];
+  root.children.forEach(child=>{
+    if(!child.children || child.children.length===0){
+      simple.push(child.person.name);
+    } else {
+      complex.push(describeComplexChild(child));
+    }
+  });
+  const suffix = root.person.gender==='m' ? 'ه' : 'ها';
+  const combined = [...complex, ...simple];
+  return `وأولاد${suffix} ` + combined.join(' و');
 }
 
 function addTargetFor(personId, relKey){
@@ -2879,16 +2904,9 @@ function renderWasiyya(personId){
       categories[key].forEach(root=>{
         const heading = document.createElement('p');
         heading.className = 'will-root-line';
-        const suffix = root.person.gender==='m' ? 'ه' : 'ها';
         const hasKids = root.children.length>0;
-        heading.textContent = `${root.label} ${root.person.name}` + (hasKids ? ` وأولاد${suffix}` : '');
+        heading.textContent = `${root.label} ${root.person.name}` + (hasKids ? ' ' + narrateRootChildren(root) : '');
         narrative.appendChild(heading);
-        root.children.forEach(child=>{
-          const line = document.createElement('p');
-          line.className = 'will-child-line';
-          line.textContent = describeSubtree(child);
-          narrative.appendChild(line);
-        });
       });
     });
     doc.appendChild(narrative);
