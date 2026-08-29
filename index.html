@@ -326,29 +326,34 @@
   .branch-box.active .branch-box-label{color:#fff;}
   .branch-box.active .branch-box-sub{color:rgba(255,255,255,.8);}
 
-  /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح */
+  /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح، أكورديون
+     حقيقي (أخ واحد مفتوح بكل مستوى)، وشبكة مضغوطة توفّر المساحة بدل التكديس عموديًا */
   .tree-toolbar{padding:14px 16px 0;}
   .tree-back-old{
     display:inline-block;font-size:12px;color:var(--green-deep);text-decoration:underline;
     cursor:pointer;
   }
   .tree-wrap{padding:14px 16px 24px;}
-  .tree-node{margin-bottom:8px;}
-  .tree-children{margin-inline-start:22px;border-inline-start:2px dashed var(--gold-rich);
-    padding-inline-start:14px;margin-top:8px;}
+  .tree-box-wrap{margin-bottom:8px;}
+  .tree-children{
+    display:flex;flex-wrap:wrap;gap:8px;margin-inline-start:18px;
+    border-inline-start:2px dashed var(--gold-rich);padding-inline-start:12px;
+    padding-top:2px;padding-bottom:4px;margin-bottom:6px;
+  }
+  .tree-children > .tree-box-wrap{margin-bottom:0;flex:0 0 auto;}
   .tree-box{
     background:var(--card);border:2px solid var(--gold-rich);border-radius:12px;
-    padding:10px 14px;font-weight:600;font-size:14px;color:var(--green-deep);
-    cursor:pointer;display:inline-block;min-width:120px;text-align:center;
+    padding:8px 12px;font-weight:600;font-size:13px;color:var(--green-deep);
+    cursor:pointer;display:inline-block;min-width:88px;text-align:center;
   }
   .tree-box:active{opacity:.8;}
   .tree-box.tree-root{
     display:block;background:var(--green-deep);color:#fff;border-color:var(--green-deep);
-    font-size:15px;font-weight:700;
+    font-size:15px;font-weight:700;padding:10px 14px;
   }
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-box.tree-root.open{background:var(--green-deep);}
-  .tree-empty{font-size:12px;color:var(--muted);margin-top:6px;margin-inline-start:22px;}
+  .tree-empty{font-size:12px;color:var(--muted);margin:4px 0 6px 18px;}
   .verse-text{
     font-family:'Amiri','Markazi Text',serif;font-size:19px;line-height:2.2;
     color:var(--green-deep);font-weight:700;
@@ -2387,40 +2392,45 @@ function wireBranchBoxes(){
 // شجرة تصفح تفاعلية لفرع واحد: مربع أخضر بأعلى فيه اسم الجد كاملًا، الضغط عليه يفتح/يطوي
 // أبناءه المباشرين كمربعات تحته، وكل مربع ابن يفتح/يطوي أبناءه هو بنفس الطريقة — تنازليًا بلا حد
 function renderBranchTree(rootId){
-  const expanded = new Set(state.expanded || []);
+  // مسار الفتح: عنصر واحد بكل مستوى بحيث فتح أخ يطوي أخوه تلقائيًا (أكورديون حقيقي) — بدل
+  // مجموعة مفتوحة بلا حدود
+  const path = state.expanded || [];
   const root = P[rootId];
   const backLink = `<div class="tree-toolbar">
     <span class="tree-back-old" data-back-old="${rootId}">🔙 الرجوع للتصميم السابق (بحث داخل الفرع)</span>
   </div>`;
-  function renderNode(id, isRoot){
+  function renderLevel(id, depth, isRoot){
     const p = P[id];
     if(!p) return '';
-    const isOpen = expanded.has(id);
+    const isOpen = path[depth]===id;
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
     const label = isRoot ? p.chain : p.name;
-    let html = `<div class="tree-node">
-      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}">${label}</div>`;
+    let html = `<div class="tree-box-wrap">
+      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}" data-depth="${depth}">${label}</div>
+    </div>`;
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
       if(kids.length>0){
-        html += `<div class="tree-children">` + kids.map(cid=>renderNode(cid,false)).join('') + `</div>`;
+        html += `<div class="tree-children">` + kids.map(cid=>renderLevel(cid, depth+1, false)).join('') + `</div>`;
       } else {
         html += `<div class="tree-empty">لا يوجد أبناء مسجّلون بعد</div>`;
       }
     }
-    html += `</div>`;
     return html;
   }
-  main.innerHTML = backLink + `<div class="tree-wrap">` + renderNode(rootId, true) + `</div>`;
+  main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>`;
   main.querySelector('.tree-back-old').onclick = ()=>{
     goTo({view:'home', searchMode:'branch', branchId: main.querySelector('.tree-back-old').dataset.backOld});
   };
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
-      const exp = new Set(state.expanded || []);
-      if(exp.has(id)) exp.delete(id); else exp.add(id);
-      state.expanded = Array.from(exp);
+      const depth = parseInt(el.dataset.depth, 10);
+      let p = (state.expanded || []).slice(0, depth); // اقطع أي فرع مفتوح بنفس هذا المستوى أو أعمق
+      if((state.expanded||[])[depth] !== id){
+        p.push(id); // فتح هذا (يستبدل أي أخ كان مفتوحًا بهذا المستوى)
+      } // وإلا خليه مقطوع = طي
+      state.expanded = p;
       render();
     };
   });
