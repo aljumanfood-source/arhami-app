@@ -2323,6 +2323,24 @@ function mergeAllDuplicates(){
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
 let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'general'};
+
+// وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
+// يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
+const ADMIN_PIN = '260826';
+let isAdmin = false;
+try{ isAdmin = localStorage.getItem('arhami_admin')==='1'; }catch(e){}
+function requireAdmin(action){
+  if(isAdmin){ action(); return; }
+  const entered = prompt('هذا الإجراء يتطلب صلاحية المدير. أدخل الرقم السري:');
+  if(entered===null) return; // إلغاء
+  if(entered===ADMIN_PIN){
+    isAdmin = true;
+    try{ localStorage.setItem('arhami_admin','1'); }catch(e){}
+    action();
+  } else {
+    showToast('❌ الرقم السري غير صحيح');
+  }
+}
 const BRANCH_ROOTS = [
   {id:'khalfan_salim', label:'خلفان بن سليم'},
   {id:'muhammad_salim', label:'محمد بن سليم'},
@@ -2571,8 +2589,8 @@ function renderProfile(id){
     grid.appendChild(btn);
   });
   document.getElementById('backBtn').onclick = goBack;
-  document.getElementById('editSelfBtn').onclick = ()=>openEditPanel(id);
-  document.getElementById('deleteSelfBtn').onclick = (e)=>armDelete(e.target, id);
+  document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
+  document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
   if(p.isDeceased){
     document.getElementById('wasiyyaBtn').onclick = ()=>{ goTo({view:'wasiyya', personId:id}); };
   }
@@ -2784,7 +2802,7 @@ function renderRelation(personId, relKey){
       tile.addEventListener('click', ()=>{ goTo({view:'profile', personId:person.id}); });
       tile.querySelector('.tile-edit-btn').addEventListener('click', (e)=>{
         e.stopPropagation();
-        openEditPanel(person.id);
+        requireAdmin(()=>openEditPanel(person.id));
       });
       grid.appendChild(tile);
     });
@@ -2792,7 +2810,7 @@ function renderRelation(personId, relKey){
       const addTile = document.createElement('div');
       addTile.className='icon-tile add-tile';
       addTile.innerHTML = `<div class="icon-avatar">+</div><div class="icon-tile-name">إضافة</div>`;
-      addTile.onclick = ()=>openAddForm(target.parentId, target.gender, target.motherId||null);
+      addTile.onclick = ()=>requireAdmin(()=>openAddForm(target.parentId, target.gender, target.motherId||null));
       grid.appendChild(addTile);
     }
     main.appendChild(grid);
