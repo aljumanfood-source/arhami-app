@@ -1693,13 +1693,14 @@ add('bushra3_muhammad_nasra2','بشري','f','muhammad_saud2_nasra2','nasra2_ham
 add('noor_muhammad_nasra2','نور','f','muhammad_saud2_nasra2','nasra2_hamd_zwaina',10,'نور بنت محمد بن سعود محمد الطوقية');
 add('ahmad2_muhammad_nasra2','احمد','m','muhammad_saud2_nasra2','nasra2_hamd_zwaina',10,'احمد بن محمد بن سعود محمد الطوقي');
 
-// فاطمة بنت حمد وزوجها حمد بن سالم الظاهري وأولادهما الثلاثة
-add('hamd_salim_alzahiri_fatima3','حمد بن سالم الظاهري','m',null,null,9,'حمد بن سالم الظاهري');
-P.fatima3_hamd_zwaina.spouseId = 'hamd_salim_alzahiri_fatima3';
-P.fatima3_hamd_zwaina.spouseName = P.hamd_salim_alzahiri_fatima3.chain;
-add('ibrahim2_hamd_fatima3','إبراهيم','m','hamd_salim_alzahiri_fatima3','fatima3_hamd_zwaina',10,'إبراهيم بن حمد بن سالم الظاهري');
-add('ishaq_hamd_fatima3','إسحاق','m','hamd_salim_alzahiri_fatima3','fatima3_hamd_zwaina',10,'إسحاق بن حمد بن سالم الظاهري');
-add('arwa_hamd_fatima3','أروى','f','hamd_salim_alzahiri_fatima3','fatima3_hamd_zwaina',10,'أروى بنت حمد بن سالم الظاهرية');
+// فاطمة بنت حمد وزوجها حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس
+// الظاهري (id حي spouse_fatima3_hamd_zwaina، أضيف مسبقًا عبر التطبيق) وأولادهما الخمسة —
+// الاسم المختصر "حمد بن سالم الظاهري" كان تكرارًا لنفس هذا الرجل، فحُذف من هنا
+P.fatima3_hamd_zwaina.spouseId = 'spouse_fatima3_hamd_zwaina';
+P.fatima3_hamd_zwaina.spouseName = 'حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري';
+add('ibrahim2_hamd_fatima3','إبراهيم','m','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'إبراهيم بن حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري');
+add('ishaq_hamd_fatima3','إسحاق','m','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'إسحاق بن حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري');
+add('arwa_hamd_fatima3','أروى','f','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'أروى بنت حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهرية');
 
 // حسنى بنت حمد وزوجها وارث بن سليمان البوسعيدي وأولادهما الأربعة
 add('warith_sulaiman_husna2','وارث بن سليمان البوسعيدي','m',null,null,9,'وارث بن سليمان البوسعيدي');
