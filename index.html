@@ -2589,10 +2589,11 @@ function renderHome(){
       }).join('') +
     `</div>`;
   if(!q){
-    main.innerHTML = `<div class="verse-block">
+    const verseHtml = state.boxesHidden ? '' : `<div class="verse-block">
       <p class="verse-text">وَأُولُو الْأَرْحَامِ بَعْضُهُمْ أَوْلَىٰ بِبَعْضٍ فِي كِتَابِ اللَّهِ مِنَ الْمُؤْمِنِينَ وَالْمُهَاجِرِينَ إِلَّا أَن تَفْعَلُوا إِلَىٰ أَوْلِيَائِكُم مَّعْرُوفًا ۚ كَانَ ذَٰلِكَ فِي الْكِتَابِ مَسْطُورًا</p>
       <p class="verse-ref">سورة الأحزاب: ٦</p>
-    </div>` + branchBoxesHtml;
+    </div>`;
+    main.innerHTML = verseHtml + branchBoxesHtml;
     wireBranchBoxes();
     return;
   }
