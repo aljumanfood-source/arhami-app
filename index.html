@@ -1295,7 +1295,41 @@ add('saeed_khalfan_grandfather','سعيد','m','khalfan_muhammad_h',null,5,'سع
 add('humaid_saeed_h','حميد','m','saeed_hussain',null,3,'حميد بن سعيد بن حسين العيسري');
 add('hamood_humaid_h','حمود','m','humaid_saeed_h',null,4,'حمود بن حميد بن سعيد بن حسين العيسري');
 add('hamd_hamood_h','حمد','m','hamood_humaid_h',null,5,'حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
-add('fatima_grandmother','فاطمة','f','hamd_hamood_h',null,6,'فاطمة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+// شمسة بنت محمد بن سالم العيسرية — زوجة حمد بن حمود الأولى (طلقها لاحقًا)، أم فاطمة
+add('shamsa2_muhammad_salim','شمسة','f','muhammad2_salim_h',null,5,'شمسة بنت محمد بن سالم العيسرية');
+add('fatima_grandmother','فاطمة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'فاطمة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+add('ziyana13_hamd_shamsa2','زيانة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'زيانة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+add('saif12_hamd_shamsa2','سيف','m','hamd_hamood_h','shamsa2_muhammad_salim',6,'سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+add('zwaina12_hamd_shamsa2','زوينة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'زوينة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+// محمد بن سالم العيسري (والد شمسة) وباقي أولاده: سالم وناصر وشنونة (إخوة شمسة)
+add('muhammad2_salim_h','محمد بن سالم العيسري','m',null,null,4,'محمد بن سالم العيسري');
+add('salim2_muhammad_h','سالم','m','muhammad2_salim_h',null,5,'سالم بن محمد بن سالم العيسري');
+add('nasir2_muhammad_h','ناصر','m','muhammad2_salim_h',null,5,'ناصر بن محمد بن سالم العيسري');
+add('shanoona2_muhammad_h','شنونة','f','muhammad2_salim_h',null,5,'شنونة بنت محمد بن سالم العيسرية');
+
+// عبدالله بن حمود بن حميد بن سعيد بن حسين العيسري — أخو حمد
+add('abdullah21_hamood_h','عبدالله','m','hamood_humaid_h',null,5,'عبدالله بن حمود بن حميد بن سعيد بن حسين العيسري');
+// عزيزة بنت عبدالله — زوجة حمد بن حمود الثانية (وهي بنت أخيه عبدالله)
+add('aziza2_abdullah21','عزيزة','f','abdullah21_hamood_h',null,6,'عزيزة بنت عبدالله بن حمود بن حميد بن سعيد بن حسين العيسرية');
+queueSpouseLink('hamd_hamood_h', 'aziza2_abdullah21');
+add('hamdoon3_hamd_aziza2','حمدون','m','hamd_hamood_h','aziza2_abdullah21',6,'حمدون بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+add('nima7_hamd_aziza2','نعمة','f','hamd_hamood_h','aziza2_abdullah21',6,'نعمة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+// خديجة وميا: أخوات عزيزة (بنات عبدالله)
+add('khadija4_abdullah21','خديجة','f','abdullah21_hamood_h',null,6,'خديجة بنت عبدالله بن حمود بن حميد بن سعيد بن حسين العيسرية');
+add('maya_abdullah21','ميا','f','abdullah21_hamood_h',null,6,'ميا بنت عبدالله بن حمود بن حميد بن سعيد بن حسين العيسرية');
+// ميا تزوجت سيف بن حمد (ابن عمها) وأولادهما
+P.maya_abdullah21.spouseId = 'saif12_hamd_shamsa2';
+P.maya_abdullah21.spouseName = P.saif12_hamd_shamsa2.chain;
+P.saif12_hamd_shamsa2.spouseId = 'maya_abdullah21';
+P.saif12_hamd_shamsa2.spouseName = P.maya_abdullah21.chain;
+add('ahmad14_saif12_maya','أحمد','m','saif12_hamd_shamsa2','maya_abdullah21',7,'أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+add('khalfan5_saif12_maya','خلفان','m','saif12_hamd_shamsa2','maya_abdullah21',7,'خلفان بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+add('nasra8_saif12_maya','نصرى','f','saif12_hamd_shamsa2','maya_abdullah21',7,'نصرى بنت سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+P.nasra8_saif12_maya.isDeceased = true;
+// أحمد بن سيف تزوج خديجة بنت محمد بن سالم بن سعيد محمد بن سعيد بن حسين العيسري (شخص مختلف عن خديجة بنت عبدالله أعلاه)
+add('khadija5_muhammad_ahmad14','خديجة بنت محمد بن سالم بن سعيد محمد بن سعيد بن حسين العيسري','f',null,null,7,'خديجة بنت محمد بن سالم بن سعيد محمد بن سعيد بن حسين العيسري');
+P.ahmad14_saif12_maya.spouseId = 'khadija5_muhammad_ahmad14';
+P.ahmad14_saif12_maya.spouseName = P.khadija5_muhammad_ahmad14.chain;
 
 // mother's father married two wives: فاطمة (grandmother) + نصرا بنت حميد بن عبدالله
 add('ziyanah_mother','زيانة','f','saeed_khalfan_grandfather','fatima_grandmother',6,'زيانة بنت سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
