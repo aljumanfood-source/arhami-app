@@ -2420,7 +2420,7 @@ let state = {view:'home', personId:null, pendingApprove:null, branchId:null, sea
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
-const ADMIN_PIN = '260826';
+const ADMIN_PIN = '273427';
 let isAdmin = false;
 try{ isAdmin = localStorage.getItem('arhami_admin')==='1'; }catch(e){}
 function requireAdmin(action){
@@ -2568,7 +2568,7 @@ function renderBranchTree(rootId){
     };
   });
   main.querySelectorAll('.tree-will-shortcut').forEach(el=>{
-    el.onclick = ()=>{ goTo({view:'wasiyya', personId: el.dataset.willId}); };
+    el.onclick = ()=>requireAdmin(()=>{ goTo({view:'wasiyya', personId: el.dataset.willId}); });
   });
 }
 
@@ -2647,7 +2647,7 @@ function renderHome(){
     b.onclick = ()=>{ goTo({view:'profile', personId:b.dataset.id}); };
   });
   main.querySelectorAll('.btn-wasiyya').forEach(b=>{
-    b.onclick = ()=>{ goTo({view:'wasiyya', personId:b.dataset.id}); };
+    b.onclick = ()=>requireAdmin(()=>{ goTo({view:'wasiyya', personId:b.dataset.id}); });
   });
 }
 
@@ -2701,7 +2701,7 @@ function renderProfile(id){
   document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
   document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
   if(p.isDeceased){
-    document.getElementById('wasiyyaBtn').onclick = ()=>{ goTo({view:'wasiyya', personId:id}); };
+    document.getElementById('wasiyyaBtn').onclick = ()=>requireAdmin(()=>{ goTo({view:'wasiyya', personId:id}); });
   }
 }
 
