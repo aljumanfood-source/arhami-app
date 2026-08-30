@@ -96,6 +96,9 @@
     box-shadow: 0 1px 0 rgba(43,33,24,0.03);
   }
   .result-card .rname{font-family:'Markazi Text',serif;font-size:20px;font-weight:700;color:var(--green-deep);line-height:1.5;}
+  .result-card.deceased{background:var(--green);border-color:var(--green-deep);}
+  .result-card.deceased .rname{color:#fff;}
+  .result-card.deceased .rlayer{color:rgba(255,255,255,.85);}
   .result-card .rlayer{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;}
   .badge{
     display:inline-flex;align-items:center;justify-content:center;
@@ -362,8 +365,16 @@
     font-weight:500;color:rgba(255,255,255,.85);
   }
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
+  .tree-box.deceased:not(.open){background:var(--green);border-color:var(--green-deep);color:#fff;}
+  .tree-box.tree-root.deceased{background:var(--green-deep);border-color:var(--green-deep);}
   .tree-box.tree-root.open{background:var(--green-deep);}
   .tree-empty{font-size:12px;color:var(--muted);margin:4px 0 6px 18px;}
+  .tree-will-shortcut{
+    display:block;width:fit-content;margin:6px 0 8px auto;font-size:12px;font-weight:600;
+    color:var(--green-deep);background:var(--card);border:1.5px solid var(--gold-rich);
+    border-radius:8px;padding:5px 12px;cursor:pointer;
+  }
+  .tree-will-shortcut:active{opacity:.8;}
   .verse-text{
     font-family:'Amiri','Markazi Text',serif;font-size:19px;line-height:2.2;
     color:var(--green-deep);font-weight:700;
@@ -2404,7 +2415,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'general', boxesHidden:false};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false};
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
@@ -2517,10 +2528,13 @@ function renderBranchTree(rootId){
     const label = isRoot ? p.chain : p.name;
     const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
     let html = `<div class="tree-box-wrap">
-      <div class="${boxClass} ${isOpen?'open':''}" data-node="${id}" data-depth="${depth}">${hint}${label}</div>
+      <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''}" data-node="${id}" data-depth="${depth}">${hint}${label}</div>
     </div>`;
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
+      if(!p.isDeceased){
+        html += `<div class="tree-will-shortcut" data-will-id="${id}">📜 الوصية</div>`;
+      }
       if(kids.length>0){
         html += `<div class="tree-children">` + renderSiblingGroup(kids, depth+1) + `</div>`;
       } else {
@@ -2552,6 +2566,9 @@ function renderBranchTree(rootId){
       render();
     };
   });
+  main.querySelectorAll('.tree-will-shortcut').forEach(el=>{
+    el.onclick = ()=>{ goTo({view:'wasiyya', personId: el.dataset.willId}); };
+  });
 }
 
 function renderChain(person){
@@ -2574,8 +2591,7 @@ function renderHome(){
   const q = searchInput.value.trim();
   const boxDefs = [
     ...BRANCH_ROOTS.map(b=>({mode:'branch', branch:b.id, label:b.label, sub:'بحث في نفس الفرع'})),
-    {mode:'general', branch:'', label:'بحث عام في الفروع', sub:'لمن لا يعرف هو من أي فرع'},
-    {mode:'full', branch:'', label:'بحث شامل', sub:'يشمل أزواج البنات ومن هم من غير العائلة'}
+    {mode:'full', branch:'', label:'بحث شامل', sub:'يبحث في أي اسم مسجّل بالتطبيق (الطبقة ٨ فما فوق)'}
   ];
   const branchBoxesHtml = state.boxesHidden
     ? `<div class="boxes-back">🔙 رجوع لخيارات البحث</div>`
@@ -2603,14 +2619,11 @@ function renderHome(){
     // deliberately still checks every layer (including ancestors) so duplicates keep getting
     // linked instead of recreated, regardless of what shows up here
     if(p.layer<8) return false;
-    // "بحث شامل" (searchMode==='full') is the only mode that includes in-laws/outsiders —
-    // both "بحث عام في الفروع" (all three branches) and a specific branch box stay limited to
-    // actual blood descendants
+    // بحث شامل (الافتراضي الآن) يفتش كل شخص من الطبقة ٨ فما فوق بلا قيد؛ اختيار فرع محدد
+    // يحصر النتائج في ذرية ذلك الفرع فقط
     if(state.searchMode==='branch'){
       if(!belongsToBranch(p.id, state.branchId)) return false;
-    } else if(state.searchMode==='general'){
-      if(!isBloodDescendant(p.id)) return false;
-    } // else 'full': no blood-line restriction at all
+    }
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
@@ -2621,7 +2634,7 @@ function renderHome(){
     return;
   }
   main.innerHTML = branchBoxesHtml + results.map(p=>`
-    <div class="result-card">
+    <div class="result-card ${p.isDeceased?'deceased':''}">
       <div class="rname">${shortChain(p)}</div>
       <div class="rlayer"><span class="badge">الطبقة ${p.layer}</span></div>
       <button class="btn-approve" data-id="${p.id}">موافق</button>
