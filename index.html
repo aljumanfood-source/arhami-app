@@ -512,7 +512,7 @@ add('humaid_abdullah','حميد','m','abdullah_rashid','shanoona_salim_azeez',7,
 
 // حميد's three wives
 add('fatima_abdullah_hamad','فاطمة','f',null,null,7,'فاطمة بنت عبدالله بن حمد الطوقية');
-add('riya_muhammad_w2','ريا','f',null,null,7,'ريا بنت محمد الطوقية');
+add('riya_muhammad_w2','ريا','f','muhammad_sulaiman',null,7,'ريا بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('zwaina_numaniyah','زوينة','f',null,null,7,'زوينة النعمانية');
 
 // wife 1 children (with فاطمة)
@@ -1347,7 +1347,7 @@ add('ramadan_saeed_nasra9','رمضان','m','saeed_rashid_shanin','nasra9_saeed_
 
 // أصيلة بنت سليمان بن محمد الطوقي — أخت زيانة بنت سليمان (أم سعيد بن خلفان العيسري)؛ تزوجها
 // رمضان بن سعيد ثم طلقها
-add('aseela8_sulaiman8','أصيلة','f','sulaiman8_muhammad_khawla','khawla_bint_abdullah',8,'أصيلة بنت سليمان بن محمد بن سليمان بن سليم بن راشد');
+add('aseela8_sulaiman8','أصيلة','f','sulaiman_m2','khawla_bint_abdullah',8,'أصيلة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 queueSpouseLink('ramadan_saeed_nasra9', 'aseela8_sulaiman8');
 add('saeed18_ramadan_aseela8','سعيد','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سعيد بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('salim8_ramadan_aseela8','سالم','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سالم بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -1415,7 +1415,7 @@ add('fatima13_abdullah_rahma9','فاطمة','f','abdullah19_saeed_rahma9','rahma
 // فاطمة تزوجت محمد بن سليمان (muhammad_sulaiman، موجود أصلًا) — أولادهما رويدة وبشرى، وسليمان
 // (=sulaiman_m2 الموجود أصلًا بزوجته ساجدة وولديه محمد وجُمان) نصحح أمه فقط
 queueSpouseLink('fatima13_abdullah_rahma9', 'muhammad_sulaiman');
-add('ruwaida_muhammad_fatima13','رويدة','f','muhammad_sulaiman','fatima13_abdullah_rahma9',7,'رويدة بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('ruwaida_muhammad_fatima13','رويدة','f','muhammad15_sulaiman_sajida',null,10,'رويدة بنت محمد بن سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('bushra5_muhammad_fatima13','بشرى','f','muhammad_sulaiman','fatima13_abdullah_rahma9',7,'بشرى بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('hamood12_nasir_bushra5','حمود بن ناصر بن حمود الرواحي','m',null,null,7,'حمود بن ناصر بن حمود الرواحي');
 P.bushra5_muhammad_fatima13.spouseId = 'hamood12_nasir_bushra5';
@@ -1502,12 +1502,9 @@ add('khawla_bint_abdullah','خولة','f','abdullah_rashid','shanoona_salim_azee
 // خولة بنت عبدالله's husband سليمان بن محمد بن سليمان بن سليم بن راشد، وابنتهما زيانة، اللي
 // تزوجت خلفان بن محمد بن سعيد وأنجبت سعيد وخولة ورحمة — ورحمة كان لها زوج سابق سعود بن محمد بن
 // سالم الطوقي وابنهما محمد بن سعود هو نفسه زوج نصرى بنت حمد بن حميد الموجود أصلًا (نربطه بأبويه الآن)
-add('sulaiman8_muhammad_khawla','سليمان بن محمد بن سليمان بن سليم بن راشد','m',null,null,7,'سليمان بن محمد بن سليمان بن سليم بن راشد');
-P.khawla_bint_abdullah.spouseId = 'sulaiman8_muhammad_khawla';
-P.khawla_bint_abdullah.spouseName = P.sulaiman8_muhammad_khawla.chain;
-P.sulaiman8_muhammad_khawla.spouseId = 'khawla_bint_abdullah';
-P.sulaiman8_muhammad_khawla.spouseName = P.khawla_bint_abdullah.chain;
-add('ziyana6_sulaiman8','زيانة','f','sulaiman8_muhammad_khawla','khawla_bint_abdullah',8,'زيانة بنت سليمان بن محمد بن سليمان بن سليم بن راشد');
+// سليمان بن محمد بن سليمان (sulaiman_m2) له زوجة ثانية خولة بنت عبدالله (إضافة لساجدة)
+queueSpouseLink('sulaiman_m2', 'khawla_bint_abdullah');
+add('ziyana6_sulaiman8','زيانة','f','sulaiman_m2','khawla_bint_abdullah',8,'زيانة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('khalfan2_muhammad_ziyana6','خلفان بن محمد بن سعيد بن حسين العيسري','m',null,null,8,'خلفان بن محمد بن سعيد بن حسين العيسري');
 P.ziyana6_sulaiman8.spouseId = 'khalfan2_muhammad_ziyana6';
 P.ziyana6_sulaiman8.spouseName = P.khalfan2_muhammad_ziyana6.chain;
