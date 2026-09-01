@@ -1245,7 +1245,7 @@ add('humaid13_saif_u3','حميد','m','saif_u3','zeena3_saif_u3',9,'حميد ب�
 add('saif5_humaid13','سيف','m','humaid13_saif_u3',null,10,'سيف بن حميد بن سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('shadin2_humaid13','شادن','f','humaid13_saif_u3',null,10,'شادن بنت حميد بن سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('sajida_saif_u3','ساجدة','f','saif_u3','zeena3_saif_u3',9,'ساجدة بنت سيف بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('muhammad15_sulaiman_sajida','محمد','m','sulaiman_m2',null,8,'محمد بن سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('muhammad15_sulaiman_sajida','محمد','m','sulaiman_m2','sharifa6_khayla_naumani',8,'محمد بن سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 // محمد (ابن سليمان الأول) تزوج فاطمة الصقرية أيضًا (بجانب زوجته الأخرى) — أولادهما رويدة وبشرى
 // وسليمان الثاني
 queueSpouseLink('muhammad15_sulaiman_sajida', 'fatima13_abdullah_rahma9');
@@ -1352,7 +1352,7 @@ add('ramadan_saeed_nasra9','رمضان','m','saeed_rashid_shanin','nasra9_saeed_
 
 // أصيلة بنت سليمان بن محمد الطوقي — أخت زيانة بنت سليمان (أم سعيد بن خلفان العيسري)؛ تزوجها
 // رمضان بن سعيد ثم طلقها
-add('aseela8_sulaiman8','أصيلة','f','sulaiman_m2','khawla_bint_abdullah',8,'أصيلة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('aseela8_sulaiman8','أصيلة','f','sulaiman_m2','sharifa6_khayla_naumani',8,'أصيلة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 queueSpouseLink('ramadan_saeed_nasra9', 'aseela8_sulaiman8');
 add('saeed18_ramadan_aseela8','سعيد','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سعيد بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('salim8_ramadan_aseela8','سالم','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سالم بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -1701,14 +1701,59 @@ add('fatima_m','فاطمة','f','muhammad_sulaiman','sharifa_rashid',7,'فاطم
 // إخوة سلطان من زوجة أخرى لمحمد بن سليمان
 add('riya_m2','ريا','f','muhammad_sulaiman',null,7,'ريا بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('saeed_m2','سعيد','m','muhammad_sulaiman',null,7,'سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-add('sulaiman_m2','سليمان','m','muhammad_sulaiman',null,7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman_m2','سليمان','m','muhammad_sulaiman','salma_ubaid_khamas',7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salma_ubaid_khamas','سلمى','f',null,null,7,'سلمى بنت عبيد بن خماس بن راشد بن علي بن سالم الطوقية');
+
+// سليمان(1) تزوج شريفة بنت خيلة النعمانية (زوجة ثانية، إضافة لخولة بنت عبدالله) وأولادهما
+add('sharifa6_khayla_naumani','شريفة بنت خيلة النعمانية','f',null,null,7,'شريفة بنت خيلة النعمانية');
+queueSpouseLink('sulaiman_m2', 'sharifa6_khayla_naumani');
+add('fatima14_sulaiman_sharifa6','فاطمة','f','sulaiman_m2','sharifa6_khayla_naumani',8,'فاطمة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('alamri_fatima14','العامري','m',null,null,8,'العامري');
+P.fatima14_sulaiman_sharifa6.spouseId = 'alamri_fatima14';
+P.fatima14_sulaiman_sharifa6.spouseName = P.alamri_fatima14.chain;
+
+add('riya2_sulaiman_sharifa6','ريا','f','sulaiman_m2','sharifa6_khayla_naumani',8,'ريا بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hamd12_hamood_muhammad_riya2','حمد بن حمود بن محمد الطوقي','m',null,null,8,'حمد بن حمود بن محمد الطوقي');
+P.riya2_sulaiman_sharifa6.spouseId = 'hamd12_hamood_muhammad_riya2';
+P.riya2_sulaiman_sharifa6.spouseName = P.hamd12_hamood_muhammad_riya2.chain;
+
+add('asma9_sulaiman_sharifa6','أسماء','f','sulaiman_m2','sharifa6_khayla_naumani',8,'أسماء بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('salim9_sultan_asma9','سالم بن سلطان بن محمد الطوقي','m',null,null,8,'سالم بن سلطان بن محمد الطوقي');
+P.asma9_sulaiman_sharifa6.spouseId = 'salim9_sultan_asma9';
+P.asma9_sulaiman_sharifa6.spouseName = P.salim9_sultan_asma9.chain;
+
+// سليمان(1) له زوجة ثالثة غير مسمّاة، وأولادها: سليمة وسلمى وشمسة وخديجة (خديجة موجودة أصلًا)
+add('wife3_sulaiman_m2','زوجة سليمان الثالثة (غير مسمّاة)','f',null,null,7,'زوجة سليمان الثالثة (غير مسمّاة)');
+queueSpouseLink('sulaiman_m2', 'wife3_sulaiman_m2');
+
+add('sulaima_sulaiman_wife3','سليمة','f','sulaiman_m2','wife3_sulaiman_m2',8,'سليمة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('salim10_saeed_sulaima','سالم بن سعيد بن محمد بن سعيد بن حسين العيسري','m',null,null,8,'سالم بن سعيد بن محمد بن سعيد بن حسين العيسري');
+P.sulaima_sulaiman_wife3.spouseId = 'salim10_saeed_sulaima';
+P.sulaima_sulaiman_wife3.spouseName = P.salim10_saeed_sulaima.chain;
+add('muhammad32_salim10_sulaima','محمد','m','salim10_saeed_sulaima','sulaima_sulaiman_wife3',9,'محمد بن سالم بن سعيد بن محمد بن سعيد بن حسين العيسري');
+// طلّقها ثم تزوجها عبدالله البرواني
+add('abdullah22_albarwani_sulaima','عبدالله البرواني','m',null,null,8,'عبدالله البرواني');
+queueSpouseLink('sulaima_sulaiman_wife3', 'abdullah22_albarwani_sulaima');
+add('abdullah23_abdullah22_sulaima','عبدالله','m','abdullah22_albarwani_sulaima','sulaima_sulaiman_wife3',9,'عبدالله بن عبدالله البرواني');
+add('salim11_abdullah22_sulaima','سالم','m','abdullah22_albarwani_sulaima','sulaima_sulaiman_wife3',9,'سالم بن عبدالله البرواني');
+add('nasir20_abdullah22_sulaima','ناصر','m','abdullah22_albarwani_sulaima','sulaima_sulaiman_wife3',9,'ناصر بن عبدالله البرواني');
+
+add('salma2_sulaiman_wife3','سلمى','f','sulaiman_m2','wife3_sulaiman_m2',8,'سلمى بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+
+add('shamsa7_sulaiman_wife3','شمسة','f','sulaiman_m2','wife3_sulaiman_m2',8,'شمسة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad33_khatroush_shamsa7','محمد بن ختروش النعماني','m',null,null,8,'محمد بن ختروش النعماني');
+P.shamsa7_sulaiman_wife3.spouseId = 'muhammad33_khatroush_shamsa7';
+P.shamsa7_sulaiman_wife3.spouseName = P.muhammad33_khatroush_shamsa7.chain;
+add('khalfan6_muhammad33_shamsa7','خلفان','m','muhammad33_khatroush_shamsa7','shamsa7_sulaiman_wife3',9,'خلفان بن محمد بن ختروش النعماني');
+
+add('khadija_sulaiman_m2','خديجة','f','sulaiman_m2','wife3_sulaiman_m2',8,'خديجة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('hamood_m2','حمود','m','muhammad_sulaiman',null,7,'حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
 add('aamir_riya','عامر','m','sultan_m',null,8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_sultan_brother','راشد','m','sultan_m',null,8,'راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي'); // أخو عامر بن سلطان، زوج عزا بنت حميد
 
-// خديجة: سليمان بن محمد بن سليمان's daughter, راشد بن سلطان's SECOND wife (besides عزا بنت حميد)
-add('khadija_sulaiman_m2','خديجة','f','sulaiman_m2',null,8,'خديجة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+// خديجة: سليمان بن محمد بن سليمان's daughter (من زوجته الثالثة غير المسمّاة، مضافة أعلاه)،
+// راشد بن سلطان's SECOND wife (besides عزا بنت حميد)
 P.khadija_sulaiman_m2.spouseId = 'rashid_sultan_brother';
 P.khadija_sulaiman_m2.spouseName = P.rashid_sultan_brother.chain;
 if(!P.rashid_sultan_brother.spouseId){ P.rashid_sultan_brother.spouseId = 'azza'; P.rashid_sultan_brother.spouseName = P.azza.chain; }
