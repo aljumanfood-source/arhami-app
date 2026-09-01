@@ -1338,6 +1338,39 @@ add('ziyanah_mother','زيانة','f','saeed_khalfan_grandfather','fatima_grandm
 /* ---- User's father's wives ---- */
 add('nemah_mother','نعمة','f','saeed_rashid_shanin','shamsa_bint_abdullah',8,'نعمة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 add('saeed_rashid_shanin','سعيد','m','rashid_shanin','sharifa_rashid',7,'سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+// سعيد بن راشد بن شنين تزوج أيضًا نصرى البحرية (زوجة ثانية، إضافة لشمسة بنت عبدالله) وأولادهما
+add('nasra9_saeed_shanin','نصرى البحرية','f',null,null,7,'نصرى البحرية');
+queueSpouseLink('saeed_rashid_shanin', 'nasra9_saeed_shanin');
+add('izza9_saeed_nasra9','عزة','f','saeed_rashid_shanin','nasra9_saeed_shanin',8,'عزة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zwaina13_saeed_nasra9','زوينة','f','saeed_rashid_shanin','nasra9_saeed_shanin',8,'زوينة بنت سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('ramadan_saeed_nasra9','رمضان','m','saeed_rashid_shanin','nasra9_saeed_shanin',8,'رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+
+// أصيلة بنت سليمان بن محمد الطوقي — أخت زيانة بنت سليمان (أم سعيد بن خلفان العيسري)؛ تزوجها
+// رمضان بن سعيد ثم طلقها
+add('aseela8_sulaiman8','أصيلة','f','sulaiman8_muhammad_khawla','khawla_bint_abdullah',8,'أصيلة بنت سليمان بن محمد بن سليمان بن سليم بن راشد');
+queueSpouseLink('ramadan_saeed_nasra9', 'aseela8_sulaiman8');
+add('saeed18_ramadan_aseela8','سعيد','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سعيد بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salim8_ramadan_aseela8','سالم','m','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'سالم بن رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+add('nasra10_ramadan_aseela8','نصرى','f','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'نصرى بنت رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('sharifa4_ramadan_aseela8','شريفة','f','ramadan_saeed_nasra9','aseela8_sulaiman8',9,'شريفة بنت رمضان بن سعيد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// نصرى بنت رمضان تزوجت مسعود اللمكي وأولادهما
+add('masaad3_allamki_nasra10','مسعود اللمكي','m',null,null,9,'مسعود اللمكي');
+P.nasra10_ramadan_aseela8.spouseId = 'masaad3_allamki_nasra10';
+P.nasra10_ramadan_aseela8.spouseName = P.masaad3_allamki_nasra10.chain;
+add('shaith_masaad3','شيث','f','masaad3_allamki_nasra10','nasra10_ramadan_aseela8',10,'شيث بنت مسعود اللمكية');
+add('sam_masaad3','سام','m','masaad3_allamki_nasra10','nasra10_ramadan_aseela8',10,'سام بن مسعود اللمكي');
+add('sharifa5_masaad3','شريفة','f','masaad3_allamki_nasra10','nasra10_ramadan_aseela8',10,'شريفة بنت مسعود اللمكية');
+add('sharmeen_masaad3','شرمين','f','masaad3_allamki_nasra10','nasra10_ramadan_aseela8',10,'شرمين بنت مسعود اللمكية');
+
+// شريفة بنت رمضان تزوجت محمد الرقيشي (متوفى) وأولادهما
+add('muhammad31_alraqishi_sharifa4','محمد الرقيشي','m',null,null,9,'محمد الرقيشي');
+P.muhammad31_alraqishi_sharifa4.isDeceased = true;
+P.sharifa4_ramadan_aseela8.spouseId = 'muhammad31_alraqishi_sharifa4';
+P.sharifa4_ramadan_aseela8.spouseName = P.muhammad31_alraqishi_sharifa4.chain;
+add('waheeb_muhammad31','وهيب','m','muhammad31_alraqishi_sharifa4','sharifa4_ramadan_aseela8',10,'وهيب بن محمد الرقيشي');
+add('zareefa_muhammad31','ظريفة','f','muhammad31_alraqishi_sharifa4','sharifa4_ramadan_aseela8',10,'ظريفة بنت محمد الرقيشية');
+add('rawan3_muhammad31','روان','f','muhammad31_alraqishi_sharifa4','sharifa4_ramadan_aseela8',10,'روان بنت محمد الرقيشية');
 add('shamsa_bint_abdullah','شمسة','f','abdullah_rashid','shanoona_salim_azeez',7,'شمسة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // شمسة+سعيد بن راشد بن شنين's remaining 2 daughters (نعمة/زيانة/شنونة already established): شريفة ورحمة
