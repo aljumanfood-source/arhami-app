@@ -2726,7 +2726,7 @@ function renderHome(){
       <div class="rname">${shortChain(p)}</div>
       <div class="rlayer"><span class="badge">الطبقة ${p.layer}</span></div>
       <button class="btn-approve" data-id="${p.id}">موافق</button>
-      <button class="btn-wasiyya" data-id="${p.id}">📜 الوصية</button>
+      ${p.isDeceased ? '' : `<button class="btn-wasiyya" data-id="${p.id}">📜 الوصية</button>`}
     </div>
   `).join('');
   wireBranchBoxes();
@@ -2771,7 +2771,7 @@ function renderProfile(id){
     </div>
     <div id="familySummary"></div>
     <div class="rel-grid" id="relGrid"></div>
-    ${p.isDeceased ? `<button class="btn-approve" id="wasiyyaBtn" style="margin-top:16px;">📜 الوصية</button>` : ''}
+    ${p.isDeceased ? '' : `<button class="btn-approve" id="wasiyyaBtn" style="margin-top:16px;">📜 الوصية</button>`}
     <p class="section-note">اضغط على أي بطاقة لعرض القائمة، ويمكن إضافة اسم جديد بعلامة (+) إن لم يكن مسجلًا بعد.</p>
   `;
   renderFamilySummary(id);
@@ -2787,7 +2787,7 @@ function renderProfile(id){
   document.getElementById('backBtn').onclick = goBack;
   document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
   document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
-  if(p.isDeceased){
+  if(!p.isDeceased){
     document.getElementById('wasiyyaBtn').onclick = ()=>requireAdmin(()=>{ goTo({view:'wasiyya', personId:id}); });
   }
 }
