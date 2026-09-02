@@ -1721,6 +1721,7 @@ add('zwaina14_ahmad_sulaima2','زوينة','f','ahmad_m','sulaima2_abdullah_rash
 add('fatima16_hussain','فاطمة بنت حسين','f',null,null,7,'فاطمة بنت حسين');
 queueSpouseLink('ahmad_m', 'fatima16_hussain');
 add('mouza_ahmad_fatima16','موزه','f','ahmad_m','fatima16_hussain',8,'موزه بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+P.mouza_ahmad_fatima16.isDeceased = true;
 add('aamir3_ahmad_fatima16','عامر','m','ahmad_m','fatima16_hussain',8,'عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('khalfan7_ahmad_fatima16','خلفان','m','ahmad_m','fatima16_hussain',8,'خلفان بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
@@ -1737,6 +1738,125 @@ add('shamsa8_ahmad_sulaima3','شمسة','f','ahmad_m','sulaima3_saeed_alaisari',
 add('nasir21_ahmad_sulaima3','ناصر','m','ahmad_m','sulaima3_saeed_alaisari',8,'ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saeed20_ahmad_sulaima3','سعيد','m','ahmad_m','sulaima3_saeed_alaisari',8,'سعيد بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('asma10_ahmad_sulaima3','اسماء','f','ahmad_m','sulaima3_saeed_alaisari',8,'اسماء بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+
+// أحفاد أحمد بن محمد بن سليمان عبر أولاده الـ١٤
+// ١. زوينة + علي بن سلطان بن محمد بن سليمان بن محمد بن سليم
+add('ali5_sultan_zwaina14','علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقي','m',null,null,8,'علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقي');
+P.zwaina14_ahmad_sulaima2.spouseId = 'ali5_sultan_zwaina14';
+P.zwaina14_ahmad_sulaima2.spouseName = P.ali5_sultan_zwaina14.chain;
+add('humaid20_ali5_zwaina14','حميد','m','ali5_sultan_zwaina14','zwaina14_ahmad_sulaima2',9,'حميد بن علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('sultan2_ali5_zwaina14','سلطان','m','ali5_sultan_zwaina14','zwaina14_ahmad_sulaima2',9,'سلطان بن علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('maryam3_ali5_zwaina14','مريم','f','ali5_sultan_zwaina14','zwaina14_ahmad_sulaima2',9,'مريم بنت علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('jamila_ali5_zwaina14','جميلة','f','ali5_sultan_zwaina14','zwaina14_ahmad_sulaima2',9,'جميلة بنت علي بن سلطان بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ٢. موزة (متوفاة) + خليفة الغسيني
+add('khalifa2_alghusaini_mouza','خليفة الغسيني','m',null,null,8,'خليفة الغسيني');
+P.mouza_ahmad_fatima16.spouseId = 'khalifa2_alghusaini_mouza';
+P.mouza_ahmad_fatima16.spouseName = P.khalifa2_alghusaini_mouza.chain;
+add('ahmad16_khalifa2_mouza','احمد','m','khalifa2_alghusaini_mouza','mouza_ahmad_fatima16',9,'احمد بن خليفة الغسيني');
+add('ahlam_khalifa2_mouza','احلام','f','khalifa2_alghusaini_mouza','mouza_ahmad_fatima16',9,'احلام بنت خليفة الغسينية');
+
+// ٣. عامر بن أحمد (بلا زوجة مسمّاة)
+add('ahmad17_aamir3','احمد','m','aamir3_ahmad_fatima16',null,9,'احمد بن عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('nadia_aamir3','نادية','f','aamir3_ahmad_fatima16',null,9,'نادية بنت عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('nabeela_aamir3','نبيلة','f','aamir3_ahmad_fatima16',null,9,'نبيلة بنت عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('nisreen_aamir3','نسرين','f','aamir3_ahmad_fatima16',null,9,'نسرين بنت عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('sabreen_aamir3','صابرين','f','aamir3_ahmad_fatima16',null,9,'صابرين بنت عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('siham_aamir3','سهام','f','aamir3_ahmad_fatima16',null,9,'سهام بنت عامر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ٤. محمد بن أحمد (بلا زوجة مسمّاة)
+add('ahmad18_muhammad36','احمد','m','muhammad36_ahmad_sulaima3',null,9,'احمد بن محمد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('salwa_muhammad36','سلوى','f','muhammad36_ahmad_sulaima3',null,9,'سلوى بنت محمد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('samra_muhammad36','سمرة','f','muhammad36_ahmad_sulaima3',null,9,'سمرة بنت محمد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('sameera_muhammad36','سميرة','f','muhammad36_ahmad_sulaima3',null,9,'سميرة بنت محمد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ٥. سليمان بن أحمد (بلا زوجة مسمّاة)
+add('salma3_sulaiman5','سلمى','f','sulaiman5_ahmad_sulaima3',null,9,'سلمى بنت سليمان بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+P.salma3_sulaiman5.isDeceased = true;
+add('qamariya_sulaiman5','قمرية','f','sulaiman5_ahmad_sulaima3',null,9,'قمرية بنت سليمان بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('farha_sulaiman5','فرحة','f','sulaiman5_ahmad_sulaima3',null,9,'فرحة بنت سليمان بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('hanan2_sulaiman5','حنان','f','sulaiman5_ahmad_sulaima3',null,9,'حنان بنت سليمان بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ٦. فاطمة بنت أحمد + سعيد بن حمد العيسري بن أحمد العيسري
+add('saeed21_hamd_fatima17','سعيد بن حمد العيسري بن أحمد العيسري','m',null,null,8,'سعيد بن حمد العيسري بن أحمد العيسري');
+P.fatima17_ahmad_sulaima3.spouseId = 'saeed21_hamd_fatima17';
+P.fatima17_ahmad_sulaima3.spouseName = P.saeed21_hamd_fatima17.chain;
+add('abdulmoneim_saeed21_fatima17','عبدالمنعم','m','saeed21_hamd_fatima17','fatima17_ahmad_sulaima3',9,'عبدالمنعم بن سعيد العيسري');
+add('munzir_saeed21_fatima17','منذر','m','saeed21_hamd_fatima17','fatima17_ahmad_sulaima3',9,'منذر بن سعيد العيسري');
+add('hamza_saeed21_fatima17','حمزة','m','saeed21_hamd_fatima17','fatima17_ahmad_sulaima3',9,'حمزة بن سعيد العيسري');
+add('lubna_saeed21_fatima17','لبنى','f','saeed21_hamd_fatima17','fatima17_ahmad_sulaima3',9,'لبنى بنت سعيد العيسرية');
+add('reem_saeed21_fatima17','ريم','f','saeed21_hamd_fatima17','fatima17_ahmad_sulaima3',9,'ريم بنت سعيد العيسرية');
+
+// ٧. زيانة بنت أحمد + سالم بن حمد بن أحمد العيسري (أخو سعيد زوج فاطمة)
+add('salim15_hamd_ziyana14','سالم بن حمد بن أحمد العيسري','m',null,null,8,'سالم بن حمد بن أحمد العيسري');
+P.ziyana14_ahmad_sulaima3.spouseId = 'salim15_hamd_ziyana14';
+P.ziyana14_ahmad_sulaima3.spouseName = P.salim15_hamd_ziyana14.chain;
+add('samya3_salim15_ziyana14','سامية','f','salim15_hamd_ziyana14','ziyana14_ahmad_sulaima3',9,'سامية بنت سالم العيسرية');
+add('nadia2_salim15_ziyana14','نادية','f','salim15_hamd_ziyana14','ziyana14_ahmad_sulaima3',9,'نادية بنت سالم العيسرية');
+add('umaima_salim15_ziyana14','اميمة','f','salim15_hamd_ziyana14','ziyana14_ahmad_sulaima3',9,'اميمة بنت سالم العيسرية');
+add('marwa_salim15_ziyana14','مروة','f','salim15_hamd_ziyana14','ziyana14_ahmad_sulaima3',9,'مروة بنت سالم العيسرية');
+add('safaa2_salim15_ziyana14','صفاء','f','salim15_hamd_ziyana14','ziyana14_ahmad_sulaima3',9,'صفاء بنت سالم العيسرية');
+
+// ٨. نصرى بنت أحمد + سيف بن حمود بن محمد بن سليمان بن محمد بن سليم
+add('saif14_hamood_nasra11','سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقي','m',null,null,8,'سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقي');
+P.nasra11_ahmad_sulaima3.spouseId = 'saif14_hamood_nasra11';
+P.nasra11_ahmad_sulaima3.spouseName = P.saif14_hamood_nasra11.chain;
+add('waleed_saif14_nasra11','وليد','m','saif14_hamood_nasra11','nasra11_ahmad_sulaima3',9,'وليد بن سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('rasheeda_saif14_nasra11','رشيدة','f','saif14_hamood_nasra11','nasra11_ahmad_sulaima3',9,'رشيدة بنت سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('sabra_saif14_nasra11','صابرة','f','saif14_hamood_nasra11','nasra11_ahmad_sulaima3',9,'صابرة بنت سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('reem2_saif14_nasra11','ريم','f','saif14_hamood_nasra11','nasra11_ahmad_sulaima3',9,'ريم بنت سيف بن حمود بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ٩. عبدالله بن أحمد له زوجتان: سلمى بنت سالم الراشدي، ومريم النعماني
+add('salma4_salim_alrashidi','سلمى بنت سالم الراشدي','f',null,null,8,'سلمى بنت سالم الراشدي');
+queueSpouseLink('abdullah26_ahmad_sulaima3', 'salma4_salim_alrashidi');
+add('abdulrahman2_abdullah26_salma4','عبدالرحمن','m','abdullah26_ahmad_sulaima3','salma4_salim_alrashidi',9,'عبدالرحمن بن عبدالله بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('ahmad19_abdullah26_salma4','احمد','m','abdullah26_ahmad_sulaima3','salma4_salim_alrashidi',9,'احمد بن عبدالله بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('maryam4_naumani','مريم النعماني','f',null,null,8,'مريم النعماني');
+queueSpouseLink('abdullah26_ahmad_sulaima3', 'maryam4_naumani');
+add('izza10_abdullah26_maryam4','عزة','f','abdullah26_ahmad_sulaima3','maryam4_naumani',9,'عزة بنت عبدالله بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('eman_abdullah26_maryam4','ايمان','f','abdullah26_ahmad_sulaima3','maryam4_naumani',9,'ايمان بنت عبدالله بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ١٠. راشد بن أحمد (بلا زوجة مسمّاة)
+add('sami_rashid6','سامي','m','rashid6_ahmad_sulaima3',null,9,'سامي بن راشد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('fatima18_aamir_humaid','فاطمة بنت عامر بن حميد','f',null,null,9,'فاطمة بنت عامر بن حميد');
+P.sami_rashid6.spouseId = 'fatima18_aamir_humaid';
+P.sami_rashid6.spouseName = P.fatima18_aamir_humaid.chain;
+add('samya4_rashid6','سامية','f','rashid6_ahmad_sulaima3',null,9,'سامية بنت راشد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('fatima19_rashid6','فاطمة','f','rashid6_ahmad_sulaima3',null,9,'فاطمة بنت راشد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('aseela10_rashid6','اصيلة','f','rashid6_ahmad_sulaima3',null,9,'اصيلة بنت راشد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ١١. ناصر بن أحمد (بلا زوجة مسمّاة)
+add('asaad2_nasir21','اسعد','m','nasir21_ahmad_sulaima3',null,9,'اسعد بن ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('hamd13_nasir21','حمد','m','nasir21_ahmad_sulaima3',null,9,'حمد بن ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('imad_nasir21','عماد','m','nasir21_ahmad_sulaima3',null,9,'عماد بن ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('sulaiman6_nasir21','سليمان','m','nasir21_ahmad_sulaima3',null,9,'سليمان بن ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('israa2_nasir21','اسراء','f','nasir21_ahmad_sulaima3',null,9,'اسراء بنت ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+add('jawkha5_nasir21','جوخة','f','nasir21_ahmad_sulaima3',null,9,'جوخة بنت ناصر بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقية');
+
+// ١٢. شمسة بنت أحمد لها زوجان: سالم بن حمود المسكري، ويحيى بن محمد الرواحي
+add('salim16_hamood_almuskari','سالم بن حمود المسكري','m',null,null,8,'سالم بن حمود المسكري');
+queueSpouseLink('shamsa8_ahmad_sulaima3', 'salim16_hamood_almuskari');
+add('hamood16_salim16_shamsa8','حمود','m','salim16_hamood_almuskari','shamsa8_ahmad_sulaima3',9,'حمود بن سالم بن حمود المسكري');
+add('yahya3_muhammad_alrawahi','يحيى بن محمد الرواحي','m',null,null,8,'يحيى بن محمد الرواحي');
+queueSpouseLink('shamsa8_ahmad_sulaima3', 'yahya3_muhammad_alrawahi');
+add('ahmad20_yahya3_shamsa8','احمد','m','yahya3_muhammad_alrawahi','shamsa8_ahmad_sulaima3',9,'احمد بن يحيى بن محمد الرواحي');
+add('idrees_yahya3_shamsa8','ادريس','m','yahya3_muhammad_alrawahi','shamsa8_ahmad_sulaima3',9,'ادريس بن يحيى بن محمد الرواحي');
+add('hanan3_yahya3_shamsa8','حنان','f','yahya3_muhammad_alrawahi','shamsa8_ahmad_sulaima3',9,'حنان بنت يحيى بن محمد الرواحية');
+
+// ١٣. سعيد بن أحمد (بلا زوجة مسمّاة)
+add('ahmad21_saeed20','احمد','m','saeed20_ahmad_sulaima3',null,9,'احمد بن سعيد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+add('luai2_saeed20','لؤي','m','saeed20_ahmad_sulaima3',null,9,'لؤي بن سعيد بن أحمد بن محمد بن سليمان بن محمد بن سليم الطوقي');
+
+// ١٤. اسماء بنت أحمد + سعيد بن علي البحري
+add('saeed22_ali_albahri','سعيد بن علي البحري','m',null,null,8,'سعيد بن علي البحري');
+P.asma10_ahmad_sulaima3.spouseId = 'saeed22_ali_albahri';
+P.asma10_ahmad_sulaima3.spouseName = P.saeed22_ali_albahri.chain;
+add('mansour2_saeed22_asma10','منصور','m','saeed22_ali_albahri','asma10_ahmad_sulaima3',9,'منصور بن سعيد بن علي البحري');
+add('anas_saeed22_asma10','انس','m','saeed22_ali_albahri','asma10_ahmad_sulaima3',9,'انس بن سعيد بن علي البحري');
+add('rayan3_saeed22_asma10','ريان','m','saeed22_ali_albahri','asma10_ahmad_sulaima3',9,'ريان بن سعيد بن علي البحري');
+add('ali6_saeed22_asma10','علي','m','saeed22_ali_albahri','asma10_ahmad_sulaima3',9,'علي بن سعيد بن علي البحري');
+P.ali6_saeed22_asma10.isDeceased = true;
+add('rawan4_saeed22_asma10','روان','f','saeed22_ali_albahri','asma10_ahmad_sulaima3',9,'روان بنت سعيد بن علي البحرية');
 add('saif_ahmad','سيف','m','ahmad_m','fatima16_hussain',8,'سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('fatima_m','فاطمة','f','muhammad_sulaiman','sharifa_rashid',7,'فاطمة بنت محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 // إخوة سلطان من زوجة أخرى لمحمد بن سليمان
