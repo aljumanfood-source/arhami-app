@@ -1699,6 +1699,12 @@ add('muhammad_salim','محمد','m','salim_rashid',null,4,'محمد بن سلي�
 // شنين: الابن الثالث لسليم بن راشد (أخو خلفان ومحمد)، وابنه راشد
 add('shanin_salim','شنين','m','salim_rashid',null,4,'شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_shanin','راشد','m','shanin_salim',null,5,'راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+// شيخة: أخت سعيد بن راشد بن شنين
+add('shaikha3_rashid_shanin','شيخة','f','rashid_shanin',null,7,'شيخة بنت راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('abdullah25_muhammad_mansour','عبدالله بن محمد بن منصور الطوقي','m',null,null,7,'عبدالله بن محمد بن منصور الطوقي');
+P.shaikha3_rashid_shanin.spouseId = 'abdullah25_muhammad_mansour';
+P.shaikha3_rashid_shanin.spouseName = P.abdullah25_muhammad_mansour.chain;
+add('aisha_abdullah25_shaikha3','عائشة','f','abdullah25_muhammad_mansour','shaikha3_rashid_shanin',8,'عائشة بنت عبدالله بن محمد بن منصور الطوقية');
 add('sulaiman_muhammad','سليمان','m','muhammad_salim',null,5,'سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('muhammad_sulaiman','محمد','m','sulaiman_muhammad',null,6,'محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sharifa_rashid','شريفة','f','rashid_khalfan',null,6,'شريفة بنت راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
