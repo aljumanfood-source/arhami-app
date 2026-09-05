@@ -1579,16 +1579,18 @@ add('noor4_hamdoon3','نور','f','hamdoon3_hamood',null,10,'نور بنت حم�
 add('arwa2_shamsa','أروى','f',null,'shamsa_sister',10,'أروى بنت شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('zahir_almuqbali_arwa2','زاهر','m',null,null,10,'زاهر');
 add('wareef_zahir_arwa2','وريف','m','zahir_almuqbali_arwa2','arwa2_shamsa',11,'وريف بن زاهر');
-add('abdullah11_shamsa','عبدالله','m',null,'shamsa_sister',10,'عبدالله بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('hamza2_abdullah11','حمزة','m','abdullah11_shamsa',null,11,'حمزة بن عبدالله بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('awwab2_shamsa','أواب','m',null,'shamsa_sister',10,'أواب بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('khalfan8_abdullah_almasrouri','خلفان بن عبدالله المسروري','m',null,null,9,'خلفان بن عبدالله المسروري');
+queueSpouseLink('shamsa_sister', 'khalfan8_abdullah_almasrouri');
+add('abdullah11_shamsa','عبدالله','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'عبدالله بن خلفان بن عبدالله المسروري');
+add('hamza2_abdullah11','حمزة','m','abdullah11_shamsa',null,11,'حمزة بن عبدالله بن خلفان بن عبدالله المسروري');
+add('awwab2_shamsa','أواب','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'أواب بن خلفان بن عبدالله المسروري');
 add('alaa3_awwab2','الاء','f','awwab2_shamsa',null,11,'الاء بنت أواب بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('umama_awwab2','أمامة','f','awwab2_shamsa',null,11,'أمامة بنت أواب بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('imtinan_shamsa','امتنان','f',null,'shamsa_sister',10,'امتنان بنت شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('abdulrahman2_shamsa','عبدالرحمن','m',null,'shamsa_sister',10,'عبدالرحمن بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('omar3_shamsa','عمر','m',null,'shamsa_sister',10,'عمر بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('yahya2_shamsa','يحيي','m',null,'shamsa_sister',10,'يحيي بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('zakaria2_shamsa','زكريا','m',null,'shamsa_sister',10,'زكريا بن شمسة بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('abdulrahman2_shamsa','عبدالرحمن','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'عبدالرحمن بن خلفان بن عبدالله المسروري');
+add('omar3_shamsa','عمر','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'عمر بن خلفان بن عبدالله المسروري');
+add('yahya2_shamsa','يحيي','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'يحيي بن خلفان بن عبدالله المسروري');
+add('zakaria2_shamsa','زكريا','m','khalfan8_abdullah_almasrouri','shamsa_sister',10,'زكريا بن خلفان بن عبدالله المسروري');
 
 // نصرى (بنت حمود من نعمة) وأولادها
 add('durra2_nasra','درة','f',null,'nasra_sister',10,'درة بنت نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -1596,12 +1598,14 @@ add('omar_alriyami_durra2','عمر الريامي','m',null,null,10,'عمر ال
 P.durra2_nasra.spouseId = 'omar_alriyami_durra2';
 P.durra2_nasra.spouseName = P.omar_alriyami_durra2.chain;
 add('musa_omar_durra2','موسى','m','omar_alriyami_durra2','durra2_nasra',11,'موسى بن عمر الريامي');
-add('luqman_nasra','لقمان','m',null,'nasra_sister',10,'لقمان بن نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman7_muhammad_alhajri','سليمان بن محمد بن حمود الحجري','m',null,null,9,'سليمان بن محمد بن حمود الحجري');
+queueSpouseLink('nasra_sister', 'sulaiman7_muhammad_alhajri');
+add('luqman_nasra','لقمان','m','sulaiman7_muhammad_alhajri','nasra_sister',10,'لقمان بن سليمان بن محمد بن حمود الحجري');
 add('ward_luqman','ورد','f','luqman_nasra',null,11,'ورد بنت لقمان بن نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('izzaa2_nasra','عزاء','f',null,'nasra_sister',10,'عزاء بنت نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('nima3_nasra','نعمة','f',null,'nasra_sister',10,'نعمة بنت نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
-add('dawood2_nasra','داود','m',null,'nasra_sister',10,'داود بن نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
-add('nooh_nasra','نوح','m',null,'nasra_sister',10,'نوح بن نصرا بنت حمود بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+add('dawood2_nasra','داود','m','sulaiman7_muhammad_alhajri','nasra_sister',10,'داود بن سليمان بن محمد بن حمود الحجري');
+add('nooh_nasra','نوح','m','sulaiman7_muhammad_alhajri','nasra_sister',10,'نوح بن سليمان بن محمد بن حمود الحجري');
 
 // علياء (بنت حمود من نعمة) — كان زوجها محمد بن حميد الشرجي، لا رابط زوج حالي
 add('muhammad_humaid_alya','محمد بن حميد الشرجي','m',null,null,9,'محمد بن حميد الشرجي');
@@ -1699,6 +1703,14 @@ add('muhammad_salim','محمد','m','salim_rashid',null,4,'محمد بن سلي�
 // شنين: الابن الثالث لسليم بن راشد (أخو خلفان ومحمد)، وابنه راشد
 add('shanin_salim','شنين','m','salim_rashid',null,4,'شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_shanin','راشد','m','shanin_salim',null,5,'راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+// محمد: أخو سعيد بن راشد بن شنين
+add('muhammad37_rashid_shanin','محمد','m','rashid_shanin',null,7,'محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+add('hamood17_muhammad37','حمود','m','muhammad37_rashid_shanin',null,8,'حمود بن محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+P.izza9_saeed_nasra9.spouseId = 'hamood17_muhammad37';
+P.izza9_saeed_nasra9.spouseName = P.hamood17_muhammad37.chain;
+P.hamood17_muhammad37.spouseId = 'izza9_saeed_nasra9';
+P.hamood17_muhammad37.spouseName = P.izza9_saeed_nasra9.chain;
+add('asma11_muhammad37','أسماء','f','muhammad37_rashid_shanin',null,8,'أسماء بنت محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 // شيخة: أخت سعيد بن راشد بن شنين
 add('shaikha3_rashid_shanin','شيخة','f','rashid_shanin',null,7,'شيخة بنت راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 add('abdullah25_muhammad_mansour','عبدالله بن محمد بن منصور الطوقي','m',null,null,7,'عبدالله بن محمد بن منصور الطوقي');
