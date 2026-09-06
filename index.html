@@ -489,6 +489,10 @@ function queueParentLink(childId, parentId, parentGender){ PENDING_PARENT_LINKS.
 // الأساس) دون إعادة إنشائه
 const PENDING_CHAIN_FIXES = [];
 function queueChainFix(id, correctChain){ PENDING_CHAIN_FIXES.push([id, correctChain]); }
+// لتثبيت الاسم الصحيح لشخص قد يكون له اسم بديل قديم محفوظ بقاعدة البيانات الحية (Firebase
+// renames) يطغى على الاسم الصحيح بالسكربت — يُطبَّق بعد استرجاع البيانات الحية مباشرة
+const PENDING_NAME_FIXES = [];
+function queueNameFix(id, correctName){ PENDING_NAME_FIXES.push([id, correctName]); }
 function link(){ // establish childIds from fatherId/motherId
   Object.values(P).forEach(p=>{
     if(p.fatherId && P[p.fatherId]) P[p.fatherId].childIds.push(p.id);
@@ -670,6 +674,9 @@ add('salima2_saif_sulaiman_u2','سليمة بنت سيف بن محمد بن سع
 add('muhammad14_sulaiman_u2','محمد','m','sulaiman_u2','salima2_saif_sulaiman_u2',9,'محمد بن سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 // أولاد محمد (أحفاد سليمان بن حميد) — كانوا مسجّلين بالغلط كأولاد مباشرين لسليمان
 add('sulaiman7_sulaiman_u2','سليمان','m','muhammad14_sulaiman_u2',null,10,'سليمان بن محمد بن سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
+// اسمه كان يظهر "محمد" بالتطبيق الحي رغم تصحيحه بالكود — على الأرجح بسبب اسم بديل قديم محفوظ
+// بقاعدة البيانات الحية من تعديل سابق؛ نثبّت الاسم الصحيح بالقوة بعد استرجاع البيانات الحية
+queueNameFix('sulaiman7_sulaiman_u2', 'سليمان');
 add('abdullah14_sulaiman_u2','عبدالله','m','muhammad14_sulaiman_u2',null,10,'عبدالله بن محمد بن سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif3_sulaiman_u2','سيف','m','muhammad14_sulaiman_u2',null,10,'سيف بن محمد بن سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('wijdan_sulaiman_u2','وجدان','f','muhammad14_sulaiman_u2',null,10,'وجدان بنت محمد بن سليمان بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -3923,6 +3930,9 @@ function repairFamilyLinks(){
   });
   PENDING_CHAIN_FIXES.forEach(([id, correctChain])=>{
     if(P[id] && P[id].chain !== correctChain){ P[id].chain = correctChain; fixedCount++; }
+  });
+  PENDING_NAME_FIXES.forEach(([id, correctName])=>{
+    if(P[id] && P[id].name !== correctName){ P[id].name = correctName; fixedCount++; }
   });
 
   // Pass 1: clear relationships that are logically impossible no matter the context —
