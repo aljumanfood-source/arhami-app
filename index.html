@@ -1723,10 +1723,6 @@ add('rashid_shanin','راشد','m','shanin_salim',null,5,'راشد بن شنين
 // محمد: أخو سعيد بن راشد بن شنين
 add('muhammad37_rashid_shanin','محمد','m','rashid_shanin',null,7,'محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('hamood17_muhammad37','حمود','m','muhammad37_rashid_shanin',null,8,'حمود بن محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
-P.izza9_saeed_nasra9.spouseId = 'hamood17_muhammad37';
-P.izza9_saeed_nasra9.spouseName = P.hamood17_muhammad37.chain;
-P.hamood17_muhammad37.spouseId = 'izza9_saeed_nasra9';
-P.hamood17_muhammad37.spouseName = P.izza9_saeed_nasra9.chain;
 add('asma11_muhammad37','أسماء','f','muhammad37_rashid_shanin',null,8,'أسماء بنت محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 // شيخة: أخت سعيد بن راشد بن شنين
 add('shaikha3_rashid_shanin','شيخة','f','rashid_shanin',null,7,'شيخة بنت راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -1991,6 +1987,12 @@ add('khalfan6_muhammad33_shamsa7','خلفان','m','muhammad33_khatroush_shamsa7
 
 add('khadija_sulaiman_m2','خديجة','f','sulaiman_m2','wife3_sulaiman_m2',8,'خديجة بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('hamood_m2','حمود','m','muhammad_sulaiman',null,7,'حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+// عزة بنت سعيد بن راشد بن شنين هي زوجة حمود هذا (كانت مربوطة خطأً بـ hamood17_muhammad37، حمود آخر مختلف من فرع شنين بنفس اسم الأب "محمد")
+P.izza9_saeed_nasra9.spouseId = 'hamood_m2';
+P.izza9_saeed_nasra9.spouseName = P.hamood_m2.chain;
+P.hamood_m2.spouseId = 'izza9_saeed_nasra9';
+P.hamood_m2.spouseName = P.izza9_saeed_nasra9.chain;
+add('asma12_hamood_izza9','أسماء','f','hamood_m2','izza9_saeed_nasra9',8,'أسماء بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
 add('aamir_riya','عامر','m','sultan_m',null,8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_sultan_brother','راشد','m','sultan_m',null,8,'راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي'); // أخو عامر بن سلطان، زوج عزا بنت حميد
