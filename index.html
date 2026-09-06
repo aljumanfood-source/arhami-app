@@ -345,9 +345,10 @@
   .tree-wrap{padding:14px 16px 24px;}
   .tree-box-wrap{margin-bottom:8px;}
   .tree-children{
-    display:flex;flex-wrap:wrap;gap:5px;margin-inline-start:14px;
+    display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;margin-inline-start:14px;
     border-inline-start:2px dashed var(--gold-rich);padding-inline-start:8px;
     padding-top:2px;padding-bottom:4px;margin-bottom:6px;
+    -webkit-overflow-scrolling:touch;
   }
   .tree-children > .tree-box-wrap{margin-bottom:0;flex:0 0 auto;}
   .tree-box{
