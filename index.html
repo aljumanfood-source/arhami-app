@@ -2888,8 +2888,18 @@ function renderBranchTree(rootId){
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
     const label = isRoot ? p.chain : p.name;
     const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
+    // كل جيل أصغر تدريجيًا من اللي قبله (بدءًا من depth=1، أول جيل تحت الجذر) — يخلي التسلسل
+    // الهرمي واضح بصريًا بمجرد النظر، بدون الحاجة لتتبع خطوط الإزاحة الجانبية بعناية
+    let sizeStyle = '';
+    if(!isRoot){
+      const fontSize = Math.max(9.5, 13 - (depth-1)*0.9).toFixed(1);
+      const padV = Math.max(4, 8 - (depth-1)*0.7).toFixed(1);
+      const padH = Math.max(6, 12 - (depth-1)*1.1).toFixed(1);
+      const minW = Math.max(46, 88 - (depth-1)*7);
+      sizeStyle = ` style="font-size:${fontSize}px;padding:${padV}px ${padH}px;min-width:${minW}px;"`;
+    }
     let html = `<div class="tree-box-wrap">
-      <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''}" data-node="${id}" data-depth="${depth}">${hint}${label}</div>
+      <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''}" data-node="${id}" data-depth="${depth}"${sizeStyle}>${hint}${label}</div>
     </div>`;
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
