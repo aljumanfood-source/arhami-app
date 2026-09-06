@@ -348,7 +348,9 @@
     display:flex;flex-wrap:wrap;gap:5px;margin-inline-start:8px;
     padding-top:2px;padding-bottom:4px;margin-bottom:6px;
   }
-  .tree-children > .tree-box-wrap{margin-bottom:0;flex:0 0 auto;}
+  .tree-node{flex:0 0 auto;}
+  .tree-node-open{flex:1 0 100%;}
+  .tree-children > .tree-node > .tree-box-wrap{margin-bottom:0;}
   .tree-box{
     background:var(--card);border:1.5px solid var(--gold-rich);border-radius:9px;
     padding:6px 4px;font-weight:600;font-size:11.5px;color:var(--green-deep);
@@ -2897,7 +2899,8 @@ function renderBranchTree(rootId){
       const minW = Math.max(46, 88 - (depth-1)*7);
       sizeStyle = ` style="font-size:${fontSize}px;padding:${padV}px ${padH}px;min-width:${minW}px;"`;
     }
-    let html = `<div class="tree-box-wrap">
+    let html = `<div class="tree-node ${isOpen && !isRoot ? 'tree-node-open':''}">
+      <div class="tree-box-wrap">
       <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''}" data-node="${id}" data-depth="${depth}"${sizeStyle}>${hint}${label}</div>
     </div>`;
     if(isOpen){
@@ -2911,6 +2914,7 @@ function renderBranchTree(rootId){
         html += `<div class="tree-empty">لا يوجد أبناء مسجّلون بعد</div>`;
       }
     }
+    html += `</div>`;
     return html;
   }
   // يعرض إخوة مستوى واحد: لو أحدهم مفتوح (موجود بالمسار) يظهر هو فقط مع أولاده، وتختفي
