@@ -2384,6 +2384,18 @@ add('ahmad_hamood_asma_shanoona','احمد','m','hamood_salim_asma_shanoona','u_
 P.saif_ahmad.childIds.push('haitham_saif');
 P.shanoona.childIds.push('haitham_saif');
 
+// SNAPSHOT of everyone the seed itself considers deceased (whether via the layer<=7 auto-rule
+// or an explicit isDeceased=true line above) — captured now, before any Firebase data merges
+// in. The live Firebase arhami:deceased key always wins during applyPayload() (by design, so
+// admins can toggle it from the UI), but that means a single stale/incorrect "false" entry in
+// that key permanently and silently overrides the seed's correct value on every future load —
+// exactly what happened with أصيلة بنت سليمان (aseela8_sulaiman8) earlier, and evidently with
+// many more people since. repairFamilyLinks() re-asserts every id in this set back to deceased
+// on every load, healing any stale false and persisting the correction — so from now on the
+// only way to mark someone here as deceased=false is to remove them from THIS set (i.e. fix it
+// in the seed, the project's source of truth), never a stray click in the live app.
+const SEED_DECEASED_IDS = new Set(Object.keys(P).filter(id=>P[id].isDeceased));
+
 // track which ids were added by the user during this session (for a small badge)
 const addedByUser = new Set();
 const renameLog = {};       // { personId: newName } — applied on top of seed or added data
@@ -3954,6 +3966,15 @@ function repairFamilyLinks(){
   });
   PENDING_NAME_FIXES.forEach(([id, correctName])=>{
     if(P[id] && P[id].name !== correctName){ P[id].name = correctName; fixedCount++; }
+  });
+  // re-heal any deceased person whose status a stale/incorrect Firebase entry just reset to
+  // alive during applyPayload() — see SEED_DECEASED_IDS above for why this is necessary
+  SEED_DECEASED_IDS.forEach(id=>{
+    if(P[id] && !P[id].isDeceased){
+      P[id].isDeceased = true;
+      deceasedLog[id] = true;
+      fixedCount++;
+    }
   });
 
   // Pass 1: clear relationships that are logically impossible no matter the context —
