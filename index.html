@@ -1693,6 +1693,7 @@ add('hamood8_abdullah_s','حمود','m','abdullah_s',null,10,'حمود بن عب
 
 // رحيمة (بنت حمود من نعمة، مسجّلة أصلًا في قاعدة البيانات الحية بمعرف u_31) وزوجها محمد المقبالي
 add('muhammad_almuqbali_raheema','محمد المقبالي','m',null,null,9,'محمد المقبالي');
+add('u_31','زوجة محمد المقبالي (غير مسمّاة)','f',null,null,9,'زوجة محمد المقبالي (غير مسمّاة)');
 queueSpouseLink('u_31', 'muhammad_almuqbali_raheema');
 add('shaikha2_muhammad_raheema','شيخة','f','muhammad_almuqbali_raheema','u_31',10,'شيخة بنت محمد المقبالية');
 add('mansour_muhammad_raheema','منصور','m','muhammad_almuqbali_raheema','u_31',10,'منصور بن محمد المقبالي');
@@ -2163,6 +2164,7 @@ add('ahmad2_muhammad_nasra2','احمد','m','muhammad_saud2_nasra2','nasra2_hamd
 // الاسم المختصر "حمد بن سالم الظاهري" كان تكرارًا لنفس هذا الرجل، فحُذف من هنا
 P.fatima3_hamd_zwaina.spouseId = 'spouse_fatima3_hamd_zwaina';
 P.fatima3_hamd_zwaina.spouseName = 'حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري';
+add('spouse_fatima3_hamd_zwaina','حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري','m',null,null,9,'حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري');
 add('ibrahim2_hamd_fatima3','إبراهيم','m','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'إبراهيم بن حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري');
 add('ishaq_hamd_fatima3','إسحاق','m','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'إسحاق بن حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهري');
 add('arwa_hamd_fatima3','أروى','f','spouse_fatima3_hamd_zwaina','fatima3_hamd_zwaina',10,'أروى بنت حمد بن سالم بن حمد بن سعيّد بن سليّم بن هويشل بن سالم بن عمّار بن خمّاس الظاهرية');
@@ -2228,6 +2230,7 @@ Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
 // grandchildren of نصرى بنت حميد (via her sons خلفان، ناصر، حميد، حمود، احمد، سيف — all already
 // live in the shared database, not this seed script, but fatherId references still resolve
 // correctly once repairFamilyLinks() rebuilds childIds after Firebase data loads)
+add('u_26','خلفان','m','saeed_khalfan_grandfather',null,6,'خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('hind_khalfan_nasra','هند','f','u_26',null,7,'هند بنت خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('reem_khalfan_nasra','ريم','f','u_26',null,7,'ريم بنت خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('saeed_khalfan_nasra','سعيد','m','u_26',null,7,'سعيد بن خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
@@ -2236,12 +2239,14 @@ add('ayman_khalfan_nasra','أيمن','m','u_26',null,7,'أيمن بن خلفان
 add('abdulwahhab_khalfan_nasra','عبد الوهاب','m','u_26',null,7,'عبد الوهاب بن خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('kawthar_khalfan_nasra','كوثر','f','u_26',null,7,'كوثر بنت خلفان بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 
+add('u_27','ناصر','m','saeed_khalfan_grandfather',null,6,'ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('wisal_nasir_nasra','وصال','f','u_27',null,7,'وصال بنت ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('bayan_nasir_nasra','بيان','f','u_27',null,7,'بيان بنت ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('saeed_nasir_nasra','سعيد','m','u_27',null,7,'سعيد بن ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('awwab_nasir_nasra','أواب','m','u_27',null,7,'أواب بن ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('muhammad_nasir_nasra','محمد','m','u_27',null,7,'محمد بن ناصر بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 
+add('u_mt9ypaw3_7cjjqd','حميد','m','saeed_khalfan_grandfather',null,6,'حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('saeed_humaid2_nasra','سعيد','m','u_mt9ypaw3_7cjjqd',null,7,'سعيد بن حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('manal_humaid2_nasra','منال','f','u_mt9ypaw3_7cjjqd',null,7,'منال بنت حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('abdullah_humaid2_nasra','عبدالله','m','u_mt9ypaw3_7cjjqd',null,7,'عبدالله بن حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
@@ -2250,6 +2255,7 @@ add('khawla_humaid2_nasra','خولة','f','u_mt9ypaw3_7cjjqd',null,7,'خولة �
 add('muhammad_humaid2_nasra','محمد','m','u_mt9ypaw3_7cjjqd',null,7,'محمد بن حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('sara_humaid2_nasra','سارة','f','u_mt9ypaw3_7cjjqd',null,7,'سارة بنت حميد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 
+add('u_mt9ypaw3_akpg12','حمود','m','saeed_khalfan_grandfather',null,6,'حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('maryam_hamood2_nasra','مريم','f','u_mt9ypaw3_akpg12',null,7,'مريم بنت حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('althurayya_hamood2_nasra','الثريا','f','u_mt9ypaw3_akpg12',null,7,'الثريا بنت حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('saeed_hamood2_nasra','سعيد','m','u_mt9ypaw3_akpg12',null,7,'سعيد بن حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
@@ -2259,12 +2265,14 @@ add('bushra_hamood2_nasra','بشرى','f','u_mt9ypaw3_akpg12',null,7,'بشرى �
 add('huda_hamood2_nasra','هدى','f','u_mt9ypaw3_akpg12',null,7,'هدى بنت حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('aseela2_hamood2_nasra','أصيلة','f','u_mt9ypaw3_akpg12',null,7,'أصيلة بنت حمود بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 
+add('u_mt9ypaw3_1xwdrh','أحمد','m','saeed_khalfan_grandfather',null,6,'أحمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('diyaa_ahmad_nasra','ضياء','m','u_mt9ypaw3_1xwdrh',null,7,'ضياء بن احمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('qais_ahmad_nasra','قيس','m','u_mt9ypaw3_1xwdrh',null,7,'قيس بن احمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('saeed_ahmad_nasra','سعيد','m','u_mt9ypaw3_1xwdrh',null,7,'سعيد بن احمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('ghada_ahmad_nasra','غادة','f','u_mt9ypaw3_1xwdrh',null,7,'غادة بنت احمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('hilal_ahmad_nasra','هلال','m','u_mt9ypaw3_1xwdrh',null,7,'هلال بن احمد بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 
+add('u_mt9ypaw3_7q9zvq','سيف','m','saeed_khalfan_grandfather',null,6,'سيف بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('sahab_saif_nasra','سحاب','f','u_mt9ypaw3_7q9zvq',null,7,'سحاب بنت سيف بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 add('hassan_saif_nasra','حسان','m','u_mt9ypaw3_7q9zvq',null,7,'حسان بن سيف بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('saeed_saif_nasra','سعيد','m','u_mt9ypaw3_7q9zvq',null,7,'سعيد بن سيف بن سعيد بن خلفان بن محمد بن سعيد بن حسين العيسري');
@@ -2274,6 +2282,7 @@ add('khalid_nasir_zeena2','خالد','m','nasir_u3','jawkha2_khalid_saeed',9,'خ
 
 // نصرى's 5 daughters' husbands and children
 add('khalfan_muhammad_khawla','خلفان بن محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري','m',null,null,6,'خلفان بن محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('u_mt9yq18q_fd5t00','زوجة خلفان بن محمد بن عامر العيسري (غير مسمّاة)','f',null,null,6,'زوجة خلفان بن محمد بن عامر العيسري (غير مسمّاة)');
 queueSpouseLink('u_mt9yq18q_fd5t00', 'khalfan_muhammad_khawla');
 add('mawada_khalfan_khawla','مودة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'مودة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
 add('muhammad_khalfan_khawla','محمد','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'محمد بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
@@ -2284,6 +2293,7 @@ add('yunus_khalfan_khawla','يونس','m','khalfan_muhammad_khawla','u_mt9yq18q_
 add('mahja_khalfan_khawla','مهجة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'مهجة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
 
 add('hilal_khalid_asma2','هلال بن خالد بن سعيد العيسري','m',null,null,6,'هلال بن خالد بن سعيد العيسري');
+add('u_mt9yq18q_cl3h05','زوجة هلال بن خالد بن سعيد العيسري (غير مسمّاة)','f',null,null,6,'زوجة هلال بن خالد بن سعيد العيسري (غير مسمّاة)');
 queueSpouseLink('u_mt9yq18q_cl3h05', 'hilal_khalid_asma2');
 add('khalid_hilal_asma2','خالد','m','hilal_khalid_asma2','u_mt9yq18q_cl3h05',7,'خالد بن هلال بن خالد بن سعيد العيسري');
 add('nawras_hilal_asma2','نورس','m','hilal_khalid_asma2','u_mt9yq18q_cl3h05',7,'نورس بن هلال بن خالد بن سعيد العيسري');
@@ -2293,6 +2303,7 @@ add('wanas_hilal_asma2','ونس','m','hilal_khalid_asma2','u_mt9yq18q_cl3h05',7,
 add('farah_hilal_asma2','فرح','f','hilal_khalid_asma2','u_mt9yq18q_cl3h05',7,'فرح بنت هلال بن خالد بن سعيد العيسرية');
 
 add('salim_almutajir_rahma','سالم المتجر','m',null,null,6,'سالم المتجر');
+add('u_mt9yq18q_19p3rc','زوجة سالم المتجر (غير مسمّاة)','f',null,null,6,'زوجة سالم المتجر (غير مسمّاة)');
 queueSpouseLink('u_mt9yq18q_19p3rc', 'salim_almutajir_rahma');
 add('shadin_salim_rahma','شادن','f','salim_almutajir_rahma','u_mt9yq18q_19p3rc',7,'شادن بنت سالم المتجر');
 add('sulaiman_salim_rahma','سليمان','m','salim_almutajir_rahma','u_mt9yq18q_19p3rc',7,'سليمان بن سالم المتجر');
@@ -2300,12 +2311,14 @@ add('raihan_salim_rahma','ريحان','m','salim_almutajir_rahma','u_mt9yq18q_19
 add('saeed_salim_rahma','سعيد','m','salim_almutajir_rahma','u_mt9yq18q_19p3rc',7,'سعيد بن سالم المتجر');
 
 add('saif_ahmad_safiya','سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري','m',null,null,6,'سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+add('u_mt9yq18q_6v4q6o','زوجة سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري (غير مسمّاة)','f',null,null,6,'زوجة سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري (غير مسمّاة)');
 queueSpouseLink('u_mt9yq18q_6v4q6o', 'saif_ahmad_safiya');
 add('fajr_saif_safiya','فجر','f','saif_ahmad_safiya','u_mt9yq18q_6v4q6o',7,'فجر بنت سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
 add('marwa_saif_safiya','مروة','f','saif_ahmad_safiya','u_mt9yq18q_6v4q6o',7,'مروة بنت سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
 add('taqa_saif_safiya','تقى','f','saif_ahmad_safiya','u_mt9yq18q_6v4q6o',7,'تقى بنت سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
 add('sultan_saif_safiya','سلطان','m','saif_ahmad_safiya','u_mt9yq18q_6v4q6o',7,'سلطان بن سيف بن أحمد بن سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
 
+add('u_mt9yq18q_7ynclg','زوجة خالد بن ناصر بن حميد بن عبدالله الطوقي (غير مسمّاة)','f',null,null,9,'زوجة خالد بن ناصر بن حميد بن عبدالله الطوقي (غير مسمّاة)');
 queueSpouseLink('u_mt9yq18q_7ynclg', 'khalid_nasir_zeena2');
 add('shamikh_khalid_zeena2','شامخ','m','khalid_nasir_zeena2','u_mt9yq18q_7ynclg',10,'شامخ بن خالد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ward_khalid_zeena2','ورد','f','khalid_nasir_zeena2','u_mt9yq18q_7ynclg',10,'ورد بنت خالد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -2320,6 +2333,7 @@ add('haitham_saif','هيثم','m','saif_ahmad','shanoona',9,'هيثم بن سي�
 // شنونة+سيف's grandchildren, via their existing sons حميد (u_20)، سعيد (u_21)، محمد (u_22)، أحمد (u_23)
 // — these three ids live in the shared database, not this seed script, but fatherId references
 // still resolve correctly once repairFamilyLinks() rebuilds childIds after Firebase data loads
+add('u_20','حميد','m','saif_ahmad',null,9,'حميد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif_humaid_shanoona','سيف','m','u_20',null,10,'سيف بن حميد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('muhammad_humaid_shanoona','محمد','m','u_20',null,10,'محمد بن حميد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ahmad_humaid_shanoona','أحمد','m','u_20',null,10,'أحمد بن حميد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -2339,23 +2353,27 @@ P.fatima_humaid_shanoona.motherId = 'riyaa_muhammad_u2';
 P.sara_humaid_shanoona.motherId = 'riyaa_muhammad_u2';
 P.israa_humaid_shanoona.motherId = 'riyaa_muhammad_u2';
 
+add('u_21','سعيد','m','saif_ahmad',null,9,'سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif_saeed_shanoona','سيف','m','u_21',null,10,'سيف بن سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ghadeer_saeed_shanoona','غدير','f','u_21',null,10,'غدير بنت سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('fatima_saeed_shanoona','فاطمة','f','u_21',null,10,'فاطمة بنت سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('hadeel_saeed_shanoona','هديل','f','u_21',null,10,'هديل بنت سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('ahmad_saeed_shanoona','احمد','m','u_21',null,10,'احمد بن سعيد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
+add('u_22','محمد','m','saif_ahmad',null,9,'محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ahmad_muhammad_shanoona','احمد','m','u_22',null,10,'احمد بن محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('yousif_muhammad_shanoona','يوسف','m','u_22',null,10,'يوسف بن محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif_muhammad_shanoona','سيف','m','u_22',null,10,'سيف بن محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ilyas_muhammad_shanoona','الياس','m','u_22',null,10,'الياس بن محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('lina_muhammad_shanoona','لينا','f','u_22',null,10,'لينا بنت محمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
+add('u_23','أحمد','m','saif_ahmad',null,9,'أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('saif_ahmad_shanoona2','سيف','m','u_23',null,10,'سيف بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('eilaf_ahmad_shanoona2','ايلاف','f','u_23',null,10,'ايلاف بنت أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('haitham_ahmad_shanoona2','هيثم','m','u_23',null,10,'هيثم بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('wael_ahmad_shanoona2','وائل','m','u_23',null,10,'وائل بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('hamood_salim_asma_shanoona','حمود بن سالم السناوي','m',null,null,9,'حمود بن سالم السناوي');
+add('u_25','زوجة حمود بن سالم السناوي (غير مسمّاة)','f',null,null,9,'زوجة حمود بن سالم السناوي (غير مسمّاة)');
 queueSpouseLink('u_25', 'hamood_salim_asma_shanoona');
 add('ammar_hamood_asma_shanoona','عمار','m','hamood_salim_asma_shanoona','u_25',10,'عمار بن حمود بن سالم السناوي');
 add('afraa_hamood_asma_shanoona','عفراء','f','hamood_salim_asma_shanoona','u_25',10,'عفراء بنت حمود بن سالم السناوية');
