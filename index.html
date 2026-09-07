@@ -2227,7 +2227,6 @@ add('yousif3_riya','يوسف','m','aamir_riya','riya_sister',10,'يوسف بن �
 
 
 link();
-Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
 
 // grandchildren of نصرى بنت حميد (via her sons خلفان، ناصر، حميد، حمود، احمد، سيف — all already
 // live in the shared database, not this seed script, but fatherId references still resolve
@@ -2509,6 +2508,11 @@ add('husna_khammas','حسنى','f','khammas_rashid_ali',null,4,'حسنى بنت 
 // ==== نهاية فرع خماس ====
 P.saif_ahmad.childIds.push('haitham_saif');
 P.shanoona.childIds.push('haitham_saif');
+
+// كل من هم في الطبقة ٧ فما دون (حتى الجيل الأول) يُعتبرون متوفّين تلقائيًا — هذا القرار
+// يُطبَّق هنا، بعد انتهاء كل add() في الملف كاملًا (وليس في منتصفه كما كان سابقًا)، حتى يشمل
+// كل شخص بغض النظر عن مكان إضافته في هذا الملف، الآن ومستقبلًا.
+Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
 
 // SNAPSHOT of everyone the seed itself considers deceased (whether via the layer<=7 auto-rule
 // or an explicit isDeceased=true line above) — captured now, before any Firebase data merges
