@@ -4106,6 +4106,46 @@ function repairFamilyLinks(){
     }
   });
 
+  // Pass 0c: ONE-TIME identity correction — حمود بن محمد بن راشد بن شنين... (hamood17_muhammad37)
+  // was never a real second person; his whole ancestry chain (the شنين branch) was a data-entry
+  // mistake. He is the same person as حمود بن محمد بن سليمان بن محمد بن سليم... (hamood_m2, already
+  // correctly linked to his wife عزة). All of his children were added later, live, directly in
+  // Firebase (never in this seed file) under the wrong father — so they can't be caught by id,
+  // only by searching for anyone whose fatherId still points at hamood17_muhammad37, whatever
+  // their own (Firebase-generated) id happens to be. His daughter أسماء is a pure duplicate of
+  // the already-correct asma12_hamood_izza9 under hamood_m2 and must be dropped, not moved.
+  if(P['hamood17_muhammad37'] && P['hamood_m2']){
+    const wrongFatherId = 'hamood17_muhammad37';
+    const correctFather = P['hamood_m2'];
+    const misfiled = Object.values(P).filter(p=>p.fatherId===wrongFatherId);
+    function shiftLayerRecursive(personId, delta){
+      const p = P[personId];
+      if(!p) return;
+      p.layer += delta;
+      p.childIds.forEach(cid=>{
+        const c = P[cid];
+        if(c && isChainSource(c, personId)) shiftLayerRecursive(cid, delta);
+      });
+    }
+    misfiled.forEach(child=>{
+      if(child.name==='أسماء' || child.name==='اسماء'){
+        deletePerson(child.id);
+        fixedCount++;
+        return;
+      }
+      const oldLayer = child.layer;
+      child.fatherId = 'hamood_m2';
+      const connector = child.gender==='m' ? 'بن' : 'بنت';
+      child.chain = applyChainGenderSuffix(`${child.name} ${connector} ${correctFather.chain}`, child.gender);
+      shiftLayerRecursive(child.id, (correctFather.layer + 1) - oldLayer);
+      rebuildDescendantChains(child.id);
+      if(!correctFather.childIds.includes(child.id)) correctFather.childIds.push(child.id);
+      fixedCount++;
+    });
+    deletePerson(wrongFatherId);
+    fixedCount++;
+  }
+
   PENDING_PARENT_LINKS.forEach(([childId, parentId, parentGender])=>{
     const child = P[childId], parent = P[parentId];
     if(!child || !parent) return;
