@@ -4086,6 +4086,24 @@ function repairFamilyLinks(){
       if(!P[b].spouseId){ P[b].spouseId = a; P[b].spouseName = P[a].chain; fixedCount++; }
     }
   });
+  // Pass 0b: enforce spouse-link reciprocity UNIVERSALLY, for every person, regardless of how
+  // the link was written (a queued PENDING_SPOUSE_LINK, a direct "P.x.spouseId = 'y'" line in
+  // the seed, or something merged in from Firebase). Found 107 people across this file whose
+  // spouseId pointed at someone who did NOT point back — e.g. P.shanoona.spouseId='saif_ahmad'
+  // was set with no matching P.saif_ahmad.spouseId='shanoona' anywhere. Any page/feature that
+  // reads spouse info from the OTHER person's own record (rather than always checking both
+  // directions) would show it correctly from one side and show nothing from the other — this
+  // is the "خلل الربط بين المعلومات" bug. Runs on every load, so it also heals any future
+  // one-way link the same way the deceased-status fix heals stale Firebase overrides — no
+  // one-off patch, no need to catch each case by hand again.
+  Object.values(P).forEach(p=>{
+    if(p.spouseId && P[p.spouseId] && !P[p.spouseId].spouseId){
+      P[p.spouseId].spouseId = p.id;
+      P[p.spouseId].spouseName = p.chain;
+      fixedCount++;
+    }
+  });
+
   PENDING_PARENT_LINKS.forEach(([childId, parentId, parentGender])=>{
     const child = P[childId], parent = P[parentId];
     if(!child || !parent) return;
