@@ -2332,6 +2332,7 @@ P.nemah_mother.spouseId = 'hamood_father';
 P.nemah_mother.spouseName = P.hamood_father.chain;
 add('haitham_saif','هيثم','m','saif_ahmad','shanoona',9,'هيثم بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('asma13_saif_shanoona','أسماء','f','saif_ahmad','shanoona',9,'أسماء بنت سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+queueSpouseLink('asma13_saif_shanoona', 'hamood_salim_asma_shanoona');
 // شنونة+سيف's grandchildren, via their existing sons حميد (u_20)، سعيد (u_21)، محمد (u_22)، أحمد (u_23)
 // — these three ids live in the shared database, not this seed script, but fatherId references
 // still resolve correctly once repairFamilyLinks() rebuilds childIds after Firebase data loads
@@ -2375,12 +2376,12 @@ add('eilaf_ahmad_shanoona2','ايلاف','f','u_23',null,10,'ايلاف بنت �
 add('haitham_ahmad_shanoona2','هيثم','m','u_23',null,10,'هيثم بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('wael_ahmad_shanoona2','وائل','m','u_23',null,10,'وائل بن أحمد بن سيف بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('hamood_salim_asma_shanoona','حمود بن سالم السناوي','m',null,null,9,'حمود بن سالم السناوي');
-add('u_25','زوجة حمود بن سالم السناوي (غير مسمّاة)','f',null,null,9,'زوجة حمود بن سالم السناوي (غير مسمّاة)');
-queueSpouseLink('u_25', 'hamood_salim_asma_shanoona');
-add('ammar_hamood_asma_shanoona','عمار','m','hamood_salim_asma_shanoona','u_25',10,'عمار بن حمود بن سالم السناوي');
-add('afraa_hamood_asma_shanoona','عفراء','f','hamood_salim_asma_shanoona','u_25',10,'عفراء بنت حمود بن سالم السناوية');
-add('salim_hamood_asma_shanoona','سالم','m','hamood_salim_asma_shanoona','u_25',10,'سالم بن حمود بن سالم السناوي');
-add('ahmad_hamood_asma_shanoona','احمد','m','hamood_salim_asma_shanoona','u_25',10,'احمد بن حمود بن سالم السناوي');
+// كانت زوجة حمود مسجَّلة سابقًا بمعرِّف مؤقت (u_25) بلا اسم حقيقي — تبيّن أنها أسماء بنت سيف
+// بن أحمد (asma13_saif_shanoona)، فاستُبدل المعرّف المؤقت بها في كل مكان بدل تركها سجلًا منفصلًا.
+add('ammar_hamood_asma_shanoona','عمار','m','hamood_salim_asma_shanoona','asma13_saif_shanoona',10,'عمار بن حمود بن سالم السناوي');
+add('afraa_hamood_asma_shanoona','عفراء','f','hamood_salim_asma_shanoona','asma13_saif_shanoona',10,'عفراء بنت حمود بن سالم السناوية');
+add('salim_hamood_asma_shanoona','سالم','m','hamood_salim_asma_shanoona','asma13_saif_shanoona',10,'سالم بن حمود بن سالم السناوي');
+add('ahmad_hamood_asma_shanoona','احمد','m','hamood_salim_asma_shanoona','asma13_saif_shanoona',10,'احمد بن حمود بن سالم السناوي');
 
 // ==== أولاد وأحفاد خماس بن راشد بن علي بن سالم الطوقي (خطّه كاملًا، أضيف دفعة واحدة) ====
 add('obaid_khammas','عبيد','m','khammas_rashid_ali',null,4,'عبيد بن خماس بن راشد بن علي بن سالم الطوقي');
