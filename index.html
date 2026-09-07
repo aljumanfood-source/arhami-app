@@ -3351,12 +3351,27 @@ const RELATIONS = [
   {key:'children', label:'أولادي', noun:'أولاد', icon:'👶', fn:(id)=>childrenOf(id,'m').concat(childrenOf(id,'f'))},
 ];
 
+function buildTreePathTo(personId){
+  const chain = [];
+  let cur = P[personId];
+  while(cur){
+    chain.unshift(cur.id);
+    if(!cur.fatherId || !P[cur.fatherId]) break;
+    cur = P[cur.fatherId];
+  }
+  const rootId = chain[0];
+  if(!BRANCH_ROOTS.some(b=>b.id===rootId)) return null;
+  return {branchRootId: rootId, expanded: chain.slice(1)};
+}
+
 function renderProfile(id){
   const p = P[id];
+  const treePath = buildTreePathTo(id);
   main.innerHTML = `
     <div class="subheader">
       <div class="back-btn" id="backBtn">${arrowIcon()}</div>
       <h2>الصفحة الشخصية</h2>
+      ${treePath ? `<span class="tree-detail-btn" id="toTreeBtn" title="فتح موقعه في شجرة التصفح">↩️</span>` : ''}
     </div>
     <div class="profile-hero">
       ${renderChain(p)}
@@ -3384,6 +3399,9 @@ function renderProfile(id){
     grid.appendChild(btn);
   });
   document.getElementById('backBtn').onclick = goBack;
+  if(treePath){
+    document.getElementById('toTreeBtn').onclick = ()=>{ goTo({view:'branchTree', branchRootId:treePath.branchRootId, expanded:treePath.expanded}); };
+  }
   document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
   document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
   if(!p.isDeceased){
