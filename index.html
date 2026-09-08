@@ -3395,7 +3395,7 @@ function buildTreePathTo(personId){
     // الجذر الحقيقي لكل السلسلة هو علي بن سالم، لكنه ليس مسجَّلًا كـ"جذر فرع" في BRANCH_ROOTS
     // (فرع واحد فقط حاليًا: راشد بن علي بن سالم)، فكانت الدالة تفشل دائمًا لعدم وصولها لجذر
     // معروف، فلا يظهر زر الانتقال إطلاقًا على أي صفحة شخصية
-    if(BRANCH_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain.slice(1)};
+    if(BRANCH_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain};
     if(!cur.fatherId || !P[cur.fatherId]) return null;
     cur = P[cur.fatherId];
   }
