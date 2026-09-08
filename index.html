@@ -1783,7 +1783,7 @@ add('salim14_ahmad_sulaima2','سالم','m','ahmad_m','salima_bint_abdullah',8,'
 P.salim14_ahmad_sulaima2.isDeceased = true;
 add('shaikha4_ahmad_sulaima2','شيخة','f','ahmad_m','salima_bint_abdullah',8,'شيخة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 P.shaikha4_ahmad_sulaima2.isDeceased = true;
-add('zwaina14_ahmad_sulaima2','زوينة','f','ahmad_m','salima_bint_abdullah',8,'زوينة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zwaina14_ahmad_sulaima2','زوينة','f','ahmad_m',null,8,'زوينة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 P.zwaina14_ahmad_sulaima2.isDeceased = true;
 
 add('fatima16_hussain','فاطمة بنت حسين','f',null,null,7,'فاطمة بنت حسين');
@@ -3533,7 +3533,9 @@ function renderFamilySummary(id){
 
   const rows = [];
   if(mother){
-    rows.push(['الأم', `<div class="name-block">${nameLink(mother, true)}</div>`]);
+    rows.push(['الأم', `<div class="name-block" id="motherValueCell">${nameLink(mother, true)} <button class="spouse-edit" id="motherEditBtn">تعديل</button></div>`]);
+  } else {
+    rows.push(['الأم', `<div class="name-block" id="motherValueCell">غير معروفة <button class="spouse-edit" id="motherEditBtn">إضافة</button></div>`]);
   }
   const maternalGrandmother = (mother && mother.motherId && P[mother.motherId]) ? P[mother.motherId] : null;
   if(maternalGrandmother){
@@ -3571,13 +3573,15 @@ function renderFamilySummary(id){
     childrenHtml +
   `</div>`;
   wireNameLinks(holder);
+  const motherBtn = document.getElementById('motherEditBtn');
+  if(motherBtn) motherBtn.onclick = ()=>requireAdmin(()=>openMotherEditor(id));
 }
 
 function arrowIcon(){
   return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B2118" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>`;
 }
 
-function wireSpouseAutocomplete(inputId, dropdownId, onSelect){
+function wireSpouseAutocomplete(inputId, dropdownId, targetGender){
   const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
   let selectedId = null;
@@ -3586,8 +3590,8 @@ function wireSpouseAutocomplete(inputId, dropdownId, onSelect){
     const q = input.value.trim();
     if(q.length<2){ dropdown.innerHTML=''; dropdown.style.display='none'; return; }
     // نفس أسلوب مطابقة "بحث شامل" الموجود (بداية النسب الكامل)، لكن بلا قيد الطبقة ٨ فما فوق —
-    // فقد يكون الزوج من أي جيل
-    const matches = Object.values(P).filter(p=>p.gender==='m' && p.chain.startsWith(q)).slice(0,20);
+    // فقد يكون الزوج/الأم من أي جيل
+    const matches = Object.values(P).filter(p=>p.gender===targetGender && p.chain.startsWith(q)).slice(0,20);
     if(!matches.length){ dropdown.innerHTML=''; dropdown.style.display='none'; return; }
     dropdown.innerHTML = matches.map(p=>`<div class="spouse-suggest" data-id="${p.id}">${p.chain}</div>`).join('');
     dropdown.style.display = 'block';
@@ -3601,6 +3605,56 @@ function wireSpouseAutocomplete(inputId, dropdownId, onSelect){
   });
   return ()=>selectedId; // يُستدعى وقت الحفظ لمعرفة هل اختار المستخدم شخصًا حقيقيًا من القائمة
 }
+
+function openMotherEditor(personId){
+  const person = P[personId];
+  const cell = document.getElementById('motherValueCell');
+  if(!cell) return;
+  cell.innerHTML = `
+    <div class="spouse-input-wrap">
+      <input type="text" id="motherInput" placeholder="اسم الأم" autocomplete="off">
+      <div id="motherDropdown" class="spouse-dropdown"></div>
+    </div>
+    <div class="add-form-actions" style="margin-top:8px;">
+      <button class="save" id="motherSaveBtn">حفظ</button>
+      <button class="cancel" id="motherClearBtn">لا توجد أمّ معروفة</button>
+    </div>
+  `;
+  const getSelected = wireSpouseAutocomplete('motherInput', 'motherDropdown', 'f');
+  document.getElementById('motherSaveBtn').onclick = ()=>{
+    const val = document.getElementById('motherInput').value.trim();
+    if(!val){ showToast('اكتب الاسم أولًا'); return; }
+    const chosenId = getSelected();
+    let motherId;
+    if(chosenId && P[chosenId].chain===val){
+      motherId = chosenId; // شخص حقيقي موجود فعلًا — يُربط بمعرّفه مباشرة، بلا نسخة جديدة
+    } else {
+      motherId = 'mother_'+personId;
+      if(!P[motherId]){
+        add(motherId, val, 'f', null, null, person.layer, val);
+        P[motherId].isSpouseStub = true;
+        addedByUser.add(motherId);
+      } else {
+        renamePerson(motherId, val);
+      }
+    }
+    person.motherId = motherId;
+    if(!P[motherId].childIds.includes(personId)) P[motherId].childIds.push(personId);
+    persistState();
+    showToast('تم الحفظ');
+    render();
+  };
+  document.getElementById('motherClearBtn').onclick = ()=>{
+    if(person.motherId && P[person.motherId]){
+      P[person.motherId].childIds = (P[person.motherId].childIds||[]).filter(cid=>cid!==personId);
+    }
+    person.motherId = null;
+    persistState();
+    showToast('أُزيلت الأم');
+    render();
+  };
+}
+
 
 function renderSpousePanel(person){
   const roleLabel = 'زوجها';
@@ -3625,7 +3679,7 @@ function renderSpousePanel(person){
         </div>
         <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
       `;
-      const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown');
+      const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown', 'm');
       document.getElementById('spouseSaveBtn').onclick = ()=>{
         const val = document.getElementById('spouseInput').value.trim();
         if(!val){ showToast('اكتب الاسم أولًا'); return; }
@@ -3650,7 +3704,7 @@ function renderSpousePanel(person){
       <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
     `;
     main.appendChild(panel);
-    const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown');
+    const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown', 'm');
     document.getElementById('spouseSaveBtn').onclick = ()=>requireAdmin(()=>{
       const val = document.getElementById('spouseInput').value.trim();
       if(!val){ showToast('اكتب الاسم أولًا'); return; }
