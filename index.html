@@ -313,6 +313,16 @@
     background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 14px;
     font-family:'Tajawal';font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0;
   }
+  .spouse-input-wrap{flex:1;position:relative;}
+  .spouse-input-wrap input{width:100%;}
+  .spouse-dropdown{
+    display:none;position:absolute;top:100%;right:0;left:0;z-index:20;margin-top:2px;
+    background:var(--card);border:1px solid var(--line);border-radius:8px;
+    max-height:180px;overflow-y:auto;box-shadow:0 4px 10px rgba(0,0,0,.12);
+  }
+  .spouse-suggest{padding:8px 10px;font-size:12.5px;cursor:pointer;border-bottom:1px solid var(--line);}
+  .spouse-suggest:last-child{border-bottom:none;}
+  .spouse-suggest:active{background:var(--paper-deep);}
   .section-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.8;}
   .verse-block{margin-top:44px;text-align:center;padding:0 12px;}
 
@@ -3565,6 +3575,65 @@ function arrowIcon(){
   return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B2118" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>`;
 }
 
+function wireSpouseAutocomplete(inputId, dropdownId, onSelect){
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  let selectedId = null;
+  input.addEventListener('input', ()=>{
+    selectedId = null;
+    const q = input.value.trim();
+    if(q.length<2){ dropdown.innerHTML=''; dropdown.style.display='none'; return; }
+    // نفس أسلوب مطابقة "بحث شامل" الموجود (بداية النسب الكامل)، لكن بلا قيد الطبقة ٨ فما فوق —
+    // فقد يكون الزوج من أي جيل
+    const matches = Object.values(P).filter(p=>p.gender==='m' && p.chain.startsWith(q)).slice(0,20);
+    if(!matches.length){ dropdown.innerHTML=''; dropdown.style.display='none'; return; }
+    dropdown.innerHTML = matches.map(p=>`<div class="spouse-suggest" data-id="${p.id}">${p.chain}</div>`).join('');
+    dropdown.style.display = 'block';
+    dropdown.querySelectorAll('.spouse-suggest').forEach(el=>{
+      el.onclick = ()=>{
+        selectedId = el.dataset.id;
+        input.value = P[selectedId].chain;
+        dropdown.innerHTML=''; dropdown.style.display='none';
+      };
+    });
+  });
+  return ()=>selectedId; // يُستدعى وقت الحفظ لمعرفة هل اختار المستخدم شخصًا حقيقيًا من القائمة
+}
+
+function openLinkExistingChildrenPrompt(personId, spouseId){
+  const person = P[personId], spouse = P[spouseId];
+  const candidates = (spouse.childIds||[]).filter(cid=>P[cid] && P[cid].motherId!==personId);
+  if(!candidates.length) return;
+  const anchor = document.getElementById('backupAnchor') || main;
+  const panel = document.createElement('div');
+  panel.className = 'add-form';
+  panel.style.margin = '10px 18px 0';
+  panel.innerHTML = `
+    <p class="section-note" style="margin-top:0;">هل بعض أبناء ${spouse.chain} الحاليين هم أيضًا أبناء ${person.name}؟ اختر منهم:</p>
+    ${candidates.map(cid=>`<label style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px;">
+      <input type="checkbox" class="link-child-check" value="${cid}"> ${P[cid].chain}
+    </label>`).join('')}
+    <div class="add-form-actions" style="margin-top:10px;">
+      <button class="save" id="linkChildrenConfirmBtn">إضافة المُختارين</button>
+      <button class="cancel" id="linkChildrenSkipBtn">تخطّي</button>
+    </div>
+  `;
+  anchor.appendChild(panel);
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('linkChildrenSkipBtn').onclick = ()=>panel.remove();
+  document.getElementById('linkChildrenConfirmBtn').onclick = ()=>{
+    const chosen = Array.from(panel.querySelectorAll('.link-child-check:checked')).map(el=>el.value);
+    if(!chosen.length){ panel.remove(); return; }
+    chosen.forEach(cid=>{ P[cid].motherId = personId; });
+    if(!person.childIds) person.childIds = [];
+    chosen.forEach(cid=>{ if(!person.childIds.includes(cid)) person.childIds.push(cid); });
+    persistState();
+    showToast(`تمت إضافة ${chosen.length} من الأبناء`);
+    panel.remove();
+    render();
+  };
+}
+
 function renderSpousePanel(person){
   const roleLabel = 'زوجها';
   const promptLabel = 'اسم الزوج';
@@ -3582,34 +3651,65 @@ function renderSpousePanel(person){
     }
     document.getElementById('spouseEditBtn').onclick = ()=>requireAdmin(()=>{
       panel.innerHTML = `
-        <input type="text" id="spouseInput" value="${person.spouseName}">
+        <div class="spouse-input-wrap">
+          <input type="text" id="spouseInput" value="${person.spouseName}" autocomplete="off">
+          <div id="spouseDropdown" class="spouse-dropdown"></div>
+        </div>
         <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
       `;
+      const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown');
       document.getElementById('spouseSaveBtn').onclick = ()=>{
         const val = document.getElementById('spouseInput').value.trim();
         if(!val){ showToast('اكتب الاسم أولًا'); return; }
-        registerSpouse(person.id, val);
+        const chosenId = getSelected();
+        if(chosenId && P[chosenId].chain===val){
+          person.spouseId = chosenId;
+          person.spouseName = P[chosenId].chain;
+          spouseLog[person.id] = {name:person.spouseName, spouseId:chosenId};
+        } else {
+          registerSpouse(person.id, val);
+        }
         persistState();
         render();
+        if(chosenId && P[chosenId].chain===val) openLinkExistingChildrenPrompt(person.id, chosenId);
       };
     });
   } else {
     panel.innerHTML = `
-      <input type="text" id="spouseInput" placeholder="${promptLabel}">
+      <div class="spouse-input-wrap">
+        <input type="text" id="spouseInput" placeholder="${promptLabel}" autocomplete="off">
+        <div id="spouseDropdown" class="spouse-dropdown"></div>
+      </div>
       <button class="spouse-save" id="spouseSaveBtn">حفظ</button>
     `;
     main.appendChild(panel);
+    const getSelected = wireSpouseAutocomplete('spouseInput', 'spouseDropdown');
     document.getElementById('spouseSaveBtn').onclick = ()=>requireAdmin(()=>{
       const val = document.getElementById('spouseInput').value.trim();
       if(!val){ showToast('اكتب الاسم أولًا'); return; }
-      registerSpouse(person.id, val);
+      const chosenId = getSelected();
+      if(chosenId && P[chosenId].chain===val){
+        // اختير شخص حقيقي موجود فعلًا من القائمة — يُربط بمعرّفه مباشرة، بلا إنشاء أي نسخة
+        // جديدة منه، ثم يُعرض عليك أبناؤه الحاليون لتختار من منهم أبناؤها أيضًا
+        person.spouseId = chosenId;
+        person.spouseName = P[chosenId].chain;
+        spouseLog[person.id] = {name:person.spouseName, spouseId:chosenId};
+        if(P[chosenId].spouseId!==person.id && !P[chosenId].spouseId){
+          P[chosenId].spouseId = person.id;
+          P[chosenId].spouseName = person.chain;
+          spouseLog[chosenId] = {name:person.chain, spouseId:person.id};
+        }
+      } else {
+        registerSpouse(person.id, val);
+      }
       persistState();
       showToast('تم الحفظ — الأبناء الآن يُنسبون للزوج');
       render();
+      if(chosenId && P[chosenId].chain===val) openLinkExistingChildrenPrompt(person.id, chosenId);
     });
     const note = document.createElement('p');
     note.className = 'section-note';
-    note.textContent = 'الابن لا يُنسب لأمه أبدًا — لازم تسجّل اسم الزوج أولًا حتى تقدر تضيف الأبناء بنسبهم الصحيح.';
+    note.textContent = 'الابن لا يُنسب لأمه أبدًا — لازم تسجّل اسم الزوج أولًا حتى تقدر تضيف الأبناء بنسبهم الصحيح. اكتب حرفين على الأقل ليظهر لك اقتراح إن كان الزوج مسجَّلًا عندنا فعلًا.';
     main.appendChild(note);
   }
 }
