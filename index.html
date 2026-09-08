@@ -2686,6 +2686,16 @@ Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
 // in the seed, the project's source of truth), never a stray click in the live app.
 const SEED_DECEASED_IDS = new Set(Object.keys(P).filter(id=>P[id].isDeceased));
 
+// SNAPSHOT of every spouse link the seed itself establishes (personId -> spouseId), captured
+// now for the same reason as SEED_DECEASED_IDS above. applyPayload()'s "spouses" merge always
+// trusts the live Firebase arhami:spouses log over the seed — so a single stale entry left
+// over from BEFORE a correction (e.g. عزة بنت سعيد كانت مربوطة بالهوية الخاطئة "حمود بن محمد
+// بن راشد بن شنين" التي حُذفت لاحقًا) keeps silently winning on every load, even overriding a
+// fresh manual edit made through the app itself, exactly like the deceased-status bug. Re-assert
+// every one of these pairs after the Firebase merge, every load, so the seed's correction is
+// truly final — to change a spouse link here going forward, fix it in the seed itself.
+const SEED_SPOUSE_LINKS = new Map(Object.keys(P).filter(id=>P[id].spouseId).map(id=>[id, P[id].spouseId]));
+
 // track which ids were added by the user during this session (for a small badge)
 const addedByUser = new Set();
 const renameLog = {};       // { personId: newName } — applied on top of seed or added data
@@ -4428,6 +4438,21 @@ function repairFamilyLinks(){
     if(P[id] && !P[id].isDeceased){
       P[id].isDeceased = true;
       deceasedLog[id] = true;
+      fixedCount++;
+    }
+  });
+  // re-heal any spouse link a stale/incorrect Firebase entry just reset during applyPayload()
+  // — see SEED_SPOUSE_LINKS above for why this is necessary
+  SEED_SPOUSE_LINKS.forEach((spouseId, personId)=>{
+    if(P[personId] && P[spouseId] && P[personId].spouseId !== spouseId){
+      P[personId].spouseId = spouseId;
+      P[personId].spouseName = P[spouseId].chain;
+      spouseLog[personId] = {spouseId: spouseId, name: P[spouseId].chain};
+      if(P[spouseId].spouseId !== personId){
+        P[spouseId].spouseId = personId;
+        P[spouseId].spouseName = P[personId].chain;
+        spouseLog[spouseId] = {spouseId: personId, name: P[personId].chain};
+      }
       fixedCount++;
     }
   });
