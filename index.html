@@ -3600,40 +3600,6 @@ function wireSpouseAutocomplete(inputId, dropdownId, onSelect){
   return ()=>selectedId; // يُستدعى وقت الحفظ لمعرفة هل اختار المستخدم شخصًا حقيقيًا من القائمة
 }
 
-function openLinkExistingChildrenPrompt(personId, spouseId){
-  const person = P[personId], spouse = P[spouseId];
-  const candidates = (spouse.childIds||[]).filter(cid=>P[cid] && P[cid].motherId!==personId);
-  if(!candidates.length) return;
-  const anchor = document.getElementById('backupAnchor') || main;
-  const panel = document.createElement('div');
-  panel.className = 'add-form';
-  panel.style.margin = '10px 18px 0';
-  panel.innerHTML = `
-    <p class="section-note" style="margin-top:0;">هل بعض أبناء ${spouse.chain} الحاليين هم أيضًا أبناء ${person.name}؟ اختر منهم:</p>
-    ${candidates.map(cid=>`<label style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px;">
-      <input type="checkbox" class="link-child-check" value="${cid}"> ${P[cid].chain}
-    </label>`).join('')}
-    <div class="add-form-actions" style="margin-top:10px;">
-      <button class="save" id="linkChildrenConfirmBtn">إضافة المُختارين</button>
-      <button class="cancel" id="linkChildrenSkipBtn">تخطّي</button>
-    </div>
-  `;
-  anchor.appendChild(panel);
-  panel.scrollIntoView({behavior:'smooth', block:'start'});
-  document.getElementById('linkChildrenSkipBtn').onclick = ()=>panel.remove();
-  document.getElementById('linkChildrenConfirmBtn').onclick = ()=>{
-    const chosen = Array.from(panel.querySelectorAll('.link-child-check:checked')).map(el=>el.value);
-    if(!chosen.length){ panel.remove(); return; }
-    chosen.forEach(cid=>{ P[cid].motherId = personId; });
-    if(!person.childIds) person.childIds = [];
-    chosen.forEach(cid=>{ if(!person.childIds.includes(cid)) person.childIds.push(cid); });
-    persistState();
-    showToast(`تمت إضافة ${chosen.length} من الأبناء`);
-    panel.remove();
-    render();
-  };
-}
-
 function renderSpousePanel(person){
   const roleLabel = 'زوجها';
   const promptLabel = 'اسم الزوج';
@@ -3671,7 +3637,6 @@ function renderSpousePanel(person){
         }
         persistState();
         render();
-        if(chosenId && P[chosenId].chain===val) openLinkExistingChildrenPrompt(person.id, chosenId);
       };
     });
   } else {
@@ -3705,7 +3670,6 @@ function renderSpousePanel(person){
       persistState();
       showToast('تم الحفظ — الأبناء الآن يُنسبون للزوج');
       render();
-      if(chosenId && P[chosenId].chain===val) openLinkExistingChildrenPrompt(person.id, chosenId);
     });
     const note = document.createElement('p');
     note.className = 'section-note';
@@ -3963,10 +3927,24 @@ function chevIcon(){
 function openAddForm(parentId, gender, motherIdOverride){
   const form = document.createElement('div');
   form.className='add-form';
+  // إن كانت هذه أم تُضيف لأولاد زوجها (motherIdOverride موجود)، أول شيء تراه هو أبناؤه
+  // الحاليون الذين لا أمّ مسجَّلة لهم بعد — لتحديد من هم أبناؤها أيضًا دفعة واحدة، بدل كتابة
+  // كل اسم يدويًا وربما إنشاء نسخة مكررة منه
+  const father = motherIdOverride ? P[parentId] : null;
+  const existingCandidates = father ? (father.childIds||[]).filter(cid=>P[cid] && !P[cid].motherId) : [];
+  const existingHtml = existingCandidates.length ? `
+    <p class="section-note" style="margin:0 0 8px;text-align:right;">أبناء ${father.name} الحاليون بلا أمّ مسجَّلة — حدّد من هم أبناؤها:</p>
+    ${existingCandidates.map(cid=>`<label style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px;">
+      <input type="checkbox" class="existingChildCheck" value="${cid}"> ${P[cid].name}
+    </label>`).join('')}
+    <button type="button" class="save" id="linkExistingBtn" style="margin:6px 0 16px;width:100%;">ربط المحدَّد كأبناء لها</button>
+    <p class="section-note" style="margin:0 0 10px;text-align:right;">أو أضِف أسماء جديدة تمامًا هنا:</p>
+  ` : '';
   const fieldsHtml = Array.from({length:6}).map((_,i)=>
     `<input type="text" class="newNameInput" placeholder="اسم ${i+1}" style="margin-bottom:8px;">`
   ).join('');
   form.innerHTML = `
+    ${existingHtml}
     ${fieldsHtml}
     <div class="gender-toggle">
       <button type="button" data-g="m" class="${gender==='m'?'active':''}">ذكر</button>
@@ -3979,6 +3957,20 @@ function openAddForm(parentId, gender, motherIdOverride){
   `;
   main.appendChild(form);
   form.scrollIntoView({behavior:'smooth', block:'center'});
+  if(existingCandidates.length){
+    document.getElementById('linkExistingBtn').onclick = ()=>{
+      const chosen = Array.from(form.querySelectorAll('.existingChildCheck:checked')).map(el=>el.value);
+      if(!chosen.length){ showToast('حدّد اسمًا واحدًا على الأقل'); return; }
+      chosen.forEach(cid=>{
+        P[cid].motherId = motherIdOverride;
+        if(!P[motherIdOverride].childIds.includes(cid)) P[motherIdOverride].childIds.push(cid);
+      });
+      persistState();
+      showToast(`تمت إضافة ${chosen.length} من الأبناء`);
+      form.remove();
+      render();
+    };
+  }
   let chosenGender = gender;
   form.querySelectorAll('.gender-toggle button').forEach(b=>{
     b.onclick = ()=>{
