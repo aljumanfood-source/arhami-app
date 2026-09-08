@@ -1773,15 +1773,17 @@ add('sharifa_rashid','شريفة','f','rashid_khalfan',null,6,'شريفة بنت
 add('sultan_m','سلطان','m','muhammad_sulaiman','sharifa_rashid',7,'سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('ahmad_m','أحمد','m','muhammad_sulaiman','sharifa_rashid',7,'أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 // أحمد بن محمد بن سليمان له ثلاث زوجات معروفة الأسماء
-add('sulaima2_abdullah_rashid','سليمة بنت عبدالله بن راشد الطوقية','f',null,null,7,'سليمة بنت عبدالله بن راشد الطوقية');
-queueSpouseLink('ahmad_m', 'sulaima2_abdullah_rashid');
-add('aseela9_ahmad_sulaima2','أصيلة','f','ahmad_m','sulaima2_abdullah_rashid',8,'أصيلة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+// سليمة بنت عبدالله بن راشد كانت مسجَّلة مرتين: مرة بنسب كامل صحيح (salima_bint_abdullah، بلا
+// أبناء) ومرة بنسب مختصر ناقص كجذر مستقل (sulaima2_abdullah_rashid، وعليها زوجها وأبناؤها
+// الأربعة فعليًا) — نفس نمط تكرار حمود بالضبط. دُمجت هنا في النسخة الصحيحة الكاملة
+queueSpouseLink('ahmad_m', 'salima_bint_abdullah');
+add('aseela9_ahmad_sulaima2','أصيلة','f','ahmad_m','salima_bint_abdullah',8,'أصيلة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 P.aseela9_ahmad_sulaima2.isDeceased = true;
-add('salim14_ahmad_sulaima2','سالم','m','ahmad_m','sulaima2_abdullah_rashid',8,'سالم بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salim14_ahmad_sulaima2','سالم','m','ahmad_m','salima_bint_abdullah',8,'سالم بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 P.salim14_ahmad_sulaima2.isDeceased = true;
-add('shaikha4_ahmad_sulaima2','شيخة','f','ahmad_m','sulaima2_abdullah_rashid',8,'شيخة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('shaikha4_ahmad_sulaima2','شيخة','f','ahmad_m','salima_bint_abdullah',8,'شيخة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 P.shaikha4_ahmad_sulaima2.isDeceased = true;
-add('zwaina14_ahmad_sulaima2','زوينة','f','ahmad_m','sulaima2_abdullah_rashid',8,'زوينة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zwaina14_ahmad_sulaima2','زوينة','f','ahmad_m','salima_bint_abdullah',8,'زوينة بنت أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 P.zwaina14_ahmad_sulaima2.isDeceased = true;
 
 add('fatima16_hussain','فاطمة بنت حسين','f',null,null,7,'فاطمة بنت حسين');
