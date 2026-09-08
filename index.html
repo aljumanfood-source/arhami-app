@@ -3218,6 +3218,7 @@ function renderBranchTree(rootId){
   const backLink = `<div class="tree-toolbar">
     <span class="tree-home-btn" title="الصفحة الرئيسية">🏠</span>
     <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
+    <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
   </div>`;
   function renderLevel(id, depth, isRoot){
     const p = P[id];
@@ -3267,6 +3268,13 @@ function renderBranchTree(rootId){
   };
   main.querySelector('.tree-detail-btn').onclick = (e)=>{
     goTo({view:'profile', personId: e.currentTarget.dataset.detailId});
+  };
+  document.getElementById('treeSearchBtn').onclick = ()=>{
+    goTo({view:'home'});
+    state.searchMode = 'full';
+    state.branchId = null;
+    state.boxesHidden = true;
+    render();
   };
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
@@ -3383,12 +3391,15 @@ function buildTreePathTo(personId){
   let cur = P[personId];
   while(cur){
     chain.unshift(cur.id);
-    if(!cur.fatherId || !P[cur.fatherId]) break;
+    // نتوقف بالضبط عند جذر فرع معروف (raashid_ali) بدل الاستمرار للأعلى حتى نفاد الأب —
+    // الجذر الحقيقي لكل السلسلة هو علي بن سالم، لكنه ليس مسجَّلًا كـ"جذر فرع" في BRANCH_ROOTS
+    // (فرع واحد فقط حاليًا: راشد بن علي بن سالم)، فكانت الدالة تفشل دائمًا لعدم وصولها لجذر
+    // معروف، فلا يظهر زر الانتقال إطلاقًا على أي صفحة شخصية
+    if(BRANCH_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain.slice(1)};
+    if(!cur.fatherId || !P[cur.fatherId]) return null;
     cur = P[cur.fatherId];
   }
-  const rootId = chain[0];
-  if(!BRANCH_ROOTS.some(b=>b.id===rootId)) return null;
-  return {branchRootId: rootId, expanded: chain.slice(1)};
+  return null;
 }
 
 function renderProfile(id){
@@ -3399,6 +3410,7 @@ function renderProfile(id){
       <div class="back-btn" id="backBtn">${arrowIcon()}</div>
       <h2>الصفحة الشخصية</h2>
       ${treePath ? `<span class="tree-detail-btn" id="toTreeBtn" title="فتح موقعه في شجرة التصفح">↩️</span>` : ''}
+      <span class="tree-detail-btn" id="toSearchBtn" title="بحث شامل">🔍</span>
     </div>
     <div class="profile-hero">
       ${renderChain(p)}
@@ -3429,6 +3441,13 @@ function renderProfile(id){
   if(treePath){
     document.getElementById('toTreeBtn').onclick = ()=>{ goTo({view:'branchTree', branchRootId:treePath.branchRootId, expanded:treePath.expanded}); };
   }
+  document.getElementById('toSearchBtn').onclick = ()=>{
+    goTo({view:'home'});
+    state.searchMode = 'full';
+    state.branchId = null;
+    state.boxesHidden = true;
+    render();
+  };
   document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
   document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
   if(!p.isDeceased){
@@ -4173,14 +4192,6 @@ async function restoreState(){
   const repaired = repairFamilyLinks();
   const autoMerged = quickSafeMerge();
   if(repaired>0 || autoMerged>0) persistState();
-  // شريط تشخيصي مؤقت (سيُزال بمجرد حل مشكلة حمود بن محمد بن سليمان) — يعرض بالضبط ماذا فعلت
-  // تمريرة الإصلاح هذا التحميل، لالتقاط لقطة شاشة منه مباشرة بدل التخمين
-  try{
-    const bar = document.createElement('div');
-    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#111;color:#0f0;font-size:11px;padding:6px;text-align:center;direction:ltr;';
-    bar.textContent = (window.__hamood17DebugMsg||'') + ' || ' + (window.__nameLinksDebugMsg||'') + ' || hamood17 exists after all passes: ' + (!!P['hamood17_muhammad37']) + ' || hamood_m2 childIds count: ' + ((P['hamood_m2']&&P['hamood_m2'].childIds)||[]).length;
-    document.body.appendChild(bar);
-  }catch(e){}
   render();
 }
 
