@@ -374,7 +374,18 @@
     position:absolute;top:6px;insert-inline-end:10px;right:10px;font-size:11px;
     font-weight:500;color:rgba(255,255,255,.85);
   }
+  .tree-box.female{background:#FBD9E6;border-color:#E6A9C4;color:var(--green-deep);}
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
+  .tree-legend{
+    display:flex;justify-content:center;gap:22px;margin-top:22px;padding:10px 6px;
+    border-top:1px solid rgba(201,162,39,.35);
+  }
+  .tree-legend-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .tree-legend-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gold-rich);}
+  .tree-legend-dot.deceased{background:var(--green);border-color:var(--green-deep);}
+  .tree-legend-dot.male{background:var(--card);}
+  .tree-legend-dot.female{background:#FBD9E6;border-color:#E6A9C4;}
+  .tree-legend-label{font-size:10.5px;color:var(--green-deep);font-weight:600;}
   .tree-box.deceased{background:var(--green);border-color:var(--green-deep);color:#fff;}
   .tree-box.deceased.open{background:var(--green);border-color:var(--green-deep);color:#fff;}
   .tree-box.tree-root.deceased{background:var(--green-deep);border-color:var(--green-deep);}
@@ -3249,7 +3260,7 @@ function renderBranchTree(rootId){
     }
     let html = `<div class="tree-node ${isOpen && !isRoot ? 'tree-node-open':''}">
       <div class="tree-box-wrap">
-      <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''}" data-node="${id}" data-depth="${depth}"${sizeStyle}>${hint}${label}</div>
+      <div class="${boxClass} ${isOpen?'open':''} ${p.isDeceased?'deceased':''} ${p.gender==='f'?'female':''}" data-node="${id}" data-depth="${depth}"${sizeStyle}>${hint}${label}</div>
     </div>`;
     if(isOpen){
       const kids = (p.childIds||[]).filter(cid=>P[cid]);
@@ -3272,7 +3283,12 @@ function renderBranchTree(rootId){
     const toShow = ids.includes(openId) ? [openId] : ids;
     return toShow.map(cid=>renderLevel(cid, depth, false)).join('');
   }
-  main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>`;
+  const legend = `<div class="tree-legend">
+    <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
+    <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
+    <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
+  </div>`;
+  main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>` + legend;
   main.querySelector('.tree-home-btn').onclick = ()=>{
     goTo({view:'home'});
   };
