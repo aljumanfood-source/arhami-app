@@ -381,7 +381,7 @@
     border-top:1px solid rgba(201,162,39,.35);
   }
   .tree-legend-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
-  .tree-legend-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gold-rich);}
+  .tree-legend-dot{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rich);}
   .tree-legend-dot.deceased{background:var(--green);border-color:var(--green-deep);}
   .tree-legend-dot.male{background:var(--card);}
   .tree-legend-dot.female{background:#FBD9E6;border-color:#E6A9C4;}
@@ -3281,7 +3281,15 @@ function renderBranchTree(rootId){
   function renderSiblingGroup(ids, depth){
     const openId = path[depth];
     const toShow = ids.includes(openId) ? [openId] : ids;
-    return toShow.map(cid=>renderLevel(cid, depth, false)).join('');
+    // ترتيب العرض فقط (لا يمسّ ترتيب الأبناء المخزَّن ولا منطق الفتح/الطي): توفاهم الله أولًا،
+    // ثم الذكور، ثم الإناث — يطابق ترتيب دليل الألوان أسفل الشجرة
+    function colorRank(cid){
+      const person = P[cid];
+      if(person.isDeceased) return 0;
+      return person.gender==='f' ? 2 : 1;
+    }
+    const sorted = toShow.slice().sort((a,b)=>colorRank(a)-colorRank(b));
+    return sorted.map(cid=>renderLevel(cid, depth, false)).join('');
   }
   const legend = `<div class="tree-legend">
     <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
