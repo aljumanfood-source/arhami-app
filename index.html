@@ -2537,9 +2537,26 @@ add('husna_khammas','حسنى','f','khammas_rashid_ali',null,4,'حسنى بنت 
 P.saif_ahmad.childIds.push('haitham_saif');
 P.shanoona.childIds.push('haitham_saif');
 
-// ==== ذرية إضافية لحمود بن محمد بن سليمان (hamood_m2) عبر أبنائه/بناته الأحد عشر المضافين
-// مباشرة عبر التطبيق (بلا معرّف معروف هنا) — تُربط وقت التشغيل بالاسم عبر
-// queueParentLinkByName/queueSpouseLinkByName بدل معرّف ثابت لا نملكه ====
+// ==== أبناء وبنات حمود بن محمد بن سليمان (hamood_m2) الأحد عشر — كانوا مضافين مباشرة عبر
+// التطبيق فقط (بلا معرّف هنا)، رُبطوا وقت التشغيل بالاسم عبر queueParentLinkByName، لكن هذا
+// تسبب في كارثة حقيقية: عندما تعارض توقيت حفظ "حذف الهوية الخاطئة له" مع حفظ "تصحيح نسب
+// أبنائه" في قاعدة البيانات الحيّة، حُذف الأحد عشر بالكامل تبعًا له (خطأ عام أُصلح جذريًا في
+// معالجة الحذف نفسها). الحل الدائم هنا: بدل الاعتماد على أي بيانات حيّة قد تُفقد، أصبح
+// الأحد عشر جميعًا أشخاصًا حقيقيين في هذا الملف المصدري مباشرة، بمعرّفات ثابتة، فلا يعتمد
+// وجودهم على أي كتابة تلقائية للقاعدة الحيّة إطلاقًا بعد اليوم — إعادة إدخال كاملة من نفس
+// المعلومات التي زوّدنا بها المستخدم أصلًا
+add('muhammad_hamood_m2','محمد','m','hamood_m2',null,8,'محمد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salim_hamood_m2','سالم','m','hamood_m2',null,8,'سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('rashid_hamood_m2','راشد','m','hamood_m2',null,8,'راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saeed_hamood_m2','سعيد','m','hamood_m2',null,8,'سعيد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ziyana_hamood_m2','زيانة','f','hamood_m2',null,8,'زيانة بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('riya_hamood_m2','ريا','f','hamood_m2',null,8,'ريا بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('huseina_hamood_m2','حسينة','f','hamood_m2',null,8,'حسينة بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hasna_hamood_m2','حسناء','f','hamood_m2',null,8,'حسناء بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('fathiya_hamood_m2','فتحية','f','hamood_m2',null,8,'فتحية بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('fatima_hamood_m2','فاطمة','f','hamood_m2',null,8,'فاطمة بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('shamsa_hamood_m2','شمسة','f','hamood_m2',null,8,'شمسة بنت حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+// محمد بن حمود وفاطمة بنت حمود: لا يوجد أبناء مسجَّلون (كما أخبرنا المستخدم)
 
 // حمد بن حمود (ابن مباشر لحمود، لم يكن مسجَّلًا من قبل) وأولاده الثلاثة
 add('hamd_hamood_m2','حمد','m','hamood_m2',null,8,'حمد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -2548,24 +2565,17 @@ add('areej_hamd_hamood','أريج','f','hamd_hamood_m2',null,9,'أريج بنت 
 add('adam_hamd_hamood','آدم','m','hamd_hamood_m2',null,9,'آدم بن حمد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // راشد بن حمود (لا زوجة مسجَّلة) وأولاده الثلاثة
-add('muhammad_rashid_hamood2','محمد','m',null,null,9,'محمد بن راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-add('sharifa_rashid_hamood2','شريفة','f',null,null,9,'شريفة بنت راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-add('haitham_rashid_hamood2','هيثم','m',null,null,9,'هيثم بن راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-queueParentLinkByName('muhammad_rashid_hamood2', 'راشد', 'hamood_m2', 'm');
-queueParentLinkByName('sharifa_rashid_hamood2', 'راشد', 'hamood_m2', 'm');
-queueParentLinkByName('haitham_rashid_hamood2', 'راشد', 'hamood_m2', 'm');
+add('muhammad_rashid_hamood2','محمد','m','rashid_hamood_m2',null,9,'محمد بن راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sharifa_rashid_hamood2','شريفة','f','rashid_hamood_m2',null,9,'شريفة بنت راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('haitham_rashid_hamood2','هيثم','m','rashid_hamood_m2',null,9,'هيثم بن راشد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // سالم بن حمود (لا زوجة مسجَّلة) وأولاده الثلاثة
-add('hamood_salim_hamood2','حمود','m',null,null,9,'حمود بن سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
-add('radeen_salim_hamood2','ردين','f',null,null,9,'ردين بنت سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-add('malak_salim_hamood2','ملاك','f',null,null,9,'ملاك بنت سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-queueParentLinkByName('hamood_salim_hamood2', 'سالم', 'hamood_m2', 'm');
-queueParentLinkByName('radeen_salim_hamood2', 'سالم', 'hamood_m2', 'm');
-queueParentLinkByName('malak_salim_hamood2', 'سالم', 'hamood_m2', 'm');
+add('hamood_salim_hamood2','حمود','m','salim_hamood_m2',null,9,'حمود بن سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('radeen_salim_hamood2','ردين','f','salim_hamood_m2',null,9,'ردين بنت سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('malak_salim_hamood2','ملاك','f','salim_hamood_m2',null,9,'ملاك بنت سالم بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // سعيد بن حمود (لا زوجة مسجَّلة) وابنته
-add('alyaa_saeed_hamood2','علياء','f',null,null,9,'علياء بنت سعيد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-queueParentLinkByName('alyaa_saeed_hamood2', 'سعيد', 'hamood_m2', 'm');
+add('alyaa_saeed_hamood2','علياء','f','saeed_hamood_m2',null,9,'علياء بنت سعيد بن حمود بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
 // زيانة بنت حمود، زوجها يُعرف بـ"أبو سلمى" فقط، وابنتاها سلمى وشادية، وابن سلمى ماهر الشهيبي
 // (نسبه من أبيه خارج الشجرة، معروف بلقب "الشهيبي" فقط)
@@ -2573,19 +2583,25 @@ add('zoj_ziyana_hamood','أبو سلمى','m',null,null,8,'أبو سلمى');
 add('salma_zoj_ziyana','سلمى','f','zoj_ziyana_hamood',null,9,'سلمى بنت أبو سلمى');
 add('shadia_zoj_ziyana','شادية','f','zoj_ziyana_hamood',null,9,'شادية بنت أبو سلمى');
 add('maher_alshuhaibi','ماهر','m',null,'salma_zoj_ziyana',10,'ماهر الشهيبي');
-queueSpouseLinkByName('zoj_ziyana_hamood', 'زيانة', 'hamood_m2', 'f');
-queueParentLinkByName('salma_zoj_ziyana', 'زيانة', 'hamood_m2', 'f');
-queueParentLinkByName('shadia_zoj_ziyana', 'زيانة', 'hamood_m2', 'f');
+P.ziyana_hamood_m2.spouseId = 'zoj_ziyana_hamood';
+P.ziyana_hamood_m2.spouseName = P.zoj_ziyana_hamood.chain;
+P.zoj_ziyana_hamood.spouseId = 'ziyana_hamood_m2';
+P.zoj_ziyana_hamood.spouseName = P.ziyana_hamood_m2.chain;
+P.salma_zoj_ziyana.motherId = 'ziyana_hamood_m2';
+P.shadia_zoj_ziyana.motherId = 'ziyana_hamood_m2';
 
 // ريا بنت حمود، زوجها يُعرف بـ"أبو سعيد" فقط، وأولادهما الثلاثة
 add('zoj_riya_hamood','أبو سعيد','m',null,null,8,'أبو سعيد');
 add('saeed_zoj_riya','سعيد','m','zoj_riya_hamood',null,9,'سعيد بن أبو سعيد');
 add('muhaira_zoj_riya','محيرة','f','zoj_riya_hamood',null,9,'محيرة بنت أبو سعيد');
 add('maisa_zoj_riya','ميسى','f','zoj_riya_hamood',null,9,'ميسى بنت أبو سعيد');
-queueSpouseLinkByName('zoj_riya_hamood', 'ريا', 'hamood_m2', 'f');
-queueParentLinkByName('saeed_zoj_riya', 'ريا', 'hamood_m2', 'f');
-queueParentLinkByName('muhaira_zoj_riya', 'ريا', 'hamood_m2', 'f');
-queueParentLinkByName('maisa_zoj_riya', 'ريا', 'hamood_m2', 'f');
+P.riya_hamood_m2.spouseId = 'zoj_riya_hamood';
+P.riya_hamood_m2.spouseName = P.zoj_riya_hamood.chain;
+P.zoj_riya_hamood.spouseId = 'riya_hamood_m2';
+P.zoj_riya_hamood.spouseName = P.riya_hamood_m2.chain;
+P.saeed_zoj_riya.motherId = 'riya_hamood_m2';
+P.muhaira_zoj_riya.motherId = 'riya_hamood_m2';
+P.maisa_zoj_riya.motherId = 'riya_hamood_m2';
 
 // حسينة بنت حمود، زوجها حمود بن علي الراشدي، وأولادهما الخمسة
 add('hamood_ali_alrashidi','حمود','m',null,null,8,'حمود بن علي الراشدي');
@@ -2594,12 +2610,15 @@ add('hamd_hamood_alrashidi','حمد','m','hamood_ali_alrashidi',null,9,'حمد �
 add('izza_hamood_alrashidi','عزة','f','hamood_ali_alrashidi',null,9,'عزة بنت حمود بن علي الراشدية');
 add('samra_hamood_alrashidi','سمرة','f','hamood_ali_alrashidi',null,9,'سمرة بنت حمود بن علي الراشدية');
 add('lulwa_hamood_alrashidi','لولوة','f','hamood_ali_alrashidi',null,9,'لولوة بنت حمود بن علي الراشدية');
-queueSpouseLinkByName('hamood_ali_alrashidi', 'حسينة', 'hamood_m2', 'f');
-queueParentLinkByName('maryam_hamood_alrashidi', 'حسينة', 'hamood_m2', 'f');
-queueParentLinkByName('hamd_hamood_alrashidi', 'حسينة', 'hamood_m2', 'f');
-queueParentLinkByName('izza_hamood_alrashidi', 'حسينة', 'hamood_m2', 'f');
-queueParentLinkByName('samra_hamood_alrashidi', 'حسينة', 'hamood_m2', 'f');
-queueParentLinkByName('lulwa_hamood_alrashidi', 'حسينة', 'hamood_m2', 'f');
+P.huseina_hamood_m2.spouseId = 'hamood_ali_alrashidi';
+P.huseina_hamood_m2.spouseName = P.hamood_ali_alrashidi.chain;
+P.hamood_ali_alrashidi.spouseId = 'huseina_hamood_m2';
+P.hamood_ali_alrashidi.spouseName = P.huseina_hamood_m2.chain;
+P.maryam_hamood_alrashidi.motherId = 'huseina_hamood_m2';
+P.hamd_hamood_alrashidi.motherId = 'huseina_hamood_m2';
+P.izza_hamood_alrashidi.motherId = 'huseina_hamood_m2';
+P.samra_hamood_alrashidi.motherId = 'huseina_hamood_m2';
+P.lulwa_hamood_alrashidi.motherId = 'huseina_hamood_m2';
 
 // حسناء بنت حمود، زوجها أحمد بن عبدالله السعيدي، وأولادهما الخمسة
 add('ahmad_abdullah_alsaeedi','أحمد','m',null,null,8,'أحمد بن عبدالله السعيدي');
@@ -2608,12 +2627,15 @@ add('asaad_ahmad_alsaeedi','أسعد','m','ahmad_abdullah_alsaeedi',null,9,'أس
 add('almutasim_ahmad_alsaeedi','المعتصم','m','ahmad_abdullah_alsaeedi',null,9,'المعتصم بن أحمد بن عبدالله السعيدي');
 add('adam_ahmad_alsaeedi','آدم','m','ahmad_abdullah_alsaeedi',null,9,'آدم بن أحمد بن عبدالله السعيدي');
 add('aiman_ahmad_alsaeedi','أيمن','m','ahmad_abdullah_alsaeedi',null,9,'أيمن بن أحمد بن عبدالله السعيدي');
-queueSpouseLinkByName('ahmad_abdullah_alsaeedi', 'حسناء', 'hamood_m2', 'f');
-queueParentLinkByName('aseel_ahmad_alsaeedi', 'حسناء', 'hamood_m2', 'f');
-queueParentLinkByName('asaad_ahmad_alsaeedi', 'حسناء', 'hamood_m2', 'f');
-queueParentLinkByName('almutasim_ahmad_alsaeedi', 'حسناء', 'hamood_m2', 'f');
-queueParentLinkByName('adam_ahmad_alsaeedi', 'حسناء', 'hamood_m2', 'f');
-queueParentLinkByName('aiman_ahmad_alsaeedi', 'حسناء', 'hamood_m2', 'f');
+P.hasna_hamood_m2.spouseId = 'ahmad_abdullah_alsaeedi';
+P.hasna_hamood_m2.spouseName = P.ahmad_abdullah_alsaeedi.chain;
+P.ahmad_abdullah_alsaeedi.spouseId = 'hasna_hamood_m2';
+P.ahmad_abdullah_alsaeedi.spouseName = P.hasna_hamood_m2.chain;
+P.aseel_ahmad_alsaeedi.motherId = 'hasna_hamood_m2';
+P.asaad_ahmad_alsaeedi.motherId = 'hasna_hamood_m2';
+P.almutasim_ahmad_alsaeedi.motherId = 'hasna_hamood_m2';
+P.adam_ahmad_alsaeedi.motherId = 'hasna_hamood_m2';
+P.aiman_ahmad_alsaeedi.motherId = 'hasna_hamood_m2';
 
 // فتحية بنت حمود، زوجها هارون الشقصي، وأولادهما الأربعة
 add('haroon_alshaqsi','هارون','m',null,null,8,'هارون الشقصي');
@@ -2621,11 +2643,14 @@ add('hanin_haroon_alshaqsi','حنين','f','haroon_alshaqsi',null,9,'حنين ب
 add('hamood_haroon_alshaqsi','حمود','m','haroon_alshaqsi',null,9,'حمود بن هارون الشقصي');
 add('muhammad_haroon_alshaqsi','محمد','m','haroon_alshaqsi',null,9,'محمد بن هارون الشقصي');
 add('hanan_haroon_alshaqsi','حنان','f','haroon_alshaqsi',null,9,'حنان بنت هارون الشقصية');
-queueSpouseLinkByName('haroon_alshaqsi', 'فتحية', 'hamood_m2', 'f');
-queueParentLinkByName('hanin_haroon_alshaqsi', 'فتحية', 'hamood_m2', 'f');
-queueParentLinkByName('hamood_haroon_alshaqsi', 'فتحية', 'hamood_m2', 'f');
-queueParentLinkByName('muhammad_haroon_alshaqsi', 'فتحية', 'hamood_m2', 'f');
-queueParentLinkByName('hanan_haroon_alshaqsi', 'فتحية', 'hamood_m2', 'f');
+P.fathiya_hamood_m2.spouseId = 'haroon_alshaqsi';
+P.fathiya_hamood_m2.spouseName = P.haroon_alshaqsi.chain;
+P.haroon_alshaqsi.spouseId = 'fathiya_hamood_m2';
+P.haroon_alshaqsi.spouseName = P.fathiya_hamood_m2.chain;
+P.hanin_haroon_alshaqsi.motherId = 'fathiya_hamood_m2';
+P.hamood_haroon_alshaqsi.motherId = 'fathiya_hamood_m2';
+P.muhammad_haroon_alshaqsi.motherId = 'fathiya_hamood_m2';
+P.hanan_haroon_alshaqsi.motherId = 'fathiya_hamood_m2';
 
 // شمسة بنت حمود، زوجها سلطان بن راشد بن سلطان العامري، وأولادهما الخمسة
 add('sultan_rashid_sultan_alamri','سلطان','m',null,null,8,'سلطان بن راشد بن سلطان العامري');
@@ -2634,13 +2659,15 @@ add('abdullah_sultan_alamri','عبدالله','m','sultan_rashid_sultan_alamri',
 add('almunthir_sultan_alamri','المنذر','m','sultan_rashid_sultan_alamri',null,9,'المنذر بن سلطان بن راشد بن سلطان العامري');
 add('tamer_sultan_alamri','تامر','m','sultan_rashid_sultan_alamri',null,9,'تامر بن سلطان بن راشد بن سلطان العامري');
 add('tasneem_sultan_alamri','تسنيم','f','sultan_rashid_sultan_alamri',null,9,'تسنيم بنت سلطان بن راشد بن سلطان العامرية');
-queueSpouseLinkByName('sultan_rashid_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-queueParentLinkByName('nada_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-queueParentLinkByName('abdullah_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-queueParentLinkByName('almunthir_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-queueParentLinkByName('tamer_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-queueParentLinkByName('tasneem_sultan_alamri', 'شمسة', 'hamood_m2', 'f');
-// محمد بنت حمود وفاطمة بنت حمود: لا يوجد أبناء مسجَّلون (كما أخبرنا المستخدم)
+P.shamsa_hamood_m2.spouseId = 'sultan_rashid_sultan_alamri';
+P.shamsa_hamood_m2.spouseName = P.sultan_rashid_sultan_alamri.chain;
+P.sultan_rashid_sultan_alamri.spouseId = 'shamsa_hamood_m2';
+P.sultan_rashid_sultan_alamri.spouseName = P.shamsa_hamood_m2.chain;
+P.nada_sultan_alamri.motherId = 'shamsa_hamood_m2';
+P.abdullah_sultan_alamri.motherId = 'shamsa_hamood_m2';
+P.almunthir_sultan_alamri.motherId = 'shamsa_hamood_m2';
+P.tamer_sultan_alamri.motherId = 'shamsa_hamood_m2';
+P.tasneem_sultan_alamri.motherId = 'shamsa_hamood_m2';
 
 // كل من هم في الطبقة ٧ فما دون (حتى الجيل الأول) يُعتبرون متوفّين تلقائيًا — هذا القرار
 // يُطبَّق هنا، بعد انتهاء كل add() في الملف كاملًا (وليس في منتصفه كما كان سابقًا)، حتى يشمل
@@ -4223,7 +4250,24 @@ function applyPayload(payload){
     }
   });
   (payload.deletes||[]).forEach(id=>{
-    if(P[id]) deletePerson(id);
+    // FOUND THE REAL BUG: this used to call the interactive deletePerson(), which CASCADES to
+    // any child still pointing at this id. That's correct for a live admin click (childIds are
+    // fresh at that instant), but catastrophic during payload replay: "adds" is merged BEFORE
+    // "deletes" in this same function, so a child whose OWN corrected-parent write never made
+    // it to Firebase yet still shows the OLD wrong fatherId here — and gets silently wiped out
+    // along with the parent being deleted, even though it should have simply been re-parented.
+    // This is exactly what erased حمود بن محمد بن سليمان's 11 children when حمود بن محمد بن
+    // راشد بن شنين (the wrong duplicate identity) finally got its own delete flag persisted
+    // before their corrected fatherId did. A person who legitimately needs their children gone
+    // too already has each of those children as their OWN separate entry in this same deletes
+    // list (deletePerson added them individually at the moment of the real interactive delete),
+    // so replaying deletes non-recursively here is exactly as complete and far safer.
+    if(P[id]){
+      const p = P[id];
+      if(p.fatherId && P[p.fatherId]) P[p.fatherId].childIds = P[p.fatherId].childIds.filter(x=>x!==id);
+      if(p.motherId && P[p.motherId]) P[p.motherId].childIds = P[p.motherId].childIds.filter(x=>x!==id);
+      delete P[id];
+    }
     deletedIds.add(id);
   });
 }
