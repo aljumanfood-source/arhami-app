@@ -3274,12 +3274,19 @@ function renderBranchTree(rootId){
     <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
     <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
   </div>`;
+  function shortDisplayName(name){
+    // بعض الأشخاص خُزِّن نسبهم الكامل بالخطأ في حقل "الاسم" نفسه بدل الاسم الأول فقط (كما في
+    // مثال "محمد بن سعيد بن محمد بن سليمان...") — نعرض هنا الاسم الأول فقط داخل مربع الشجرة
+    // دائمًا، بصرف النظر عمّا هو مخزَّن فعليًا في حقل الاسم، دون تعديل البيانات نفسها إطلاقًا
+    const m = name.match(/^(.*?) (بن|بنت) /);
+    return m ? m[1] : name;
+  }
   function renderLevel(id, depth, isRoot){
     const p = P[id];
     if(!p) return '';
     const isOpen = path[depth]===id;
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
-    const label = isRoot ? p.chain : p.name;
+    const label = isRoot ? p.chain : shortDisplayName(p.name);
     const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
     // كل جيل أصغر تدريجيًا من اللي قبله (بدءًا من depth=1، أول جيل تحت الجذر) — يخلي التسلسل
     // الهرمي واضح بصريًا بمجرد النظر، بدون الحاجة لتتبع خطوط الإزاحة الجانبية بعناية
