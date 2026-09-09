@@ -2699,10 +2699,24 @@ P.almunthir_sultan_alamri.motherId = 'shamsa_hamood_m2';
 P.tamer_sultan_alamri.motherId = 'shamsa_hamood_m2';
 P.tasneem_sultan_alamri.motherId = 'shamsa_hamood_m2';
 
-// كل من هم في الطبقة ٧ فما دون (حتى الجيل الأول) يُعتبرون متوفّين تلقائيًا — هذا القرار
-// يُطبَّق هنا، بعد انتهاء كل add() في الملف كاملًا (وليس في منتصفه كما كان سابقًا)، حتى يشمل
-// كل شخص بغض النظر عن مكان إضافته في هذا الملف، الآن ومستقبلًا.
-Object.values(P).forEach(p=>{ if(p.layer<=7) p.isDeceased = true; });
+// كل من هم في الطبقة ٧ فما دون (حتى الجيل الأول) يُعتبرون متوفّين تلقائيًا — لكن هذا صحيح
+// فقط لذرية راشد بن علي بن سالم نفسه، حيث رقم الطبقة يقيس فعلًا كم جيلًا مضى منذ الجد
+// المشترك. أي عائلة "مطعَّمة" بالزواج (كعائلة العيسري هنا، أو أي عائلة خارجية أخرى) لها
+// عدّاد طبقات مستقل تمامًا لا علاقة له بالقِدَم الفعلي — فكانت هذه القاعدة تُعامل بنات
+// معاصرات تمامًا (كخولة وأسماء وصفية ورحمة وزينة بنات سعيد بن خلفان العيسري، طبقة ٦) على
+// أنهنّ متوفَّيات فقط لأن رقم طبقتهنّ الداخلي صادف أن يكون ٧ فأقل — خلل خطير فعلًا. الحل:
+// تُطبَّق القاعدة الآن فقط على من تصل سلسلة نسبه (من جهة الأب) فعليًا إلى راشد بن علي بن
+// سالم نفسه، لا على أي عائلة خارجية مهما كان رقم طبقتها
+function isInRashidAliLineage(id){
+  let cur = P[id];
+  while(cur){
+    if(cur.id==='rashid_ali') return true;
+    if(!cur.fatherId || !P[cur.fatherId]) return false;
+    cur = P[cur.fatherId];
+  }
+  return false;
+}
+Object.values(P).forEach(p=>{ if(p.layer<=7 && isInRashidAliLineage(p.id)) p.isDeceased = true; });
 
 // SNAPSHOT of everyone the seed itself considers deceased (whether via the layer<=7 auto-rule
 // or an explicit isDeceased=true line above) — captured now, before any Firebase data merges
@@ -4615,6 +4629,17 @@ function repairFamilyLinks(){
   });
   PENDING_NAME_FIXES.forEach(([id, correctName])=>{
     if(P[id] && P[id].name !== correctName){ P[id].name = correctName; fixedCount++; }
+  });
+  // إصلاح مستهدف لمرة واحدة: خمسة أشخاص (خولة وأسماء ورحمة وصفية وزينة بنات سعيد بن خلفان
+  // العيسري) رُصدوا متوفَّيات خطأً بواسطة قاعدة الطبقة٧ القديمة الخاطئة (انظر التعليق أعلى
+  // isInRashidAliLineage) قبل تصحيحها، وقد يكون هذا الخطأ وصل للقاعدة الحيّة فعليًا وعالقًا
+  // فيها الآن — يُصحَّح هنا صراحة بلا انتظار أي تدخّل يدوي
+  ['u_mt9yq18q_fd5t00','u_mt9yq18q_cl3h05','u_mt9yq18q_19p3rc','u_mt9yq18q_6v4q6o','u_mt9yq18q_7ynclg'].forEach(id=>{
+    if(P[id] && P[id].isDeceased){
+      P[id].isDeceased = false;
+      deceasedLog[id] = false;
+      fixedCount++;
+    }
   });
   // re-heal any deceased person whose status a stale/incorrect Firebase entry just reset to
   // alive during applyPayload() — see SEED_DECEASED_IDS above for why this is necessary
