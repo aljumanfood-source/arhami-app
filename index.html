@@ -186,6 +186,10 @@
     display:flex;flex-direction:column;align-items:center;gap:6px;
   }
   .rel-btn:active{transform:scale(0.97);}
+  .rel-btn.disabled{
+    opacity:.5;cursor:default;filter:grayscale(1);
+  }
+  .rel-btn.disabled:active{transform:none;}
   .rel-btn .icon{
     width:34px;height:34px;border-radius:50%;background:var(--paper-deep);
     display:flex;align-items:center;justify-content:center;font-size:16px;
@@ -3447,10 +3451,8 @@ function renderHome(){
 }
 
 const RELATIONS = [
-  {key:'maternal', label:'أمي وأخوالي', noun:'أمي وأخوال', icon:'👪', fn:(id)=>{
-    const p = P[id];
+  {key:'maternal', label:'أخوالي', noun:'أخوال', icon:'👪', fn:(id)=>{
     const list = [];
-    if(p && p.motherId && P[p.motherId]) list.push(P[p.motherId]);
     list.push(...unclesAuntsMotherOf(id,'m'));
     list.push(...unclesAuntsMotherOf(id,'f'));
     return list;
@@ -3511,9 +3513,11 @@ function renderProfile(id){
   RELATIONS.forEach(r=>{
     const list = r.fn(id);
     const btn = document.createElement('div');
-    btn.className='rel-btn';
+    btn.className = list.length ? 'rel-btn' : 'rel-btn disabled';
     btn.innerHTML = `<div class="icon">${r.icon}</div><div class="label">${r.label}</div><div class="count">${list.length} مسجّل</div>`;
-    btn.onclick = ()=>{ goTo({view:'relation', personId:id, relKey:r.key}); };
+    if(list.length){
+      btn.onclick = ()=>{ goTo({view:'relation', personId:id, relKey:r.key}); };
+    }
     grid.appendChild(btn);
   });
   document.getElementById('backBtn').onclick = goBack;
