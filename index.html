@@ -3607,9 +3607,9 @@ function renderFamilySummary(id){
 
   const rows = [];
   if(mother){
-    rows.push(['الأم', `<div class="name-block" id="motherValueCell">${nameLink(mother, true)} <button class="spouse-edit" id="motherEditBtn">تعديل</button></div>`]);
+    rows.push(['الأم', `<div class="name-block" id="motherValueCell">${nameLink(mother, true)} <button class="spouse-edit" id="motherEditBtn">تعديل</button> <button class="spouse-edit" id="motherLinkBtn">ربط</button></div>`]);
   } else {
-    rows.push(['الأم', `<div class="name-block" id="motherValueCell"><button class="spouse-edit" id="motherEditBtn">إضافة</button></div>`]);
+    rows.push(['الأم', `<div class="name-block" id="motherValueCell"><button class="spouse-edit" id="motherEditBtn">إضافة</button> <button class="spouse-edit" id="motherLinkBtn">ربط</button></div>`]);
   }
   const maternalGrandmother = (mother && mother.motherId && P[mother.motherId]) ? P[mother.motherId] : null;
   if(maternalGrandmother){
@@ -3649,6 +3649,84 @@ function renderFamilySummary(id){
   wireNameLinks(holder);
   const motherBtn = document.getElementById('motherEditBtn');
   if(motherBtn) motherBtn.onclick = ()=>requireAdmin(()=>openMotherEditor(id));
+  const motherLinkBtn = document.getElementById('motherLinkBtn');
+  if(motherLinkBtn) motherLinkBtn.onclick = ()=>requireAdmin(()=>openSiblingMotherLinker(id));
+}
+
+function openSiblingMotherLinker(personId){
+  const person = P[personId];
+  if(!person.fatherId || !P[person.fatherId]){
+    showToast('لا يوجد أب مسجَّل له، فلا يمكن معرفة إخوته من هذا الطريق');
+    return;
+  }
+  const siblings = (P[person.fatherId].childIds||[])
+    .map(cid=>P[cid])
+    .filter(s=>s && s.id!==personId);
+  if(!siblings.length){
+    showToast('لا يوجد إخوة مسجَّلون من نفس الأب');
+    return;
+  }
+  const existing = document.getElementById('siblingMotherPanel');
+  if(existing) existing.remove();
+  const anchor = main;
+  const panel = document.createElement('div');
+  panel.id = 'siblingMotherPanel';
+  panel.className = 'add-form';
+  panel.style.margin = '10px 18px 0';
+  panel.innerHTML = `
+    <p class="section-note" style="margin-top:0;">حدّد إخوة ${person.name} الذين هم أيضًا إخوة لها من نفس الأمّ — إن كان لأحدهم أمّ مسجَّلة أصلًا، ستُطبَّق على كل من تحدّدهم (ومن كانت له هذه الأمّ أصلًا وأزلت تحديده، تُحذف منه).</p>
+    ${siblings.map(s=>{
+      const hasMother = s.motherId && P[s.motherId];
+      const sameMother = person.motherId && s.motherId===person.motherId;
+      const checked = sameMother ? 'checked' : '';
+      const note = hasMother ? ` (أمّه: ${P[s.motherId].name})` : '';
+      return `<label style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px;">
+        <input type="checkbox" class="sib-mother-check" value="${s.id}" ${checked}> ${s.name}${note}
+      </label>`;
+    }).join('')}
+    <div class="add-form-actions" style="margin-top:10px;">
+      <button class="save" id="sibMotherSaveBtn">حفظ</button>
+      <button class="cancel" id="sibMotherCancelBtn">إلغاء</button>
+    </div>
+  `;
+  anchor.appendChild(panel);
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('sibMotherCancelBtn').onclick = ()=>panel.remove();
+  document.getElementById('sibMotherSaveBtn').onclick = ()=>{
+    const checkedIds = Array.from(panel.querySelectorAll('.sib-mother-check:checked')).map(el=>el.value);
+    // المصدر: أمّ الشخص نفسه إن كانت مسجَّلة، وإلا أوّل أخ محدَّد له أمّ مسجَّلة أصلًا
+    let sourceMotherId = (person.motherId && P[person.motherId]) ? person.motherId : null;
+    if(!sourceMotherId){
+      for(const sid of checkedIds){
+        if(P[sid].motherId && P[P[sid].motherId]){ sourceMotherId = P[sid].motherId; break; }
+      }
+    }
+    if(!sourceMotherId){
+      showToast('لا يوجد بينهم أمّ مسجَّلة لتُستخدم كمرجع — سجّلي الأم أولًا عبر "إضافة" لأحدهم');
+      return;
+    }
+    const sourceMother = P[sourceMotherId];
+    function setMother(pid){
+      if(P[pid].motherId===sourceMotherId) return;
+      if(P[pid].motherId && P[P[pid].motherId]) P[P[pid].motherId].childIds = (P[P[pid].motherId].childIds||[]).filter(x=>x!==pid);
+      P[pid].motherId = sourceMotherId;
+      if(!sourceMother.childIds.includes(pid)) sourceMother.childIds.push(pid);
+    }
+    function clearMother(pid){
+      if(P[pid].motherId!==sourceMotherId) return;
+      sourceMother.childIds = (sourceMother.childIds||[]).filter(x=>x!==pid);
+      P[pid].motherId = null;
+    }
+    setMother(personId);
+    siblings.forEach(s=>{
+      if(checkedIds.includes(s.id)) setMother(s.id);
+      else clearMother(s.id);
+    });
+    persistState();
+    showToast('تم الربط');
+    panel.remove();
+    render();
+  };
 }
 
 function arrowIcon(){
