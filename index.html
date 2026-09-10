@@ -3609,7 +3609,7 @@ function renderFamilySummary(id){
   if(mother){
     rows.push(['الأم', `<div class="name-block" id="motherValueCell">${nameLink(mother, true)} <button class="spouse-edit" id="motherEditBtn">تعديل</button></div>`]);
   } else {
-    rows.push(['الأم', `<div class="name-block" id="motherValueCell">غير معروفة <button class="spouse-edit" id="motherEditBtn">إضافة</button></div>`]);
+    rows.push(['الأم', `<div class="name-block" id="motherValueCell"><button class="spouse-edit" id="motherEditBtn">إضافة</button></div>`]);
   }
   const maternalGrandmother = (mother && mother.motherId && P[mother.motherId]) ? P[mother.motherId] : null;
   if(maternalGrandmother){
