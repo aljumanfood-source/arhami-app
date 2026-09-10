@@ -3117,15 +3117,24 @@ function setWillAmount(ownerId, relativeId, amount){
   amountsLog[ownerId][relativeId] = amount;
 }
 
+const CLEARED_SENTINEL = '__CLEARED__';
+// Firebase Realtime Database يحذف أي مفتاح قيمته null تمامًا من التخزين عند الكتابة (بدل حفظ
+// null فعليًا) — يستخدمه هو نفسه كطريقة "احذف هذا المفتاح". فكل مرة كنا نُرسل {motherId:null}
+// (لحذف أم شخص) كانت القاعدة الحيّة تحذف مفتاح motherId بالكامل من السجل المحفوظ بدل حفظ null،
+// فعند القراءة التالية لا نجد 'motherId' في الكائن إطلاقًا، ولا يُطبَّق الحذف — وهذا بالضبط
+// سبب "يرجع الاسم بعد الخروج والرجوع" الذي وصفه المستخدم. الحل: نخزّن قيمة مميزة (سلسلة نصية
+// وليست null) تدل على "محذوف عمدًا"، تبقى كما هي عبر الحفظ والقراءة، ونحوّلها لـ null فقط
+// عند تطبيقها على الشخص في الذاكرة
 function setParentLink(personId, fields){
   // fields: {fatherId} أو {motherId} أو كلاهما. يحدّث الشخص في الذاكرة، ويسجّل التغيير في
   // parentOverridesLog حتى يُحفظ فعليًا (انظر تعريف السجل وتعليقه أعلى الملف) — أي كود يغيّر
   // fatherId/motherId لشخص موجود مسبقًا يجب أن يمرّ من هنا، لا تعيينًا مباشرًا للحقل
   const p = P[personId];
   if(!p) return;
-  if('fatherId' in fields) p.fatherId = fields.fatherId;
-  if('motherId' in fields) p.motherId = fields.motherId;
-  parentOverridesLog[personId] = Object.assign({}, parentOverridesLog[personId], fields);
+  const stored = {};
+  if('fatherId' in fields){ p.fatherId = fields.fatherId; stored.fatherId = fields.fatherId===null ? CLEARED_SENTINEL : fields.fatherId; }
+  if('motherId' in fields){ p.motherId = fields.motherId; stored.motherId = fields.motherId===null ? CLEARED_SENTINEL : fields.motherId; }
+  parentOverridesLog[personId] = Object.assign({}, parentOverridesLog[personId], stored);
 }
 
 function registerSpouse(personId, spouseName){
@@ -4697,8 +4706,8 @@ function applyPayload(payload){
     if(P[id]){
       const entry = payload.parentOverrides[id];
       if(entry && typeof entry === 'object'){
-        if('fatherId' in entry) P[id].fatherId = entry.fatherId;
-        if('motherId' in entry) P[id].motherId = entry.motherId;
+        if('fatherId' in entry) P[id].fatherId = entry.fatherId===CLEARED_SENTINEL ? null : entry.fatherId;
+        if('motherId' in entry) P[id].motherId = entry.motherId===CLEARED_SENTINEL ? null : entry.motherId;
         parentOverridesLog[id] = entry;
       }
     }
