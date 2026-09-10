@@ -3699,7 +3699,10 @@ function openSiblingMotherLinker(personId){
   panel.className = 'add-form';
   panel.style.margin = '10px 18px 0';
   panel.innerHTML = `
-    <p class="section-note" style="margin-top:0;">حدّد إخوة ${person.name} الذين هم أيضًا إخوة لها من نفس الأمّ — إن كان لأحدهم أمّ مسجَّلة أصلًا، ستُطبَّق على كل من تحدّدهم (ومن كانت له هذه الأمّ أصلًا وأزلت تحديده، تُحذف منه).</p>
+    <p class="section-note" style="margin-top:0;">حدّد من هم إخوة ${person.name} فعلًا من نفس الأمّ (ومنها هي نفسها) — إن كان لأحدهم أمّ مسجَّلة أصلًا، ستُطبَّق على كل من حدّدته. إلغاء تحديد أي اسم (بما في ذلك ${person.name} نفسها) يحذف هذه الأم منه فقط.</p>
+    <label style="display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13.5px;font-weight:700;">
+      <input type="checkbox" class="sib-mother-check" value="${personId}" checked> ${person.name} (هي نفسها)
+    </label>
     ${siblings.map(s=>{
       const hasMother = s.motherId && P[s.motherId];
       const sameMother = person.motherId && s.motherId===person.motherId;
@@ -3718,37 +3721,35 @@ function openSiblingMotherLinker(personId){
   panel.scrollIntoView({behavior:'smooth', block:'start'});
   document.getElementById('sibMotherCancelBtn').onclick = ()=>panel.remove();
   document.getElementById('sibMotherSaveBtn').onclick = ()=>{
+    const allIds = [personId, ...siblings.map(s=>s.id)];
     const checkedIds = Array.from(panel.querySelectorAll('.sib-mother-check:checked')).map(el=>el.value);
-    // المصدر: أمّ الشخص نفسه إن كانت مسجَّلة، وإلا أوّل أخ محدَّد له أمّ مسجَّلة أصلًا
-    let sourceMotherId = (person.motherId && P[person.motherId]) ? person.motherId : null;
-    if(!sourceMotherId){
-      for(const sid of checkedIds){
-        if(P[sid].motherId && P[P[sid].motherId]){ sourceMotherId = P[sid].motherId; break; }
-      }
+    const uncheckedIds = allIds.filter(id=>!checkedIds.includes(id));
+    // نحتاج "أمًّا مرجعية" فقط لمن هو محدَّد ولا يحمل هذه الأمّ أصلًا (سيُعطى إياها) — أمّا من
+    // أُلغي تحديده فيُحذف منه أيًّا كانت أمّه الحالية، بلا حاجة لأي مرجع إطلاقًا
+    let sourceMotherId = null;
+    for(const id of checkedIds){
+      if(P[id].motherId && P[P[id].motherId]){ sourceMotherId = P[id].motherId; break; }
     }
-    if(!sourceMotherId){
+    const needsSource = checkedIds.some(id=>P[id].motherId!==sourceMotherId);
+    if(needsSource && !sourceMotherId){
       showToast('لا يوجد بينهم أمّ مسجَّلة لتُستخدم كمرجع — سجّلي الأم أولًا عبر "إضافة" لأحدهم');
       return;
     }
-    const sourceMother = P[sourceMotherId];
     function setMother(pid){
       if(P[pid].motherId===sourceMotherId) return;
       if(P[pid].motherId && P[P[pid].motherId]) P[P[pid].motherId].childIds = (P[P[pid].motherId].childIds||[]).filter(x=>x!==pid);
       setParentLink(pid, {motherId: sourceMotherId});
-      if(!sourceMother.childIds.includes(pid)) sourceMother.childIds.push(pid);
+      if(!P[sourceMotherId].childIds.includes(pid)) P[sourceMotherId].childIds.push(pid);
     }
     function clearMother(pid){
-      if(P[pid].motherId!==sourceMotherId) return;
-      sourceMother.childIds = (sourceMother.childIds||[]).filter(x=>x!==pid);
+      if(!P[pid].motherId) return;
+      if(P[P[pid].motherId]) P[P[pid].motherId].childIds = (P[P[pid].motherId].childIds||[]).filter(x=>x!==pid);
       setParentLink(pid, {motherId: null});
     }
-    setMother(personId);
-    siblings.forEach(s=>{
-      if(checkedIds.includes(s.id)) setMother(s.id);
-      else clearMother(s.id);
-    });
+    checkedIds.forEach(id=>{ if(sourceMotherId) setMother(id); });
+    uncheckedIds.forEach(id=>clearMother(id));
     persistState();
-    showToast('تم الربط');
+    showToast('تم الحفظ');
     panel.remove();
     render();
   };
