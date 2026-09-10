@@ -4703,6 +4703,14 @@ function applyPayload(payload){
     }
   });
   (payload.deletes||[]).forEach(id=>{
+    // إعفاء دائم لحمود بن محمد بن راشد بن شنين (hamood17_muhammad37): إصدار سابق من هذا الكود
+    // كان قد حذفه فعليًا وحفظ ذلك في القاعدة الحيّة (arhami:deletes) ظنًّا منه أنه نسخة مكرَّرة
+    // من حمود بن محمد بن سليمان — تبيّن لاحقًا أن هذا خطأ، وأنه شخص حقيقي منفصل بالكامل. بما
+    // أن حذفه القديم لا يزال عالقًا في القاعدة الحيّة، تعيد كل عملية تحميل حذفه رغم أن ملف
+    // البيانات يُعرِّفه بكل أبنائه بشكل صحيح — يتجاهله هذا السطر عمدًا فلا يُحذف مرة أخرى، ولا
+    // يُعاد إدراجه في deletedIds، فيلتقط الحفظ التالي غيابه من قائمة الحذف ويُصحِّح القاعدة
+    // الحيّة نفسها تلقائيًا
+    if(id==='hamood17_muhammad37') return;
     // FOUND THE REAL BUG: this used to call the interactive deletePerson(), which CASCADES to
     // any child still pointing at this id. That's correct for a live admin click (childIds are
     // fresh at that instant), but catastrophic during payload replay: "adds" is merged BEFORE
