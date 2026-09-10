@@ -4549,8 +4549,23 @@ async function attemptPersist(){
     // below) carries everyone else's edits too — this is what actually prevents one
     // saver's write from clobbering another's, rather than just detecting the clash
     // after the fact.
+    //
+    // لكن هذا الدمج نفسه له أثر جانبي خطير لأي تعديل "غيّرنا فيه قيمة موجودة أصلًا" (لا
+    // نضيفها لأول مرة): applyPayload(remote) يعيد فرض القيمة القديمة المخزَّنة حاليًا على
+    // القاعدة الحيّة (والتي لم تصلها كتابتنا الطازجة بعد) فوق تعديلنا نحن في نفس هذه اللحظة —
+    // فتُفقَد كتابتنا قبل أن تُرسَل أصلًا. هذا بالضبط ما وصفه المستخدم بـ"انخذف ورجع أمام عيني"
+    // عند محاولة حذف/تغيير أم مسجَّلة مسبقًا: نلتقط ما ننوي حفظه هنا أولًا، ثم نعيد فرضه فوق
+    // أي دمج بعد ذلك، فتفوز كتابتنا نحن دائمًا على أي نسخة أقدم منها في القاعدة الحيّة
+    const intendedParentOverrides = JSON.parse(JSON.stringify(parentOverridesLog));
     const remote = await fetchRemotePayload();
     applyPayload(remote);
+    Object.keys(intendedParentOverrides).forEach(id=>{
+      if(!P[id]) return;
+      const entry = intendedParentOverrides[id];
+      if('fatherId' in entry) P[id].fatherId = entry.fatherId===CLEARED_SENTINEL ? null : entry.fatherId;
+      if('motherId' in entry) P[id].motherId = entry.motherId===CLEARED_SENTINEL ? null : entry.motherId;
+      parentOverridesLog[id] = entry;
+    });
     const local = buildPayload();
     await Promise.all(Object.keys(STORAGE_KEYS).map(cat=>
       firebaseSetRaw(STORAGE_KEYS[cat], local[cat])
