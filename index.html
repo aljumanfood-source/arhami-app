@@ -2793,6 +2793,12 @@ const spouseLog = {};       // { personId: spouseName } — husband/wife name re
 const deceasedLog = {};     // { personId: true/false } — deceased flag set from the edit panel
 const altNamesLog = {};     // { personId: [altName, ...] } — additional names added without replacing the main name
 const chainLog = {};        // { personId: fullChainString } — full nasab edited directly, overrides the auto-built chain
+const parentOverridesLog = {}; // { personId: {fatherId, motherId} } — an "ربط بالأب/ربط الأم" edit made
+  // through the live app on a person who ALREADY existed before this session (seed-defined or
+  // previously Firebase-added) — there was no category for this at all before, meaning any such
+  // edit silently vanished the moment the page reloaded: a seed-defined person's fatherId/motherId
+  // is re-applied fresh from the seed's own add() call on every single load, and nothing was ever
+  // written back to the live database to override it afterward. This log is that missing category.
 const amountsLog = {};      // { ownerId: { relativeId: amountString } } — wasiyya amounts per relative
 const willsLog = {};        // { personId: {...} } — full digitized "الوصية" form data per person
 const deletedIds = new Set(); // ids removed by any user of this link
@@ -3109,6 +3115,17 @@ function setWillAmount(ownerId, relativeId, amount){
   amountsLog[ownerId][relativeId] = amount;
 }
 
+function setParentLink(personId, fields){
+  // fields: {fatherId} أو {motherId} أو كلاهما. يحدّث الشخص في الذاكرة، ويسجّل التغيير في
+  // parentOverridesLog حتى يُحفظ فعليًا (انظر تعريف السجل وتعليقه أعلى الملف) — أي كود يغيّر
+  // fatherId/motherId لشخص موجود مسبقًا يجب أن يمرّ من هنا، لا تعيينًا مباشرًا للحقل
+  const p = P[personId];
+  if(!p) return;
+  if('fatherId' in fields) p.fatherId = fields.fatherId;
+  if('motherId' in fields) p.motherId = fields.motherId;
+  parentOverridesLog[personId] = Object.assign({}, parentOverridesLog[personId], fields);
+}
+
 function registerSpouse(personId, spouseName){
   const person = P[personId];
   if(!person) return null;
@@ -3177,12 +3194,16 @@ function mergeOneDuplicate(canonicalId, dupId){
   dup.childIds.forEach(cid=>{
     const child = P[cid];
     if(!child) return;
-    if(child.fatherId===dupId) child.fatherId = canonicalId;
-    if(child.motherId===dupId) child.motherId = canonicalId;
+    if(child.fatherId===dupId) setParentLink(cid, {fatherId: canonicalId});
+    if(child.motherId===dupId) setParentLink(cid, {motherId: canonicalId});
     if(!canonical.childIds.includes(cid)) canonical.childIds.push(cid);
   });
   Object.values(P).forEach(p=>{
-    if(p.spouseId===dupId) p.spouseId = canonicalId;
+    if(p.spouseId===dupId){
+      p.spouseId = canonicalId;
+      p.spouseName = canonical.chain;
+      spouseLog[p.id] = {name: canonical.chain, spouseId: canonicalId};
+    }
   });
   if(dup.fatherId && P[dup.fatherId]) P[dup.fatherId].childIds = P[dup.fatherId].childIds.filter(x=>x!==dupId);
   if(dup.motherId && P[dup.motherId]) P[dup.motherId].childIds = P[dup.motherId].childIds.filter(x=>x!==dupId);
@@ -3711,13 +3732,13 @@ function openSiblingMotherLinker(personId){
     function setMother(pid){
       if(P[pid].motherId===sourceMotherId) return;
       if(P[pid].motherId && P[P[pid].motherId]) P[P[pid].motherId].childIds = (P[P[pid].motherId].childIds||[]).filter(x=>x!==pid);
-      P[pid].motherId = sourceMotherId;
+      setParentLink(pid, {motherId: sourceMotherId});
       if(!sourceMother.childIds.includes(pid)) sourceMother.childIds.push(pid);
     }
     function clearMother(pid){
       if(P[pid].motherId!==sourceMotherId) return;
       sourceMother.childIds = (sourceMother.childIds||[]).filter(x=>x!==pid);
-      P[pid].motherId = null;
+      setParentLink(pid, {motherId: null});
     }
     setMother(personId);
     siblings.forEach(s=>{
@@ -3805,14 +3826,14 @@ function openFatherLinker(personId){
       return;
     }
     const suffix = normalizedSuffix(person.name);
-    person.fatherId = chosenId;
+    setParentLink(personId, {fatherId: chosenId});
     if(!P[chosenId].childIds.includes(personId)) P[chosenId].childIds.push(personId);
     let linkedCount = 1;
     if(suffix){
       Object.values(P).forEach(other=>{
         if(other.id===personId || other.fatherId) return;
         if(normalizedSuffix(other.name)===suffix){
-          other.fatherId = chosenId;
+          setParentLink(other.id, {fatherId: chosenId});
           if(!P[chosenId].childIds.includes(other.id)) P[chosenId].childIds.push(other.id);
           linkedCount++;
         }
@@ -3857,7 +3878,7 @@ function openMotherEditor(personId){
         renamePerson(motherId, val);
       }
     }
-    person.motherId = motherId;
+    setParentLink(personId, {motherId: motherId});
     if(!P[motherId].childIds.includes(personId)) P[motherId].childIds.push(personId);
     persistState();
     showToast('تم الحفظ');
@@ -3867,7 +3888,7 @@ function openMotherEditor(personId){
     if(person.motherId && P[person.motherId]){
       P[person.motherId].childIds = (P[person.motherId].childIds||[]).filter(cid=>cid!==personId);
     }
-    person.motherId = null;
+    setParentLink(personId, {motherId: null});
     persistState();
     showToast('أُزيلت الأم');
     render();
@@ -4237,7 +4258,7 @@ function openAddForm(parentId, gender, motherIdOverride){
       const chosen = Array.from(form.querySelectorAll('.existingChildCheck:checked')).map(el=>el.value);
       if(!chosen.length){ showToast('حدّد اسمًا واحدًا على الأقل'); return; }
       chosen.forEach(cid=>{
-        P[cid].motherId = motherIdOverride;
+        setParentLink(cid, {motherId: motherIdOverride});
         if(!P[motherIdOverride].childIds.includes(cid)) P[motherIdOverride].childIds.push(cid);
       });
       persistState();
@@ -4278,8 +4299,8 @@ function openAddForm(parentId, gender, motherIdOverride){
         // reusing an existing record without also setting ITS OWN motherId/fatherId left the
         // link one-directional (the mother's childIds knew about the child, but the child's own
         // motherId stayed empty), so relations like "أمي وأخوالي" silently came up empty for them
-        if(!existing.fatherId && fatherId) existing.fatherId = fatherId;
-        if(!existing.motherId && motherId) existing.motherId = motherId;
+        if(!existing.fatherId && fatherId) setParentLink(existing.id, {fatherId});
+        if(!existing.motherId && motherId) setParentLink(existing.id, {motherId});
       } else {
         // was 'u_'+(idCounter++): idCounter is only a local per-session GUESS (roughly
         // "however many people I currently know about"), never a real synced counter. Two
@@ -4426,6 +4447,7 @@ const STORAGE_KEYS = {
   altNames: 'arhami:altNames',
   amounts:  'arhami:amounts',
   wills:    'arhami:wills',
+  parentOverrides: 'arhami:parentOverrides',
   deletes:  'arhami:deletes'
 };
 const LEGACY_BLOB_KEY = 'arhami:family_data'; // pre-migration single-key format, read once as a fallback
@@ -4483,6 +4505,7 @@ function buildPayload(){
     altNames: JSON.parse(JSON.stringify(altNamesLog)),
     amounts: JSON.parse(JSON.stringify(amountsLog)),
     wills: JSON.parse(JSON.stringify(willsLog)),
+    parentOverrides: JSON.parse(JSON.stringify(parentOverridesLog)),
     deletes: Array.from(deletedIds)
   };
 }
@@ -4661,6 +4684,19 @@ function applyPayload(payload){
       } else if(entry){
         // legacy plain-string format from an earlier version — recreate as a proper linked node
         registerSpouse(id, entry);
+      }
+    }
+  });
+  Object.keys(payload.parentOverrides||{}).forEach(id=>{
+    // انظر تعريف parentOverridesLog أعلى الملف — هذا وحده ما يجعل تعديل الأب/الأم عبر التطبيق
+    // يثبت فعليًا لأي شخص موجود مسبقًا (من ملف البيانات أو أُضيف سابقًا)، بدل أن يُفقد بصمت
+    // في كل مرة يُعاد فيها تحميل الصفحة
+    if(P[id]){
+      const entry = payload.parentOverrides[id];
+      if(entry && typeof entry === 'object'){
+        if('fatherId' in entry) P[id].fatherId = entry.fatherId;
+        if('motherId' in entry) P[id].motherId = entry.motherId;
+        parentOverridesLog[id] = entry;
       }
     }
   });
