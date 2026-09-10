@@ -3555,11 +3555,9 @@ function renderProfile(id){
   RELATIONS.forEach(r=>{
     const list = r.fn(id);
     const btn = document.createElement('div');
-    btn.className = list.length ? 'rel-btn' : 'rel-btn disabled';
+    btn.className = 'rel-btn';
     btn.innerHTML = `<div class="icon">${r.icon}</div><div class="label">${r.label}</div><div class="count">${list.length} مسجّل</div>`;
-    if(list.length){
-      btn.onclick = ()=>{ goTo({view:'relation', personId:id, relKey:r.key}); };
-    }
+    btn.onclick = ()=>{ goTo({view:'relation', personId:id, relKey:r.key}); };
     grid.appendChild(btn);
   });
   document.getElementById('backBtn').onclick = goBack;
