@@ -3574,7 +3574,7 @@ function renderProfile(id){
       <div class="profile-meta"><span class="badge">الطبقة ${p.layer}</span>${addedByUser.has(id)?'<span class="badge" style="background:#E7D3A3;color:#6B4A15;">أُضيف حديثًا</span>':''}</div>
       <div class="profile-actions">
         <button id="editSelfBtn">✏️ تعديل الاسم</button>
-        <button id="linkFatherBtn">🔗 ربط بالأب</button>
+        <button id="linkFatherBtn">🔗 ربط بالشجرة</button>
         <button id="deleteSelfBtn" class="danger">🗑 حذف</button>
       </div>
     </div>
@@ -3807,6 +3807,28 @@ function normalizedSuffix(name){
   return s.endsWith('ية') ? s.slice(0,-1) : s;
 }
 
+function resolveFatherFromRelative(chosenId, relation, person){
+  // person قد كُتب اسمها الكامل كنسب نصّي (مثال: "سليمان بن حمد بن حمود...") — نأخذ النص الذي
+  // يُفترض أنه نسب أبيها الحقيقي (normalizedSuffix)، ونبحث عنه بين المرشَّحين المناسبين حسب
+  // نوع القرابة المختارة، فنحدّد الأب الحقيقي بدقة بدل تخمينه
+  const suffix = normalizedSuffix(person.name);
+  if(relation==='أب') return {fatherId: chosenId, suffix};
+  let candidates;
+  if(relation==='عم'){
+    const grandId = P[chosenId].fatherId;
+    if(!grandId || !P[grandId]) return {fatherId:null, suffix, error:'لا يوجد أب مسجَّل لمن اخترتِه، فلا يمكن معرفة إخوته'};
+    candidates = P[grandId].childIds||[];
+  } else if(relation==='جد'){
+    candidates = P[chosenId].childIds||[];
+  } else {
+    return {fatherId:null, suffix, error:'اختاري نوع القرابة أولًا'};
+  }
+  if(!suffix) return {fatherId:null, suffix, error:'اسم هذا الشخص لا يحمل نسبًا نصيًا يمكن مطابقته — استخدمي خيار "أب" مباشرة بدل ذلك'};
+  const realMatch = candidates.map(cid=>P[cid]).find(c=>c && c.gender==='m' && c.chain===suffix);
+  if(!realMatch) return {fatherId:null, suffix, error:'لم أجد بين أبنائه أحدًا يطابق النسب المكتوب في اسم هذا الشخص — تحققي من الاسم أو استخدمي "أب" مباشرة'};
+  return {fatherId: realMatch.id, suffix};
+}
+
 function openFatherLinker(personId){
   const person = P[personId];
   const existing = document.getElementById('fatherLinkPanel');
@@ -3816,9 +3838,14 @@ function openFatherLinker(personId){
   panel.className = 'add-form';
   panel.style.margin = '10px 18px 0';
   panel.innerHTML = `
-    <p class="section-note" style="margin-top:0;">ابحثي عن الأب الحقيقي وربطيه بمعرّفه بدل بقاء نسبه نصًّا فقط في الاسم — سيُربط أيضًا كل من له نفس النسب المكتوب من إخوته غير المرتبطين بعد.</p>
-    <div class="spouse-input-wrap">
-      <input type="text" id="fatherLinkInput" placeholder="اسم الأب" autocomplete="off">
+    <p class="section-note" style="margin-top:0;">ابحثي عن أي شخص في الشجرة تعرفين قرابته بـ${person.name} — أبًا، أو عمًّا، أو جدًّا — وحدّدي نوع القرابة، وسيحدِّد التطبيق أباها الحقيقي تلقائيًا. سيُربط أيضًا كل من له نفس النسب المكتوب من إخوتها غير المرتبطين بعد.</p>
+    <div class="gender-toggle" id="relationTypeToggle">
+      <button type="button" data-rel="أب" class="active">أب</button>
+      <button type="button" data-rel="عم">عم</button>
+      <button type="button" data-rel="جد">جد</button>
+    </div>
+    <div class="spouse-input-wrap" style="margin-top:10px;">
+      <input type="text" id="fatherLinkInput" placeholder="اكتبي اسمه" autocomplete="off">
       <div id="fatherLinkDropdown" class="spouse-dropdown"></div>
     </div>
     <div class="add-form-actions" style="margin-top:10px;">
@@ -3828,6 +3855,14 @@ function openFatherLinker(personId){
   `;
   main.appendChild(panel);
   panel.scrollIntoView({behavior:'smooth', block:'start'});
+  let selectedRelation = 'أب';
+  panel.querySelectorAll('#relationTypeToggle button').forEach(btn=>{
+    btn.onclick = ()=>{
+      panel.querySelectorAll('#relationTypeToggle button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedRelation = btn.dataset.rel;
+    };
+  });
   const getSelected = wireSpouseAutocomplete('fatherLinkInput', 'fatherLinkDropdown', 'm');
   document.getElementById('fatherLinkCancelBtn').onclick = ()=>panel.remove();
   document.getElementById('fatherLinkSaveBtn').onclick = ()=>{
@@ -3837,22 +3872,28 @@ function openFatherLinker(personId){
       showToast('اختاري اسمًا من القائمة المقترحة أثناء الكتابة');
       return;
     }
-    const suffix = normalizedSuffix(person.name);
-    setParentLink(personId, {fatherId: chosenId});
-    if(!P[chosenId].childIds.includes(personId)) P[chosenId].childIds.push(personId);
+    const resolved = resolveFatherFromRelative(chosenId, selectedRelation, person);
+    if(!resolved.fatherId){
+      showToast(resolved.error || 'تعذّر تحديد الأب');
+      return;
+    }
+    const realFatherId = resolved.fatherId;
+    const suffix = resolved.suffix;
+    setParentLink(personId, {fatherId: realFatherId});
+    if(!P[realFatherId].childIds.includes(personId)) P[realFatherId].childIds.push(personId);
     let linkedCount = 1;
     if(suffix){
       Object.values(P).forEach(other=>{
         if(other.id===personId || other.fatherId) return;
         if(normalizedSuffix(other.name)===suffix){
-          setParentLink(other.id, {fatherId: chosenId});
-          if(!P[chosenId].childIds.includes(other.id)) P[chosenId].childIds.push(other.id);
+          setParentLink(other.id, {fatherId: realFatherId});
+          if(!P[realFatherId].childIds.includes(other.id)) P[realFatherId].childIds.push(other.id);
           linkedCount++;
         }
       });
     }
     persistState();
-    showToast(linkedCount>1 ? `تم ربط ${linkedCount} أشخاص بهذا الأب` : 'تم الربط');
+    showToast(linkedCount>1 ? `تم ربط ${linkedCount} أشخاص بالأب الصحيح (${P[realFatherId].name})` : `تم الربط بالأب الصحيح (${P[realFatherId].name})`);
     panel.remove();
     render();
   };
