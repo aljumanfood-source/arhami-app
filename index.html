@@ -3542,6 +3542,7 @@ function renderProfile(id){
       <div class="profile-meta"><span class="badge">الطبقة ${p.layer}</span>${addedByUser.has(id)?'<span class="badge" style="background:#E7D3A3;color:#6B4A15;">أُضيف حديثًا</span>':''}</div>
       <div class="profile-actions">
         <button id="editSelfBtn">✏️ تعديل الاسم</button>
+        <button id="linkFatherBtn">🔗 ربط بالأب</button>
         <button id="deleteSelfBtn" class="danger">🗑 حذف</button>
       </div>
     </div>
@@ -3572,6 +3573,7 @@ function renderProfile(id){
     render();
   };
   document.getElementById('editSelfBtn').onclick = ()=>requireAdmin(()=>openEditPanel(id));
+  document.getElementById('linkFatherBtn').onclick = ()=>requireAdmin(()=>openFatherLinker(id));
   document.getElementById('deleteSelfBtn').onclick = (e)=>requireAdmin(()=>armDelete(e.target, id));
   if(!p.isDeceased){
     document.getElementById('wasiyyaBtn').onclick = ()=>requireAdmin(()=>{ goTo({view:'wasiyya', personId:id}); });
@@ -3756,6 +3758,71 @@ function wireSpouseAutocomplete(inputId, dropdownId, targetGender){
     });
   });
   return ()=>selectedId; // يُستدعى وقت الحفظ لمعرفة هل اختار المستخدم شخصًا حقيقيًا من القائمة
+}
+
+function nameSuffix(name){
+  // يستخرج ما بعد "بن"/"بنت" من حقل الاسم نفسه — هذا هو النسب المكتوب كنص فقط بلا رابط
+  // fatherId حقيقي، ونستخدمه لإيجاد بقية الإخوة الذين لهم نفس النص بالضبط
+  const m = name.match(/^.*? (?:بن|بنت) (.+)$/);
+  return m ? m[1] : null;
+}
+function normalizedSuffix(name){
+  // نفس nameSuffix، لكن نطبّع الكلمة الأخيرة (نسبة القبيلة) لتجاهل فارق التذكير/التأنيث
+  // ("الطوقي" مقابل "الطوقية") عند مقارنة إخوة من جنسين مختلفين لهما نفس النص بالضبط خلا ذلك
+  const s = nameSuffix(name);
+  if(!s) return null;
+  return s.endsWith('ية') ? s.slice(0,-1) : s;
+}
+
+function openFatherLinker(personId){
+  const person = P[personId];
+  const existing = document.getElementById('fatherLinkPanel');
+  if(existing) existing.remove();
+  const panel = document.createElement('div');
+  panel.id = 'fatherLinkPanel';
+  panel.className = 'add-form';
+  panel.style.margin = '10px 18px 0';
+  panel.innerHTML = `
+    <p class="section-note" style="margin-top:0;">ابحثي عن الأب الحقيقي وربطيه بمعرّفه بدل بقاء نسبه نصًّا فقط في الاسم — سيُربط أيضًا كل من له نفس النسب المكتوب من إخوته غير المرتبطين بعد.</p>
+    <div class="spouse-input-wrap">
+      <input type="text" id="fatherLinkInput" placeholder="اسم الأب" autocomplete="off">
+      <div id="fatherLinkDropdown" class="spouse-dropdown"></div>
+    </div>
+    <div class="add-form-actions" style="margin-top:10px;">
+      <button class="save" id="fatherLinkSaveBtn">حفظ</button>
+      <button class="cancel" id="fatherLinkCancelBtn">إلغاء</button>
+    </div>
+  `;
+  main.appendChild(panel);
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  const getSelected = wireSpouseAutocomplete('fatherLinkInput', 'fatherLinkDropdown', 'm');
+  document.getElementById('fatherLinkCancelBtn').onclick = ()=>panel.remove();
+  document.getElementById('fatherLinkSaveBtn').onclick = ()=>{
+    const val = document.getElementById('fatherLinkInput').value.trim();
+    const chosenId = getSelected();
+    if(!chosenId || P[chosenId].chain!==val){
+      showToast('اختاري اسمًا من القائمة المقترحة أثناء الكتابة');
+      return;
+    }
+    const suffix = normalizedSuffix(person.name);
+    person.fatherId = chosenId;
+    if(!P[chosenId].childIds.includes(personId)) P[chosenId].childIds.push(personId);
+    let linkedCount = 1;
+    if(suffix){
+      Object.values(P).forEach(other=>{
+        if(other.id===personId || other.fatherId) return;
+        if(normalizedSuffix(other.name)===suffix){
+          other.fatherId = chosenId;
+          if(!P[chosenId].childIds.includes(other.id)) P[chosenId].childIds.push(other.id);
+          linkedCount++;
+        }
+      });
+    }
+    persistState();
+    showToast(linkedCount>1 ? `تم ربط ${linkedCount} أشخاص بهذا الأب` : 'تم الربط');
+    panel.remove();
+    render();
+  };
 }
 
 function openMotherEditor(personId){
