@@ -4703,6 +4703,21 @@ function repairFamilyLinks(){
       fixedCount++;
     }
   });
+
+  // إصلاح مستهدف: حمود بن حميد بن عبدالله (hamood_father) — التصفح المباشر في الشجرة كان
+  // يعرض رحيمة بلا أبناء بينما صفحتها الشخصية (والبحث الشامل) تعرضها بأبنائها الستة صحيحين.
+  // السبب الوحيد الممكن لهذا التناقض: رحيمة أخرى (نسخة فارغة مُضافة مباشرة عبر التطبيق فقط،
+  // غير موجودة في هذا الملف المصدري إطلاقًا) موجودة ضمن أبناء حمود في القاعدة الحيّة، فيعرضها
+  // التصفح المباشر (الذي يعتمد على قائمة أبناء حمود الحيّة) بينما البحث الشامل والصفحة
+  // الشخصية يصلان لصفحة "u_31" الصحيحة مباشرة بمعرّفها الثابت. يُدمَج أي "رحيمة" زائدة ضمن
+  // أبناء حمود تلقائيًا في u_31 الصحيحة عند كل تحميل، مهما كان معرّفها الحيّ غير المعروف مسبقًا
+  if(P['hamood_father']){
+    const dupRahimas = (P['hamood_father'].childIds||[]).filter(cid=>cid!=='u_31' && P[cid] && P[cid].name==='رحيمة');
+    dupRahimas.forEach(dupId=>{
+      mergeOneDuplicate('u_31', dupId);
+      fixedCount++;
+    });
+  }
   // re-heal any spouse link a stale/incorrect Firebase entry just reset during applyPayload()
   // — see SEED_SPOUSE_LINKS above for why this is necessary
   SEED_SPOUSE_LINKS.forEach((spouseId, personId)=>{
