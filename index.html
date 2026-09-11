@@ -558,9 +558,16 @@ P.abdullah_rashid.spouseId = 'aziza2_sultan_ahmad_shanin';
 P.abdullah_rashid.spouseName = P.aziza2_sultan_ahmad_shanin.chain;
 P.aziza2_sultan_ahmad_shanin.spouseId = 'abdullah_rashid';
 P.aziza2_sultan_ahmad_shanin.spouseName = P.abdullah_rashid.chain;
+// عزّا — أخت عزيزة (بنت سلطان بن أحمد بن شنين أيضًا)، خالة حسنى وحسينة، وهي أمّ خالد بن سعيد
+// (وليست عزيزة نفسها كما كان مسجَّلًا خطأً)
+add('azza_sultan3_ahmad3_shanin','عزّا','f','sultan3_ahmad3_shanin',null,7,'عزّا بنت سلطان بن أحمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 // عزيزة كانت زوجة أخرى لسعيد بن محمد العيسري أيضًا، وأمّ خالد بن سعيد (جدّ جوخة وهلال)
 add('saeed_muhammad_eisari','سعيد','m',null,null,6,'سعيد بن محمد العيسري');
-add('khalid_saeed_muhammad_eisari','خالد','m','saeed_muhammad_eisari','aziza2_sultan_ahmad_shanin',7,'خالد بن سعيد بن محمد العيسري');
+add('khalid_saeed_muhammad_eisari','خالد','m','saeed_muhammad_eisari','azza_sultan3_ahmad3_shanin',7,'خالد بن سعيد بن محمد العيسري');
+P.azza_sultan3_ahmad3_shanin.spouseId = 'saeed_muhammad_eisari';
+P.azza_sultan3_ahmad3_shanin.spouseName = P.saeed_muhammad_eisari.chain;
+P.saeed_muhammad_eisari.spouseId = 'azza_sultan3_ahmad3_shanin';
+P.saeed_muhammad_eisari.spouseName = P.azza_sultan3_ahmad3_shanin.chain;
 add('shanoona_salim_azeez','شنونة بنت سالم بن عزيز','f',null,null,6,'شنونة بنت سالم بن عزيز');
 P.abdullah_rashid.spouseId = 'shanoona_salim_azeez';
 P.abdullah_rashid.spouseName = P.shanoona_salim_azeez.chain;
