@@ -1601,6 +1601,56 @@ add('saud3_muhammad_rahma6','سعود بن محمد بن سالم الطوقي',
 // بأبويه الصحيحين بعد تعريفه لاحقًا في الملف
 add('salima_bint_abdullah','سليمة','f','abdullah_rashid','shanoona_salim_azeez',7,'سليمة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('husaina_bint_abdullah','حسينة','f','abdullah_rashid',null,7,'حسينة بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+// زوجا حسينة بنت عبدالله وأبناؤهما (أُضيفوا دفعة واحدة)
+add('muhammad_shamis_albutashi','محمد','m',null,null,7,'محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشي');
+add('harith_husaina','حارث','m','muhammad_shamis_albutashi','husaina_bint_abdullah',8,'حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشي');
+P.husaina_bint_abdullah.spouseId = 'muhammad_shamis_albutashi';
+P.husaina_bint_abdullah.spouseName = P.muhammad_shamis_albutashi.chain;
+P.muhammad_shamis_albutashi.spouseId = 'husaina_bint_abdullah';
+P.muhammad_shamis_albutashi.spouseName = P.husaina_bint_abdullah.chain;
+add('jaifar_harith','جيفر','m','harith_husaina',null,9,'جيفر بن حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشي');
+add('ghassan_harith','غسان','m','harith_husaina',null,9,'غسان بن حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشي');
+add('nabhan_harith','نبهان','m','harith_husaina',null,9,'نبهان بن حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشي');
+add('sindus_harith','سندس','f','harith_husaina',null,9,'سندس بنت حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشية');
+add('jawahir_harith','جواهر','f','harith_husaina',null,9,'جواهر بنت حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشية');
+add('aziza2_harith','عزيزة','f','harith_husaina',null,9,'عزيزة بنت حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشية');
+add('rawd_harith','روض','f','harith_husaina',null,9,'روض بنت حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشية');
+add('laila2_harith','ليلى','f','harith_husaina',null,9,'ليلى بنت حارث بن محمد بن شامس بن خنجر بن شامس بن خنجر بن شامس بن ناصر بن سيف بن فارس بن كهلان بن خنجر بن شامس بن فارس بن سنان بن شامس البطاشية');
+// محمد بن حارث موجود مسبقًا (muhammad_harith_aya) بلا أب مسجَّل — يُربط بأبيه الحقيقي هنا فقط
+P.muhammad_harith_aya.fatherId = 'harith_husaina';
+P.muhammad_harith_aya.name = 'محمد';
+if(!P.harith_husaina.childIds.includes('muhammad_harith_aya')) P.harith_husaina.childIds.push('muhammad_harith_aya');
+add('humaid_hamd_saeed_numani','حميد','m',null,null,7,'حميد بن حمد بن سعيد بن راشد النعماني');
+P.humaid_hamd_saeed_numani.spouseId = 'husaina_bint_abdullah';
+P.humaid_hamd_saeed_numani.spouseName = P.husaina_bint_abdullah.chain;
+add('abdullah_humaid_husaina','عبدالله','m','humaid_hamd_saeed_numani','husaina_bint_abdullah',8,'عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('humaid2_abdullah_humaid','حميد','m','abdullah_humaid_husaina',null,9,'حميد بن عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('abdulrahman_abdullah_humaid','عبدالرحمن','m','abdullah_humaid_husaina',null,9,'عبدالرحمن بن عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('alnooman_abdullah_humaid','النعمان','m','abdullah_humaid_husaina',null,9,'النعمان بن عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('almunthir2_abdullah_humaid','المنذر','m','abdullah_humaid_husaina',null,9,'المنذر بن عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('wajd_abdullah_humaid','وجد','f','abdullah_humaid_husaina',null,9,'وجد بنت عبدالله بن حميد بن حمد بن سعيد بن راشد النعماني');
+add('fayza2_humaid_husaina','فايزة','f','humaid_hamd_saeed_numani','husaina_bint_abdullah',8,'فايزة بنت حميد بن حمد بن سعيد بن راشد النعمانية');
+add('ibrahim_saeed_sabih_alfarsi','إبراهيم','m',null,null,8,'إبراهيم بن سعيد بن صابح الفارسي');
+P.fayza2_humaid_husaina.spouseId = 'ibrahim_saeed_sabih_alfarsi';
+P.fayza2_humaid_husaina.spouseName = P.ibrahim_saeed_sabih_alfarsi.chain;
+P.ibrahim_saeed_sabih_alfarsi.spouseId = 'fayza2_humaid_husaina';
+P.ibrahim_saeed_sabih_alfarsi.spouseName = P.fayza2_humaid_husaina.chain;
+add('alkhalil_ibrahim_fayza','الخليل','m','ibrahim_saeed_sabih_alfarsi','fayza2_humaid_husaina',9,'الخليل بن إبراهيم بن سعيد بن صابح الفارسي');
+add('yousuf_ibrahim_fayza','يوسف','m','ibrahim_saeed_sabih_alfarsi','fayza2_humaid_husaina',9,'يوسف بن إبراهيم بن سعيد بن صابح الفارسي');
+add('jana_ibrahim_fayza','جنى','f','ibrahim_saeed_sabih_alfarsi','fayza2_humaid_husaina',9,'جنى بنت إبراهيم بن سعيد بن صابح الفارسي');
+add('lama2_ibrahim_fayza','لما','f','ibrahim_saeed_sabih_alfarsi','fayza2_humaid_husaina',9,'لما بنت إبراهيم بن سعيد بن صابح الفارسي');
+add('ruaa_ibrahim_fayza','رؤى','f','ibrahim_saeed_sabih_alfarsi','fayza2_humaid_husaina',9,'رؤى بنت إبراهيم بن سعيد بن صابح الفارسي');
+add('asma_humaid_husaina','أسماء','f','humaid_hamd_saeed_numani','husaina_bint_abdullah',8,'أسماء بنت حميد بن حمد بن سعيد بن راشد النعمانية');
+add('nasir_abdullah_salih_alyazidi','ناصر','m',null,null,8,'ناصر بن عبدالله بن صالح اليزيدي');
+P.asma_humaid_husaina.spouseId = 'nasir_abdullah_salih_alyazidi';
+P.asma_humaid_husaina.spouseName = P.nasir_abdullah_salih_alyazidi.chain;
+P.nasir_abdullah_salih_alyazidi.spouseId = 'asma_humaid_husaina';
+P.nasir_abdullah_salih_alyazidi.spouseName = P.asma_humaid_husaina.chain;
+add('abdulaziz_nasir_asma','عبدالعزيز','m','nasir_abdullah_salih_alyazidi','asma_humaid_husaina',9,'عبدالعزيز بن ناصر بن عبدالله بن صالح اليزيدي');
+add('abdullah2_nasir_asma','عبدالله','m','nasir_abdullah_salih_alyazidi','asma_humaid_husaina',9,'عبدالله بن ناصر بن عبدالله بن صالح اليزيدي');
+add('shiyam_nasir_asma','شيم','f','nasir_abdullah_salih_alyazidi','asma_humaid_husaina',9,'شيم بنت ناصر بن عبدالله بن صالح اليزيدي');
+add('wid_nasir_asma','ود','f','nasir_abdullah_salih_alyazidi','asma_humaid_husaina',9,'ود بنت ناصر بن عبدالله بن صالح اليزيدي');
+add('hind2_nasir_asma','هند','f','nasir_abdullah_salih_alyazidi','asma_humaid_husaina',9,'هند بنت ناصر بن عبدالله بن صالح اليزيدي');
 add('husna_bint_abdullah','حسنى','f','abdullah_rashid',null,7,'حسنى بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 add('rahma_mother','رحمة','f',null,null,8,'رحمة بنت سيف بن عزيز الطوقية');
 
