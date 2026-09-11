@@ -2107,7 +2107,7 @@ add('riya_saeedm2','ريا','f','saeed_m2',null,8,'ريا بنت سعيد بن �
 add('asma_saeedm23','أسماء','f','saeed_m2',null,8,'أسماء بنت سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('warda_saeedm22','وردة','f','saeed_m2',null,8,'وردة بنت سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 add('izza_saeedm22','عزة','f','saeed_m2',null,8,'عزة بنت سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-add('sulaiman_m2','سليمان','m','muhammad_sulaiman',null,7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman_m2','سليمان','m','muhammad_sulaiman','salma_obaid',7,'سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // سليمان(1) تزوج شريفة بنت خيلة النعمانية (زوجة ثانية، إضافة لخولة بنت عبدالله) وأولادهما
 add('sharifa6_khayla_naumani','شريفة بنت خيلة النعمانية','f',null,null,7,'شريفة بنت خيلة النعمانية');
@@ -2621,8 +2621,23 @@ add('obaid_khammas','عبيد','m','khammas_rashid_ali',null,4,'عبيد بن خ
 add('huseina_obaid','حسينة','f','obaid_khammas',null,5,'حسينة بنت عبيد بن خماس بن راشد بن علي بن سالم الطوقية');
 P.huseina_obaid.isDeceased = true;
 add('saada_obaid','سعادة','f','obaid_khammas',null,5,'سعادة بنت عبيد بن خماس بن راشد بن علي بن سالم الطوقية');
+add('masood_alsaudi','مسعود','m',null,null,5,'مسعود السعودي');
+add('saeed_alsaudi','سعيد','m',null,null,5,'سعيد السعودي');
+P.saada_obaid.spouseId = 'saeed_alsaudi'; // آخر من تزوجها، للعرض فقط — لا رابط أبوّة بين الرجلين إطلاقًا
+P.saada_obaid.spouseName = P.saeed_alsaudi.chain;
+P.saeed_alsaudi.spouseId = 'saada_obaid';
+P.saeed_alsaudi.spouseName = P.saada_obaid.chain;
+add('saeed_masood_saada','سعيد','m','masood_alsaudi','saada_obaid',6,'سعيد بن مسعود السعودي');
+add('salim_masood_saada','سالم','m','masood_alsaudi','saada_obaid',6,'سالم بن مسعود السعودي');
+add('zwaina_saeed_saada','زوينة','f','saeed_alsaudi','saada_obaid',6,'زوينة بنت سعيد السعودية');
 P.saada_obaid.isDeceased = true;
 add('riya_obaid','ريا','f','obaid_khammas',null,5,'ريا بنت عبيد بن خماس بن راشد بن علي بن سالم الطوقية');
+add('hamood_jundub_alsinawi','حمود','m',null,null,5,'حمود بن جندب السناوي');
+P.riya_obaid.spouseId = 'hamood_jundub_alsinawi';
+P.riya_obaid.spouseName = P.hamood_jundub_alsinawi.chain;
+P.hamood_jundub_alsinawi.spouseId = 'riya_obaid';
+P.hamood_jundub_alsinawi.spouseName = P.riya_obaid.chain;
+add('salih_hamood_riya','صالح','m','hamood_jundub_alsinawi','riya_obaid',6,'صالح بن حمود بن جندب السناوي');
 P.riya_obaid.isDeceased = true;
 add('salma_obaid','سلمى','f','obaid_khammas',null,5,'سلمى بنت عبيد بن خماس بن راشد بن علي بن سالم الطوقية');
 P.salma_obaid.isDeceased = true;
