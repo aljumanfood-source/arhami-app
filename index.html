@@ -553,7 +553,7 @@ add('rashid_khalfan','راشد','m','khalfan_salim',null,5,'راشد بن خلف
 add('abdullah_rashid','عبدالله','m','rashid_khalfan',null,6,'عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 // عبدالله بن راشد's two wives — his 6 children (حميد/شمسة/خولة/سليمة/حسينة/حسنى) already existed
 // in the seed data but with no motherId set; adding the wives here and linking them below
-add('aziza2_sultan_ahmad_shanin','عزيزة','f',null,null,7,'عزيزة بنت سلطان بن أحمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('aziza2_sultan_ahmad_shanin','عزيزة','f','sultan3_ahmad3_shanin',null,7,'عزيزة بنت سلطان بن أحمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 P.abdullah_rashid.spouseId = 'aziza2_sultan_ahmad_shanin';
 P.abdullah_rashid.spouseName = P.aziza2_sultan_ahmad_shanin.chain;
 P.aziza2_sultan_ahmad_shanin.spouseId = 'abdullah_rashid';
@@ -694,7 +694,10 @@ add('muhammad_najeeb_aziza','محمد','m','najeeb_muhammad_aziza','aziza',9,'م
 add('talal_muhammad_aziza','طلال','m','muhammad_najeeb_aziza',null,10,'طلال بن محمد بن نجيب بن محمد بن عمير المرهوبي');
 add('atiqa_muhammad_aziza','عتيقه','f','muhammad_najeeb_aziza',null,10,'عتيقه بنت محمد بن نجيب بن محمد بن عمير المرهوبية');
 add('fahad_muhammad_aziza','فهد','m','muhammad_najeeb_aziza',null,10,'فهد بن محمد بن نجيب بن محمد بن عمير المرهوبي');
-add('husna','حسنى','f','abdullah_rashid','aziza2_sultan_ahmad_shanin',7,'حسنى بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+add('husna','حسنى','f','humaid_abdullah','fatima_abdullah_hamad',9,'حسنى بنت حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
+// حسنى الأخرى — بنت عبدالله بن راشد مباشرة (شقيقة حسينة وحميد وخولة وسليمة وشمسة)، بلا نسل،
+// وهي شخص منفصل تمامًا عن حسنى بنت حميد أعلاه (التي لها زوج وخمسة أبناء)
+add('husna3_abdullah_aziza','حسنى','f','abdullah_rashid','aziza2_sultan_ahmad_shanin',7,'حسنى بنت عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
 // حسنى's deceased husband محمد بن سعيد بن محمد بن سليمان... and their 5 children
 add('muhammad_saeed_husna','محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي','m','saeed_m2',null,8,'محمد بن سعيد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي'); // ربط الأب: كان بلا أب مسجَّل رغم أن اسمه يطابق سعيد بن محمد بن سليمان... الموجود فعلًا
 P.muhammad_saeed_husna.isDeceased = true;
@@ -1822,6 +1825,8 @@ add('tayeb_d','طيب','m','hamd',null,10,'طيب بن حمد بن حمود بن
 add('muhammad_salim','محمد','m','salim_rashid',null,4,'محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 // شنين: الابن الثالث لسليم بن راشد (أخو خلفان ومحمد)، وابنه راشد
 add('shanin_salim','شنين','m','salim_rashid',null,4,'شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ahmad3_shanin','أحمد','m','shanin_salim',null,5,'أحمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sultan3_ahmad3_shanin','سلطان','m','ahmad3_shanin',null,6,'سلطان بن أحمد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_shanin','راشد','m','shanin_salim',null,5,'راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقي');
 // اكتشاف جديد: حمود بن شنين — أخو راشد بن شنين، جدّ فاطمة بنت عبدالله (أمّ حمود بن حميد
 // وإخوته الكثر) عبر ثلاثة أجيال. نسبها الكامل الذي ظهر عبر التطبيق مباشرة كان يصل فعليًا
