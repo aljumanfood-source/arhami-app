@@ -3838,13 +3838,20 @@ function renderFamilySummary(id){
     rows.push(['جدته لأبيه', `<div class="name-block">${nameLink(paternalGrandmother, true)}</div>`]);
   }
   if(maternalUncles.length){
-    // short names together, then the shared father's full chain named once — matches
-    // how the user actually wants this read: "عبدالله وشريفة وميا أولاد راشد بن سلطان..."
-    const grandfather = (mother && mother.fatherId && P[mother.fatherId]) ? P[mother.fatherId] : null;
-    const namesLine = maternalUncles.map(u=>nameLink(u,false)).join('، ');
-    rows.push(['الأخوال', grandfather
-      ? `<div>${namesLine} أولاد ${nameLink(grandfather, true)}</div>`
-      : `<div>${namesLine}</div>`]);
+    // نجمّعهم حسب أبيهم — أخوال الشخص قد يكونون من أبوين مختلفين لأمّه (إخوة أمّه لأبيها،
+    // وإخوتها لأمّها) فلا يصحّ نسبتهم جميعًا لأب واحد كما كان يحدث سابقًا
+    const groups = new Map(); // fatherId -> [uncles]
+    maternalUncles.forEach(u=>{
+      const key = u.fatherId || '';
+      if(!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(u);
+    });
+    const lines = [...groups.entries()].map(([fatherId, list])=>{
+      const namesLine = list.map(u=>nameLink(u,false)).join('، ');
+      const grandfather = fatherId && P[fatherId] ? P[fatherId] : null;
+      return grandfather ? `${namesLine} أولاد ${nameLink(grandfather, true)}` : namesLine;
+    });
+    rows.push(['الأخوال', `<div>${lines.join('، ')}</div>`]);
   }
   if(paternalUncles.length){
     rows.push(['الأعمام', `<div>${paternalUncles.map(u=>nameLink(u,false)).join('، ')}</div>`]);
