@@ -1883,7 +1883,28 @@ P.aamir3_ahmad_fatima16.isDeceased = true;
 add('khalfan7_ahmad_fatima16','خلفان','m','ahmad_m','fatima16_hussain',8,'خلفان بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 P.khalfan7_ahmad_fatima16.isDeceased = true;
 
-add('sulaima3_saeed_alaisari','سليمة بنت سعيد العيسرية','f',null,null,7,'سليمة بنت سعيد العيسرية');
+add('sulaima3_saeed_alaisari','سليمة','f','saeed_saud_alaisari',null,7,'سليمة بنت سعيد بن سعود العيسرية');
+add('saeed_saud_alaisari','سعيد','m',null,null,6,'سعيد بن سعود العيسري');
+add('ziyana15_saeed_saud','زيانة','f','saeed_saud_alaisari',null,7,'زيانة بنت سعيد بن سعود العيسرية');
+add('shamsa9_saeed_saud','شمسة','f','saeed_saud_alaisari',null,7,'شمسة بنت سعيد بن سعود العيسرية');
+add('khadija2_saeed_saud','خديجة','f','saeed_saud_alaisari',null,7,'خديجة بنت سعيد بن سعود العيسرية');
+add('zeena3_saeed_saud','زينة','f','saeed_saud_alaisari',null,7,'زينة بنت سعيد بن سعود العيسرية');
+add('salma3_saeed_saud','سلمى','f','saeed_saud_alaisari',null,7,'سلمى بنت سعيد بن سعود العيسرية');
+add('riya2_saeed_saud','ريا','f','saeed_saud_alaisari',null,7,'ريا بنت سعيد بن سعود العيسرية');
+add('khalfan8_muhammad_saeed_husain','خلفان','m',null,null,5,'خلفان بن محمد بن سعيد بن حسين العيسري');
+add('muhammad37_khalfan8','محمد','m','khalfan8_muhammad_saeed_husain',null,6,'محمد بن خلفان بن محمد بن سعيد بن حسين العيسري');
+P.riya2_saeed_saud.spouseId = 'muhammad37_khalfan8';
+P.riya2_saeed_saud.spouseName = P.muhammad37_khalfan8.chain;
+P.muhammad37_khalfan8.spouseId = 'riya2_saeed_saud';
+P.muhammad37_khalfan8.spouseName = P.riya2_saeed_saud.chain;
+add('khalfan9_muhammad37_riya2','خلفان','m','muhammad37_khalfan8','riya2_saeed_saud',7,'خلفان بن محمد بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('abdullah27_muhammad37_riya2','عبدالله','m','muhammad37_khalfan8','riya2_saeed_saud',7,'عبدالله بن محمد بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('saeed30_muhammad37_riya2','سعيد','m','muhammad37_khalfan8','riya2_saeed_saud',7,'سعيد بن محمد بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('aamir4_khalfan8','عامر','m','khalfan8_muhammad_saeed_husain',null,6,'عامر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('fatima18_aamir4','فاطمة','f','aamir4_khalfan8',null,7,'فاطمة بنت عامر بن خلفان بن محمد بن سعيد بن حسين العيسرية');
+add('safiya4_aamir4','صفية','f','aamir4_khalfan8',null,7,'صفية بنت عامر بن خلفان بن محمد بن سعيد بن حسين العيسرية');
+add('muhammad38_aamir4','محمد','m','aamir4_khalfan8',null,7,'محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+P.aamir4_khalfan8.spouseId = 'sulaima3_saeed_alaisari'; // زوجها الأول، طلّقها لاحقًا؛ سليمة نفسها زوجة أحمد بن محمد بن سليمان حاليًا
 queueSpouseLink('ahmad_m', 'sulaima3_saeed_alaisari');
 add('muhammad36_ahmad_sulaima3','محمد','m','ahmad_m','sulaima3_saeed_alaisari',8,'محمد بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sulaiman5_ahmad_sulaima3','سليمان','m','ahmad_m','sulaima3_saeed_alaisari',8,'سليمان بن أحمد بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
@@ -2234,7 +2255,7 @@ add('asma_rashid_khadija','أسماء','f','rashid_sultan_brother','khadija_sula
 add('abdullah_hamd_asma','عبدالله','m','hamd_u','asma_rashid_khadija',9,'عبدالله بن حمد بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // حمد بن حميد's other (deceased) wife زوينة بنت عامر, and their 12 children
-add('zwaina_aamir_hamd','زوينة بنت عامر بن محمد بن سعيد بن حسين العيسرية','f',null,null,8,'زوينة بنت عامر بن محمد بن سعيد بن حسين العيسرية');
+add('zwaina_aamir_hamd','زوينة','f','aamir4_khalfan8','sulaima3_saeed_alaisari',7,'زوينة بنت عامر بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 P.zwaina_aamir_hamd.isDeceased = true;
 P.zwaina_aamir_hamd.spouseId = 'hamd_u';
 P.zwaina_aamir_hamd.spouseName = P.hamd_u.chain;
@@ -2521,17 +2542,17 @@ add('saeed_saif_nasra','سعيد','m','u_mt9ypaw3_7q9zvq',null,7,'سعيد بن 
 add('khalid_nasir_zeena2','خالد','m','nasir_u3','jawkha2_khalid_saeed',9,'خالد بن ناصر بن حميد بن عبدالله بن راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقي');
 
 // نصرى's 5 daughters' husbands and children
-add('khalfan_muhammad_khawla','خلفان بن محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري','m',null,null,6,'خلفان بن محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('khalfan_muhammad_khawla','خلفان','m','muhammad38_aamir4',null,8,'خلفان بن محمد بن عامر بن خلفان بن محمد بن سعيد بن حسين العيسري');
 add('u_mt9yq18q_fd5t00','خولة','f','saeed_khalfan_grandfather','nasra_bint_humaid',6,'خولة بنت سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
 queueSpouseLink('u_mt9yq18q_fd5t00', 'khalfan_muhammad_khawla');
-add('mawada_khalfan_khawla','مودة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'مودة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
+add('mawada_khalfan_khawla','مودة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'مودة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
 P.mawada_khalfan_khawla.isDeceased = true;
-add('muhammad_khalfan_khawla','محمد','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'محمد بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
-add('rahma_khalfan_khawla','رحمة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'رحمة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
-add('saeed_khalfan_khawla','سعيد','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'سعيد بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
-add('rafa_khalfan_khawla','رافة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'رافة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
-add('yunus_khalfan_khawla','يونس','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'يونس بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
-add('mahja_khalfan_khawla','مهجة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',7,'مهجة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
+add('muhammad_khalfan_khawla','محمد','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'محمد بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
+add('rahma_khalfan_khawla','رحمة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'رحمة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
+add('saeed_khalfan_khawla','سعيد','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'سعيد بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
+add('rafa_khalfan_khawla','رافة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'رافة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
+add('yunus_khalfan_khawla','يونس','m','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'يونس بن خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسري');
+add('mahja_khalfan_khawla','مهجة','f','khalfan_muhammad_khawla','u_mt9yq18q_fd5t00',9,'مهجة بنت خلفان بن محمد بن عامر بن محمد بن سعيد بن حسين العيسرية');
 
 add('hilal_khalid_asma2','هلال','m','khalid_saeed_muhammad_eisari',null,8,'هلال بن خالد بن سعيد بن محمد العيسري');
 add('u_mt9yq18q_cl3h05','أسماء','f','saeed_khalfan_grandfather','nasra_bint_humaid',6,'أسماء بنت سعيد بن خلفان بن محمد بن سعيد بن حسين العيسرية');
