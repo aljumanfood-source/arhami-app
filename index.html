@@ -390,9 +390,12 @@
   }
   .tree-box.female{background:#FBD9E6;border-color:#E6A9C4;color:var(--green-deep);}
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
+  .tree-legend-wrap{margin-top:60px;padding-top:14px;border-top:1px solid rgba(201,162,39,.35);}
+  .tree-legend-title{
+    text-align:center;font-size:14px;font-weight:800;color:var(--green-deep);margin:0 0 12px;
+  }
   .tree-legend{
-    display:flex;justify-content:center;gap:22px;margin-top:22px;padding:10px 6px;
-    border-top:1px solid rgba(201,162,39,.35);
+    display:flex;justify-content:center;gap:22px;padding:10px 6px;
   }
   .tree-legend-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
   .tree-legend-dot{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--gold-rich);}
@@ -3592,10 +3595,13 @@ function renderBranchTree(rootId){
     const sorted = toShow.slice().sort((a,b)=>colorRank(a)-colorRank(b));
     return sorted.map(cid=>renderLevel(cid, depth, false)).join('');
   }
-  const legend = `<div class="tree-legend">
-    <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
-    <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
-    <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
+  const legend = `<div class="tree-legend-wrap">
+    <p class="tree-legend-title">ألوان توضيحية</p>
+    <div class="tree-legend">
+      <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
+      <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
+      <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
+    </div>
   </div>`;
   main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>` + legend;
   main.querySelector('.tree-home-btn').onclick = ()=>{
