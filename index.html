@@ -3452,6 +3452,11 @@ function requireAdmin(action){
 const BRANCH_ROOTS = [
   {id:'rashid_ali', label:'راشد بن علي بن سالم الطوقي'}
 ];
+// جذور إضافية "داخلية" فقط — تُستخدم حصرًا لمعرفة أين يتوقف زر الانتقال ↩️ (buildTreePathTo)،
+// دون أن تظهر كبطاقة "تصفح شجرة العائلة كاملة" في الشاشة الرئيسية كما تفعل BRANCH_ROOTS. هذا
+// يحقّق بالضبط ما طُلب: لا شجرة مستقلة ظاهرة للمستخدم، لكن الانتقال الداخلي (من صفحة أي شخص
+// تتصل عائلته بسعيد بن حسين العيسري، عبر أمّه أو زوجه) يعمل تلقائيًا ويصل لجذره الصحيح
+const INTERNAL_TREE_ROOTS = [...BRANCH_ROOTS, {id:'saeed_hussain', label:'سعيد بن حسين العيسري'}];
 // true if walking up the father chain from id reaches rootId (or id IS rootId) — used to
 // keep search results limited to actual blood descendants of the three sons of سليم, and to
 // scope results to one specific branch when the user picks one of the three boxes
@@ -3734,7 +3739,7 @@ function buildTreePathTo(personId){
     // الجذر الحقيقي لكل السلسلة هو علي بن سالم، لكنه ليس مسجَّلًا كـ"جذر فرع" في BRANCH_ROOTS
     // (فرع واحد فقط حاليًا: راشد بن علي بن سالم)، فكانت الدالة تفشل دائمًا لعدم وصولها لجذر
     // معروف، فلا يظهر زر الانتقال إطلاقًا على أي صفحة شخصية
-    if(BRANCH_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain};
+    if(INTERNAL_TREE_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain};
     // إن لم يكن للأب رابط (شخص أمه فقط مسجَّلة، وهذا كثير في هذا الملف)، جرّب الصعود عبر الأم
     // بدل الاستسلام مباشرة — الشجرة نفسها تعرضه أصلًا تحت أمه (childIds تشمل الاثنين)، فمن
     // المنطقي أن يعمل زر الانتقال لأي شخص تستطيع الشجرة عرضه فعليًا، بغضّ النظر عن أي والد
