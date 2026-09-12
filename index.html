@@ -1386,10 +1386,13 @@ add('saeed_khalfan_grandfather','سعيد','m','khalfan_muhammad_h',null,5,'سع
 add('humaid_saeed_h','حميد','m','saeed_hussain',null,3,'حميد بن سعيد بن حسين العيسري');
 add('hamood_humaid_h','حمود','m','humaid_saeed_h',null,4,'حمود بن حميد بن سعيد بن حسين العيسري');
 add('hamd_hamood_h','حمد','m','hamood_humaid_h',null,5,'حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
+P.hamd_hamood_h.isDeceased = true;
 // شمسة بنت محمد بن سالم العيسرية — زوجة حمد بن حمود الأولى (طلقها لاحقًا)، أم فاطمة
 add('shamsa2_muhammad_salim','شمسة','f','muhammad2_salim_h',null,5,'شمسة بنت محمد بن سالم العيسرية');
 add('fatima_grandmother','فاطمة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'فاطمة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+P.fatima_grandmother.isDeceased = true;
 add('ziyana13_hamd_shamsa2','زيانة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'زيانة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
+P.ziyana13_hamd_shamsa2.isDeceased = true;
 add('saif12_hamd_shamsa2','سيف','m','hamd_hamood_h','shamsa2_muhammad_salim',6,'سيف بن حمد بن حمود بن حميد بن سعيد بن حسين العيسري');
 add('zwaina12_hamd_shamsa2','زوينة','f','hamd_hamood_h','shamsa2_muhammad_salim',6,'زوينة بنت حمد بن حمود بن حميد بن سعيد بن حسين العيسرية');
 // محمد بن سالم العيسري (والد شمسة) وباقي أولاده: سالم وناصر وشنونة (إخوة شمسة)
@@ -1400,6 +1403,7 @@ add('shanoona2_muhammad_h','شنونة','f','muhammad2_salim_h',null,5,'شنون
 
 // عبدالله بن حمود بن حميد بن سعيد بن حسين العيسري — أخو حمد
 add('abdullah21_hamood_h','عبدالله','m','hamood_humaid_h',null,5,'عبدالله بن حمود بن حميد بن سعيد بن حسين العيسري');
+P.abdullah21_hamood_h.isDeceased = true;
 // عزيزة بنت عبدالله — زوجة حمد بن حمود الثانية (وهي بنت أخيه عبدالله)
 add('aziza2_abdullah21','عزيزة','f','abdullah21_hamood_h',null,6,'عزيزة بنت عبدالله بن حمود بن حميد بن سعيد بن حسين العيسرية');
 queueSpouseLink('hamd_hamood_h', 'aziza2_abdullah21');
