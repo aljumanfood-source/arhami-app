@@ -2996,6 +2996,22 @@ P.muhammad15_sulaiman_sajida.spouseName = P.narjis_hamd12_riya2.chain;
 P.narjis_hamd12_riya2.spouseId = 'muhammad15_sulaiman_sajida';
 P.narjis_hamd12_riya2.spouseName = P.muhammad15_sulaiman_sajida.chain;
 
+// خلفان بن محمد بن سعيد بن حسين العيسري كان مسجَّلًا ثلاث مرات منفصلة بنفس الاسم بالضبط —
+// نسخة حقيقية مربوطة بأبيها (khalfan_muhammad_h، وعليها ابنه سعيد)، ونسختان أخريان بلا أب
+// (واحدة عليها خولة ورحمة، وأخرى عليها محمد وعامر) — كلهم إخوة فعليًا لأب واحد، فدُمجوا هنا
+mergeOneDuplicate('khalfan_muhammad_h', 'khalfan2_muhammad_ziyana6');
+mergeOneDuplicate('khalfan_muhammad_h', 'khalfan8_muhammad_saeed_husain');
+// زيانة وسليمة — بنتان أخريان لخلفان هذا من أب فقط (أمّهما غير مسجَّلة)
+add('ziyana19_khalfan_h','زيانة','f','khalfan_muhammad_h',null,5,'زيانة بنت خلفان بن محمد بن سعيد بن حسين العيسرية');
+add('salima5_khalfan_h','سليمة','f','khalfan_muhammad_h',null,5,'سليمة بنت خلفان بن محمد بن سعيد بن حسين العيسرية');
+// زيانة هذه هي زوجة محمد بن سيف بن سعيد بن مسلم بن سرور بن خماس، وأمّ ابنه سيف
+P.muhammad_saif.spouseId = 'ziyana19_khalfan_h';
+P.muhammad_saif.spouseName = P.ziyana19_khalfan_h.chain;
+P.ziyana19_khalfan_h.spouseId = 'muhammad_saif';
+P.ziyana19_khalfan_h.spouseName = P.muhammad_saif.chain;
+P.saif_muhammad.motherId = 'ziyana19_khalfan_h';
+if(!P.ziyana19_khalfan_h.childIds.includes('saif_muhammad')) P.ziyana19_khalfan_h.childIds.push('saif_muhammad');
+
 /* ---------------- Helpers ---------------- */
 function chainNodes(person){
   // returns array of {id,name} walking up fatherId chain, ending at the true root (no fatherId)
