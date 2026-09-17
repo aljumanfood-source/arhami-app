@@ -3001,6 +3001,24 @@ P.ziyana19_khalfan_h.spouseName = P.muhammad_saif.chain;
 P.saif_muhammad.motherId = 'ziyana19_khalfan_h';
 if(!P.ziyana19_khalfan_h.childIds.includes('saif_muhammad')) P.ziyana19_khalfan_h.childIds.push('saif_muhammad');
 
+// عزّا بنت حميد — أخت حمود بن حميد، زوجة خلفان بن محمد بن سعيد بن حسين العيسري، وأمّ عدد من
+// أبنائه (بعضهم كان مسجَّلًا مسبقًا بلا أمّ)
+add('azza2_humaid_saeed_h','عزّا','f','humaid_saeed_h',null,4,'عزّا بنت حميد بن سعيد بن حسين العيسرية');
+P.azza2_humaid_saeed_h.spouseId = 'khalfan_muhammad_h';
+P.azza2_humaid_saeed_h.spouseName = P.khalfan_muhammad_h.chain;
+P.khalfan_muhammad_h.spouseId = 'azza2_humaid_saeed_h';
+P.khalfan_muhammad_h.spouseName = P.azza2_humaid_saeed_h.chain;
+add('nasir4_khalfan_azza2','ناصر','m','khalfan_muhammad_h','azza2_humaid_saeed_h',5,'ناصر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('khalfan10_nasir4','خلفان','m','nasir4_khalfan_azza2',null,6,'خلفان بن ناصر بن خلفان بن محمد بن سعيد بن حسين العيسري');
+add('abdullah28_khalfan_azza2','عبدالله','m','khalfan_muhammad_h','azza2_humaid_saeed_h',5,'عبدالله بن خلفان بن محمد بن سعيد بن حسين العيسري');
+P.muhammad37_khalfan8.motherId = 'azza2_humaid_saeed_h';
+if(!P.azza2_humaid_saeed_h.childIds.includes('muhammad37_khalfan8')) P.azza2_humaid_saeed_h.childIds.push('muhammad37_khalfan8');
+P.salima5_khalfan_h.name = 'شنونة';
+P.salima5_khalfan_h.motherId = 'azza2_humaid_saeed_h';
+if(!P.azza2_humaid_saeed_h.childIds.includes('salima5_khalfan_h')) P.azza2_humaid_saeed_h.childIds.push('salima5_khalfan_h');
+P.ziyana19_khalfan_h.motherId = 'azza2_humaid_saeed_h';
+if(!P.azza2_humaid_saeed_h.childIds.includes('ziyana19_khalfan_h')) P.azza2_humaid_saeed_h.childIds.push('ziyana19_khalfan_h');
+
 /* ---------------- Helpers ---------------- */
 function chainNodes(person){
   // returns array of {id,name} walking up fatherId chain, ending at the true root (no fatherId)
