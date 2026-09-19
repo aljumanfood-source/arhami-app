@@ -3692,13 +3692,14 @@ function renderHome(){
   const q = searchInput.value.trim();
   const boxDefs = [
     ...BRANCH_ROOTS.map(b=>({mode:'branch', branch:b.id, label:b.label, sub:'تصفح شجرة العائلة كاملة'})),
-    {mode:'full', branch:'', label:'بحث شامل', sub:'يبحث في أي اسم مسجّل بالتطبيق (الطبقة ٨ فما فوق)'}
+    {mode:'full', branch:'rashid_ali', label:'راشد بن علي بن سالم الطوقي', sub:'بحث شامل في ذريته المتّصلة بالشجرة'},
+    {mode:'full', branch:'saeed_hussain', label:'سعيد بن حسين العيسري', sub:'بحث شامل في ذريته المتّصلة بالشجرة'}
   ];
   const branchBoxesHtml = state.boxesHidden
     ? `<div class="boxes-back">🔙 رجوع لخيارات البحث</div>`
     : `<div class="branch-boxes">` +
       boxDefs.map(b=>{
-        const isActive = state.searchMode===b.mode && (b.mode!=='branch' || state.branchId===b.branch);
+        const isActive = state.searchMode===b.mode && state.branchId===b.branch;
         return `<div class="branch-box ${isActive?'active':''}" data-mode="${b.mode}" data-branch="${b.branch}">
           <div class="branch-box-label">${b.label}</div>
           <div class="branch-box-sub">${b.sub}</div>
@@ -3720,14 +3721,17 @@ function renderHome(){
     // deliberately still checks every layer (including ancestors) so duplicates keep getting
     // linked instead of recreated, regardless of what shows up here
     if(p.layer<8) return false;
-    // بحث شامل (الافتراضي الآن) يفتش كل شخص من الطبقة ٨ فما فوق بلا قيد؛ اختيار فرع محدد
-    // يحصر النتائج في ذرية ذلك الفرع فقط
+    // بحث شامل الآن أيقونتان: راشد بن علي بن سالم، وسعيد بن حسين العيسري — كل واحدة تحصر
+    // النتائج في ذرية جذرها المتّصلة فعليًا به (بنفس معيار زر الانتقال، عبر الأب أو الأم أيّهما
+    // يوصل فعلًا)، لا نسبًا أبويًا صرفًا فقط كما كان يحدث سابقًا مع "فرع محدد"
     if(state.searchMode==='branch'){
       if(!belongsToBranch(p.id, state.branchId)) return false;
+    } else if(state.searchMode==='full' && state.branchId){
+      const path = buildTreePathTo(p.id);
+      if(!path || path.branchRootId!==state.branchId) return false;
+    } else {
+      if(!isInKnownTree(p.id)) return false;
     }
-    // البحث الشامل يعرض فقط من هو متّصل فعليًا بالشجرة (عبر نسبه من جهة الأب) — لا كل من
-    // له سجل في النظام، فأشخاص مسجَّلون كأزواج خارجيين بلا نسب متصل (كمحمد المقبالي) لا يظهرون
-    if(!isInKnownTree(p.id)) return false;
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
