@@ -288,6 +288,16 @@
     font-family:'Tajawal';font-weight:700;font-size:13.5px;cursor:pointer;color:var(--ink-soft);
   }
   .gender-toggle button.active{background:var(--green);color:#fff;border-color:var(--green-deep);}
+  .name-field-row{position:relative;margin-bottom:10px;}
+  .name-field-row input[type=text]{margin-bottom:0;padding-left:62px;}
+  .gender-badge{
+    position:absolute;left:6px;top:50%;transform:translateY(-50%);
+    font-size:11px;font-weight:700;color:#fff;background:var(--card);
+    padding:4px 8px;border-radius:7px;cursor:pointer;user-select:none;
+    background:var(--ink-soft);opacity:.55;
+  }
+  .gender-badge:not(:empty){opacity:1;background:var(--green);}
+  .gender-badge.female{background:#E6A9C4;}
   .add-form-actions{display:flex;gap:8px;}
   .add-form-actions button{
     flex:1;padding:10px;border-radius:9px;border:none;font-family:'Tajawal';font-weight:700;font-size:14px;cursor:pointer;
@@ -3256,6 +3266,30 @@ function isChainSource(child, parentId){
   return child.fatherId===parentId || (!child.fatherId && child.motherId===parentId);
 }
 
+// قوائم استثناءات لتخمين جنس الاسم، مبنيّة تلقائيًا من كل الأسماء الحقيقية المسجَّلة فعلًا في
+// هذا الملف (لا قائمة يدوية منفصلة) — أسماء ذكور تنتهي بتاء مربوطة (كحمزة، عبيدة) وأسماء إناث
+// لا تنتهي بتاء مربوطة ولا ألف ممدودة (كزينب، هند)، فيُستفاد من دقّة البيانات الفعلية نفسها.
+// تُبنى عند أول استخدام فعلي (لا عند تحميل هذا السطر) لضمان اكتمال P بكل من في الملف بغضّ
+// النظر عن مكان هذا التعريف نصّيًا بالنسبة لبقية سطور add()
+let _genderGuessExceptions = null;
+function guessGender(name){
+  name = (name||'').trim();
+  if(!name) return null;
+  if(!_genderGuessExceptions){
+    const maleEndingTa = new Set(), femaleNotEndingTa = new Set();
+    Object.values(P).forEach(p=>{
+      if(!p.name || p.name.includes(' ')) return; // تجاهل الأسماء المركّبة/النصّية الكاملة
+      const looksFemale = p.name.endsWith('ة') || p.name.endsWith('اء') || p.name.endsWith('ى');
+      if(p.gender==='m' && looksFemale) maleEndingTa.add(p.name);
+      if(p.gender==='f' && !looksFemale) femaleNotEndingTa.add(p.name);
+    });
+    _genderGuessExceptions = {maleEndingTa, femaleNotEndingTa};
+  }
+  if(_genderGuessExceptions.maleEndingTa.has(name)) return 'm';
+  if(_genderGuessExceptions.femaleNotEndingTa.has(name)) return 'f';
+  return (name.endsWith('ة') || name.endsWith('اء') || name.endsWith('ى')) ? 'f' : 'm';
+}
+
 function applyChainGenderSuffix(chain, gender){
   // the final nisba/tribal word must agree with the chain's own subject (leftmost person),
   // not with whichever parent chain it was built from
@@ -4557,15 +4591,14 @@ function openAddForm(parentId, gender, motherIdOverride){
     <p class="section-note" style="margin:0 0 10px;text-align:right;">أو أضِف أسماء جديدة تمامًا هنا:</p>
   ` : '';
   const fieldsHtml = Array.from({length:6}).map((_,i)=>
-    `<input type="text" class="newNameInput" placeholder="اسم ${i+1}" style="margin-bottom:8px;">`
+    `<div class="name-field-row">
+      <input type="text" class="newNameInput" data-idx="${i}" placeholder="اسم ${i+1}">
+      <span class="gender-badge" data-idx="${i}" data-g=""></span>
+    </div>`
   ).join('');
   form.innerHTML = `
     ${existingHtml}
     ${fieldsHtml}
-    <div class="gender-toggle">
-      <button type="button" data-g="m" class="${gender==='m'?'active':''}">ذكر</button>
-      <button type="button" data-g="f" class="${gender==='f'?'active':''}">أنثى</button>
-    </div>
     <div class="add-form-actions">
       <button class="save" id="saveNew">حفظ</button>
       <button class="cancel" id="cancelNew">إلغاء</button>
@@ -4587,25 +4620,52 @@ function openAddForm(parentId, gender, motherIdOverride){
       render();
     };
   }
-  let chosenGender = gender;
-  form.querySelectorAll('.gender-toggle button').forEach(b=>{
-    b.onclick = ()=>{
-      chosenGender = b.dataset.g;
-      form.querySelectorAll('.gender-toggle button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
+  // كل اسم له تخمين جنس خاص به يظهر تلقائيًا في نهاية خانته بمجرد الانتقال عنها، بدل زر
+  // ذكر/أنثى واحد يُطبَّق على الجميع — الضغط على الكلمة نفسها يُبدّلها إن كان التخمين خاطئًا
+  function updateBadge(idx){
+    const input = form.querySelector(`.newNameInput[data-idx="${idx}"]`);
+    const badge = form.querySelector(`.gender-badge[data-idx="${idx}"]`);
+    const name = input.value.trim();
+    if(!name){ badge.textContent=''; badge.dataset.g=''; return; }
+    if(!badge.dataset.g){ badge.dataset.g = guessGender(name); }
+    badge.textContent = badge.dataset.g==='f' ? 'أنثى' : 'ذكر';
+    badge.classList.toggle('female', badge.dataset.g==='f');
+  }
+  form.querySelectorAll('.newNameInput').forEach(input=>{
+    input.addEventListener('input', ()=>{
+      // تعديل الاسم بعد أن اختير جنس (بضغطة يدوية أو تخمين سابق) لا يمسح اختيار المستخدم —
+      // فقط اسم جديد من حقل فارغ يُعاد تخمينه من الصفر
+      const idx = input.dataset.idx;
+      const badge = form.querySelector(`.gender-badge[data-idx="${idx}"]`);
+      if(!input.value.trim()) badge.dataset.g = '';
+      updateBadge(idx);
+    });
+    input.addEventListener('blur', ()=>updateBadge(input.dataset.idx));
+  });
+  form.querySelectorAll('.gender-badge').forEach(badge=>{
+    badge.onclick = ()=>{
+      if(!badge.dataset.g) return;
+      badge.dataset.g = badge.dataset.g==='m' ? 'f' : 'm';
+      updateBadge(badge.dataset.idx);
     };
   });
   document.getElementById('cancelNew').onclick = ()=>{ form.remove(); };
   document.getElementById('saveNew').onclick = ()=>{
-    const names = Array.from(form.querySelectorAll('.newNameInput'))
-      .map(input=>input.value.trim())
-      .filter(name=>name.length>0);
-    if(names.length===0){ showToast('اكتب اسمًا واحدًا على الأقل'); return; }
+    const nameInputs = Array.from(form.querySelectorAll('.newNameInput'));
+    const entries = nameInputs
+      .map((input, idx)=>{
+        const name = input.value.trim();
+        if(!name) return null;
+        const badge = form.querySelector(`.gender-badge[data-idx="${idx}"]`);
+        return {name, gender: badge.dataset.g || guessGender(name) || gender};
+      })
+      .filter(Boolean);
+    if(entries.length===0){ showToast('اكتب اسمًا واحدًا على الأقل'); return; }
     const parent = P[parentId]; // always the father (husband) when motherIdOverride is set — nasab always follows the father
-    const connector = chosenGender==='m' ? 'بن' : 'بنت';
     let linkedCount = 0, createdCount = 0;
-    names.forEach(name=>{
-      const chain = applyChainGenderSuffix(`${name} ${connector} ${parent.chain}`, chosenGender);
+    entries.forEach(({name, gender: entryGender})=>{
+      const connector = entryGender==='m' ? 'بن' : 'بنت';
+      const chain = applyChainGenderSuffix(`${name} ${connector} ${parent.chain}`, entryGender);
       const fatherId = motherIdOverride ? parentId : (parent.gender==='m' ? parentId : null);
       const motherId = motherIdOverride ? motherIdOverride : (parent.gender==='f' ? parentId : null);
       // an identical full chain means this is the SAME real person already recorded elsewhere —
@@ -4629,7 +4689,7 @@ function openAddForm(parentId, gender, motherIdOverride){
         // collision would silently merge/overwrite one into the other on the next save. A
         // random id makes that collision astronomically unlikely instead of routine.
         newId = 'u_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
-        add(newId, name, chosenGender, fatherId, motherId, parent.layer+1, chain);
+        add(newId, name, entryGender, fatherId, motherId, parent.layer+1, chain);
         addedByUser.add(newId);
         createdCount++;
       }
