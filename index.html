@@ -3488,13 +3488,7 @@ const INTERNAL_TREE_ROOTS = [...BRANCH_ROOTS, {id:'saeed_hussain', label:'سعي
 // اسم مسجَّل في النظام فقط (كزوج/زوجة خارجي بلا نسب متصل)؟ يُستخدم لحصر "بحث شامل" على من
 // هو في الشجرة فعلًا — فمحمد المقبالي مثلًا مسجَّل كزوج لرحيمة لكنه غير متصل، فلا يظهر بالبحث
 function isInKnownTree(id){
-  let cur = P[id];
-  while(cur){
-    if(INTERNAL_TREE_ROOTS.some(r=>r.id===cur.id)) return true;
-    if(!cur.fatherId || !P[cur.fatherId]) return false;
-    cur = P[cur.fatherId];
-  }
-  return false;
+  return !!buildTreePathTo(id);
 }
 // true if walking up the father chain from id reaches rootId (or id IS rootId) — used to
 // keep search results limited to actual blood descendants of the three sons of سليم, and to
@@ -3777,16 +3771,20 @@ function buildTreePathTo(personId){
   let cur = P[personId];
   while(cur){
     chain.unshift(cur.id);
-    // نتوقف بالضبط عند جذر فرع معروف (raashid_ali) بدل الاستمرار للأعلى حتى نفاد الأب —
-    // الجذر الحقيقي لكل السلسلة هو علي بن سالم، لكنه ليس مسجَّلًا كـ"جذر فرع" في BRANCH_ROOTS
-    // (فرع واحد فقط حاليًا: راشد بن علي بن سالم)، فكانت الدالة تفشل دائمًا لعدم وصولها لجذر
-    // معروف، فلا يظهر زر الانتقال إطلاقًا على أي صفحة شخصية
     if(INTERNAL_TREE_ROOTS.some(b=>b.id===cur.id)) return {branchRootId: cur.id, expanded: chain};
-    // إن لم يكن للأب رابط (شخص أمه فقط مسجَّلة، وهذا كثير في هذا الملف)، جرّب الصعود عبر الأم
-    // بدل الاستسلام مباشرة — الشجرة نفسها تعرضه أصلًا تحت أمه (childIds تشمل الاثنين)، فمن
-    // المنطقي أن يعمل زر الانتقال لأي شخص تستطيع الشجرة عرضه فعليًا، بغضّ النظر عن أي والد
-    // أوصله لجذر الفرع
-    const nextId = (cur.fatherId && P[cur.fatherId]) ? cur.fatherId : ((cur.motherId && P[cur.motherId]) ? cur.motherId : null);
+    // السبب الجذري الحقيقي وراء اختفاء زر الانتقال لأبناء نساء متّصلات بالشجرة (كأبناء زيانة
+    // بنت حميد من زوجها ناصر): كانت الدالة تفضّل الأب دائمًا متى وُجد، بصرف النظر عن كونه
+    // موصولًا بجذر معروف أصلًا أم لا — فإن كان الأب (ناصر) شخصًا خارجيًا حقيقيًا بلا نسب متصل،
+    // كانت الدالة تسلك طريقه المسدود وتفشل تمامًا، رغم أن الأمّ (زيانة) موصولة فعليًا بجذر
+    // معروف في نفس اللحظة. الحل: نختار في كل خطوة الوالد الذي يؤدي فعليًا لجذر معروف (نتحقق
+    // بـ isInKnownTree)، لا الأب حكمًا؛ ونستخدم الأب كحلٍّ أخير فقط إن لم يوصل أيّ منهما لجذر
+    const fatherReal = cur.fatherId && P[cur.fatherId];
+    const motherReal = cur.motherId && P[cur.motherId];
+    let nextId = null;
+    if(fatherReal && isInKnownTree(cur.fatherId)) nextId = cur.fatherId;
+    else if(motherReal && isInKnownTree(cur.motherId)) nextId = cur.motherId;
+    else if(fatherReal) nextId = cur.fatherId;
+    else if(motherReal) nextId = cur.motherId;
     if(!nextId) return null;
     cur = P[nextId];
   }
