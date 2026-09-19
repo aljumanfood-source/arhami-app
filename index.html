@@ -3484,6 +3484,18 @@ const BRANCH_ROOTS = [
 // يحقّق بالضبط ما طُلب: لا شجرة مستقلة ظاهرة للمستخدم، لكن الانتقال الداخلي (من صفحة أي شخص
 // تتصل عائلته بسعيد بن حسين العيسري، عبر أمّه أو زوجه) يعمل تلقائيًا ويصل لجذره الصحيح
 const INTERNAL_TREE_ROOTS = [...BRANCH_ROOTS, {id:'saeed_hussain', label:'سعيد بن حسين العيسري'}];
+// هل هذا الشخص "في الشجرة" فعليًا (نسبه من جهة الأب يصل لأحد الجذرين المعروفين)، أم مجرّد
+// اسم مسجَّل في النظام فقط (كزوج/زوجة خارجي بلا نسب متصل)؟ يُستخدم لحصر "بحث شامل" على من
+// هو في الشجرة فعلًا — فمحمد المقبالي مثلًا مسجَّل كزوج لرحيمة لكنه غير متصل، فلا يظهر بالبحث
+function isInKnownTree(id){
+  let cur = P[id];
+  while(cur){
+    if(INTERNAL_TREE_ROOTS.some(r=>r.id===cur.id)) return true;
+    if(!cur.fatherId || !P[cur.fatherId]) return false;
+    cur = P[cur.fatherId];
+  }
+  return false;
+}
 // true if walking up the father chain from id reaches rootId (or id IS rootId) — used to
 // keep search results limited to actual blood descendants of the three sons of سليم, and to
 // scope results to one specific branch when the user picks one of the three boxes
@@ -3719,6 +3731,9 @@ function renderHome(){
     if(state.searchMode==='branch'){
       if(!belongsToBranch(p.id, state.branchId)) return false;
     }
+    // البحث الشامل يعرض فقط من هو متّصل فعليًا بالشجرة (عبر نسبه من جهة الأب) — لا كل من
+    // له سجل في النظام، فأشخاص مسجَّلون كأزواج خارجيين بلا نسب متصل (كمحمد المقبالي) لا يظهرون
+    if(!isInKnownTree(p.id)) return false;
     return q.includes(' ') ? p.chain.startsWith(q) : (p.name.startsWith(q) || (p.altNames||[]).some(n=>n.startsWith(q)));
   }).sort((a,b)=> a.name.localeCompare(b.name, 'ar'));
   if(results.length===0){
