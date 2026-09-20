@@ -2965,6 +2965,13 @@ const SEED_DECEASED_IDS = new Set(Object.keys(P).filter(id=>P[id].isDeceased));
 // fresh manual edit made through the app itself, exactly like the deceased-status bug. Re-assert
 // every one of these pairs after the Firebase merge, every load, so the seed's correction is
 // truly final — to change a spouse link here going forward, fix it in the seed itself.
+// تصحيح شامل لمرة واحدة لكل سلاسل نسب فرع سعيد بن حسين العيسري: عمليات الدمج والربط الكثيرة
+// التي أجريناها طوال هذه الجلسة (دمج نسخ خلفان المكرَّرة، ربط خولة وأسماء وصفية وزينة وغيرهنّ
+// بآبائهنّ الحقيقيين) كانت تُصحِّح الروابط نفسها بدقة، لكنها لم تكن تُعيد بناء نص النسب المعروض
+// (سلسلة "بن فلان بن فلان...") لذرية كل من صُحِّح — فبقي نص نسب كثيرين ناقصًا أو مبتورًا رغم أن
+// الربط الفعلي خلفه صحيح تمامًا (كخولة بنت خلفان، التي كانت تظهر "خولة بنت خلفان العيسرية"
+// فقط رغم اتصالها الصحيح لغاية سعيد بن حسين). هذا يعيد بناء نص النسب لكل فرعه بالكامل، بدءًا
+// من سعيد بن حسين نفسه (نصّه الخاص صحيح ومستقل)، نزولًا عبر كل ذريته الحقيقية دفعة واحدة
 const SEED_SPOUSE_LINKS = new Map(Object.keys(P).filter(id=>P[id].spouseId).map(id=>[id, P[id].spouseId]));
 
 // track which ids were added by the user during this session (for a small badge)
@@ -3028,6 +3035,15 @@ P.salima5_khalfan_h.motherId = 'azza2_humaid_saeed_h';
 if(!P.azza2_humaid_saeed_h.childIds.includes('salima5_khalfan_h')) P.azza2_humaid_saeed_h.childIds.push('salima5_khalfan_h');
 P.ziyana19_khalfan_h.motherId = 'azza2_humaid_saeed_h';
 if(!P.azza2_humaid_saeed_h.childIds.includes('ziyana19_khalfan_h')) P.azza2_humaid_saeed_h.childIds.push('ziyana19_khalfan_h');
+
+// تصحيح شامل لمرة واحدة لكل سلاسل نسب فرع سعيد بن حسين العيسري (بعد اكتمال كل الدمج والربط
+// والتسمية أعلاه) — عمليات الدمج والربط الكثيرة كانت تُصحِّح الروابط نفسها بدقة، لكنها لم تكن
+// تُعيد بناء نص النسب المعروض لذرية كل من صُحِّح، فبقي نص نسب كثيرين ناقصًا أو مبتورًا رغم أن
+// الربط الفعلي خلفه صحيح تمامًا (كخولة بنت خلفان، التي كانت تظهر "خولة بنت خلفان العيسرية"
+// فقط). نستدعي repairFamilyLinks() أولًا (آمن ومتكرر التصميم أصلًا) لضمان أن كل childIds محدَّثة
+// فعليًا من إضافات هذا الفرع الأخيرة (كناصر وعبدالله وشنونة) قبل إعادة بناء النسب اعتمادًا عليها
+repairFamilyLinks();
+rebuildDescendantChains('saeed_hussain');
 
 /* ---------------- Helpers ---------------- */
 function chainNodes(person){
