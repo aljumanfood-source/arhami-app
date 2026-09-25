@@ -3547,7 +3547,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false, fullTreeMode:false, fullTreeStarted:false};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false};
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
@@ -3596,6 +3596,12 @@ function isBloodDescendant(id){
   return BRANCH_ROOTS.some(b=>belongsToBranch(id, b.id));
 }
 let history = [];
+// حالة "العرض المتكامل" (fullTreeMode/fullTreeStarted/expandedFullIds) مقصودة عمدًا خارج كائن
+// state تمامًا — أكثر من موضع في الكود يعيد تعيين state بالكامل (state = {...}) عند الرجوع بلا
+// تاريخ، أو عند الكتابة في مربع البحث من صفحة أخرى، وأي حقل داخل state يُفقد في تلك اللحظات.
+// هذا الكائن المستقل لا يتأثر بأي منها إطلاقًا، فتبقى الأيقونات ظاهرة بمجرد أول فتح دون أي
+// تذبذب لاحق مهما تنقّل المستخدم
+let treeViewMode = { fullTreeMode: false, fullTreeStarted: false, expandedFullIds: [] };
 function goTo(next){
   history.push(JSON.parse(JSON.stringify(state)));
   state = Object.assign({}, state, next);
@@ -3673,12 +3679,12 @@ function renderFullTreeSVG(rootId, backLink){
   // expandedFullIds مصفوفة عادية (لا Set) عمدًا — history.push في goTo يستنسخ state عبر
   // JSON.stringify/parse لحفظ لقطة للرجوع، و Set لا ينجو من هذا التحويل (يتحوّل لكائن فارغ {}
   // فيضيع كل شيء بداخله)، بعكس المصفوفة العادية التي تُحفظ وتُستعاد بسلامة تامة
-  if(!state.expandedFullIds) state.expandedFullIds = [];
+  if(!treeViewMode.expandedFullIds) treeViewMode.expandedFullIds = [];
   const fullSet = {
-    has: (id)=>state.expandedFullIds.includes(id),
-    add: (id)=>{ if(!state.expandedFullIds.includes(id)) state.expandedFullIds.push(id); },
-    delete: (id)=>{ state.expandedFullIds = state.expandedFullIds.filter(x=>x!==id); },
-    get size(){ return state.expandedFullIds.length; }
+    has: (id)=>treeViewMode.expandedFullIds.includes(id),
+    add: (id)=>{ if(!treeViewMode.expandedFullIds.includes(id)) treeViewMode.expandedFullIds.push(id); },
+    delete: (id)=>{ treeViewMode.expandedFullIds = treeViewMode.expandedFullIds.filter(x=>x!==id); },
+    get size(){ return treeViewMode.expandedFullIds.length; }
   };
   function shortDisplayName(name){
     const m = name.match(/^(.*?) (بن|بنت) /);
@@ -3775,8 +3781,8 @@ function renderFullTreeSVG(rootId, backLink){
   // "بدأ التصفح" علامة منفصلة تمامًا عن fullSet نفسها — إغلاق آخر صندوق مفتوح (بالضغط عليه
   // مجددًا) لا يعيد إخفاء الأيقونات ثم إظهارها مجددًا لاحقًا (وميض غير مقصود)؛ تبقى الأيقونات
   // ظاهرة طوال الجلسة بمجرد أول فتح، ولا تُخفى إلا عند تبديل الوضع نفسه بزر 🗂️
-  const treeStarted = state.fullTreeStarted || fullSet.size > 0;
-  if(fullSet.size > 0) state.fullTreeStarted = true;
+  const treeStarted = treeViewMode.fullTreeStarted || fullSet.size > 0;
+  if(fullSet.size > 0) treeViewMode.fullTreeStarted = true;
   const headerHtml = treeStarted ? backLink : `<div class="fulltree-title-bar">شجرة العائلة</div>`;
   main.innerHTML = headerHtml +
     `<div class="fulltree-wrap ${treeStarted?'':'fulltree-wrap-start'}" style="height:${totalHeight}px;">
@@ -3792,9 +3798,9 @@ function renderFullTreeSVG(rootId, backLink){
       render();
     };
     document.getElementById('treeFullModeBtn').onclick = ()=>{
-      state.fullTreeMode = !state.fullTreeMode;
-      state.expandedFullIds = [];
-      state.fullTreeStarted = false;
+      treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
+      treeViewMode.expandedFullIds = [];
+      treeViewMode.fullTreeStarted = false;
       render();
     };
     document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
@@ -3813,8 +3819,8 @@ function renderBranchTree(rootId){
   // يبقى الوضع الافتراضي للتصفح اليومي السريع. "عرض متكامل" وضع منفصل يُفعَّل بزر خاص تحديدًا
   // لتحضير صفحات الطباعة/الكتاب: فيه لا يُغلق أحد عند فتح غيره، فتظهر الشجرة كاملة كما طُلب
   const path = state.expanded || [];
-  if(!state.expandedFullIds) state.expandedFullIds = [];
-  const fullSet = state.expandedFullIds; // ملاحظة: مسار ميت فعليًا الآن (fullTreeMode يُحال لـ renderFullTreeSVG قبل الوصول هنا عبر return أدناه) — يُبقى فقط لتناسق النوع
+  if(!treeViewMode.expandedFullIds) treeViewMode.expandedFullIds = [];
+  const fullSet = treeViewMode.expandedFullIds; // ملاحظة: مسار ميت فعليًا الآن (fullTreeMode يُحال لـ renderFullTreeSVG قبل الوصول هنا عبر return أدناه) — يُبقى فقط لتناسق النوع
   const root = P[rootId];
   // آخر اسم مفتوح حاليًا في المسار (أو الجذر نفسه لو لسه ما فتحنا شيء) — هذا هو الاسم الذي
   // يفتح زر "التفاصيل" صفحته الشخصية الكاملة، بدل الاستمرار في التنقل داخل الشجرة فقط
@@ -3823,10 +3829,10 @@ function renderBranchTree(rootId){
     <span class="tree-home-btn" title="الصفحة الرئيسية">🏠</span>
     <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
     <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
-    <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${state.fullTreeMode ? '🗂️' : '🗃️'}</span>
+    <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${treeViewMode.fullTreeMode ? '🗂️' : '🗃️'}</span>
     <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
   </div>`;
-  if(state.fullTreeMode){
+  if(treeViewMode.fullTreeMode){
     renderFullTreeSVG(rootId, backLink);
     return;
   }
@@ -3840,7 +3846,7 @@ function renderBranchTree(rootId){
   function renderLevel(id, depth, isRoot){
     const p = P[id];
     if(!p) return '';
-    const isOpen = state.fullTreeMode ? fullSet.includes(id) : path[depth]===id;
+    const isOpen = treeViewMode.fullTreeMode ? fullSet.includes(id) : path[depth]===id;
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
     const label = isRoot ? p.chain : shortDisplayName(p.name);
     const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
@@ -3879,8 +3885,8 @@ function renderBranchTree(rootId){
   const childlessNotes = []; // ملاحظات "لم ينسل/تنسل" تُجمع أثناء الرسم وتظهر أسفل الصفحة دفعة واحدة
   function renderSiblingGroup(ids, depth, parent){
     const openId = path[depth];
-    let toShow = state.fullTreeMode ? ids : (ids.includes(openId) ? [openId] : ids);
-    if(state.fullTreeMode && parent){
+    let toShow = treeViewMode.fullTreeMode ? ids : (ids.includes(openId) ? [openId] : ids);
+    if(treeViewMode.fullTreeMode && parent){
       // في العرض المتكامل تحديدًا: من لا نسل له مطلقًا يأخذ مساحة كاملة في الصف دون أن يضيف
       // شيئًا تحته، فيدفع بقية الفروع (كسليم في المثال) للأسفل ويكسر المحاذاة. نُخرجهم من
       // الصف نفسه ونجمعهم كملاحظة نصية واحدة أسفل الصفحة بدل صندوق فارغ يأخذ مكانًا
@@ -3941,9 +3947,9 @@ function renderBranchTree(rootId){
     window.print();
   };
   document.getElementById('treeFullModeBtn').onclick = ()=>{
-    state.fullTreeMode = !state.fullTreeMode;
-    state.expandedFullIds = []; // نبدأ نظيفًا عند تبديل الوضع كي لا يختلط سلوك الوضعين
-    state.fullTreeStarted = false;
+    treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
+    treeViewMode.expandedFullIds = []; // نبدأ نظيفًا عند تبديل الوضع كي لا يختلط سلوك الوضعين
+    treeViewMode.fullTreeStarted = false;
     render();
   };
   document.getElementById('treePrintBtn').onclick = ()=>{
@@ -3955,12 +3961,12 @@ function renderBranchTree(rootId){
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
-      if(state.fullTreeMode){
+      if(treeViewMode.fullTreeMode){
         // وضع العرض المتكامل: الضغط يبدّل فتح/طي هذا الشخص وحده، بلا أي تأثير على إخوته —
         // كلهم يبقون ظاهرين دائمًا، هذا فقط يظهر/يخفي أبناء من ضُغط عليه تحديدًا
-        if(!state.expandedFullIds) state.expandedFullIds = [];
-        if(state.expandedFullIds.includes(id)) state.expandedFullIds = state.expandedFullIds.filter(x=>x!==id);
-        else state.expandedFullIds.push(id);
+        if(!treeViewMode.expandedFullIds) treeViewMode.expandedFullIds = [];
+        if(treeViewMode.expandedFullIds.includes(id)) treeViewMode.expandedFullIds = treeViewMode.expandedFullIds.filter(x=>x!==id);
+        else treeViewMode.expandedFullIds.push(id);
         render();
         return;
       }
