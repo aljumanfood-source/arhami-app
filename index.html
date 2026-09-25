@@ -383,6 +383,16 @@
   }
   .tree-detail-btn:active{opacity:.8;}
   .tree-wrap{padding:14px 16px 24px;}
+  /* طباعة صفحة الشجرة كملف PDF: نخفي كل شيء عدا الشجرة نفسها ودليل الألوان — شريط الأزرار
+     العلوي وصندوق البحث وإطار التطبيق الزخرفي لا معنى لها على الورق. الشجرة تُطبع كما هي
+     بالضبط بأحجامها المتدرّجة (لا تغيير هنا، فالتصغير التدريجي مبني أصلًا في كل مربع) */
+  @media print{
+    body{background:#fff !important;padding:0 !important;}
+    .app{max-width:none !important;height:auto !important;border:none !important;box-shadow:none !important;border-radius:0 !important;}
+    header.top, #fullHeader, .tree-toolbar, .boxes-back, .full-search-menu-back{display:none !important;}
+    .tree-wrap{padding:0 !important;}
+    .tree-legend-wrap{margin-top:24px !important;}
+  }
   .tree-box-wrap{margin-bottom:8px;}
   .tree-children{
     display:flex;flex-wrap:wrap;gap:5px;margin-inline-start:8px;
@@ -3646,6 +3656,7 @@ function renderBranchTree(rootId){
     <span class="tree-home-btn" title="الصفحة الرئيسية">🏠</span>
     <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
     <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
+    <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
   </div>`;
   function shortDisplayName(name){
     // بعض الأشخاص خُزِّن نسبهم الكامل بالخطأ في حقل "الاسم" نفسه بدل الاسم الأول فقط (كما في
@@ -3725,6 +3736,12 @@ function renderBranchTree(rootId){
     state.branchId = null;
     state.boxesHidden = true;
     render();
+  };
+  document.getElementById('treePrintBtn').onclick = ()=>{
+    // نأخذ بالضبط ما هو ظاهر أمام المستخدم في هذه اللحظة (نفس المربعات بنفس أحجامها المتدرّجة)
+    // ونحوّله لصفحة PDF عبر حوار الطباعة المدمج بالمتصفح — لا حاجة لأداة رسم منفصلة، فالشجرة
+    // المتصفَّحة تدريجيًا هي بالضبط "صفحة" الكتاب المطلوبة، مقطوعة عند حيث توقّف المستخدم
+    window.print();
   };
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
