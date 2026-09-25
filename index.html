@@ -369,6 +369,11 @@
   /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح، أكورديون
      حقيقي (أخ واحد مفتوح بكل مستوى)، وشبكة مضغوطة توفّر المساحة بدل التكديس عموديًا */
   .tree-toolbar{padding:14px 16px 0;}
+  .tree-header-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 16px 0;}
+  .tree-title-fixed{font-size:15px;font-weight:800;color:var(--green-deep);padding-top:8px;}
+  .tree-toolbar-vertical{display:flex;flex-direction:column;gap:8px;align-items:center;}
+  .tree-toolbar-vertical .tree-detail-btn, .tree-toolbar-vertical .tree-home-btn{margin-inline-start:0;}
+  .tree-toolbar-vertical .hidden-in-full{display:none;}
   .tree-home-btn{
     display:inline-flex;align-items:center;justify-content:center;
     width:38px;height:38px;border-radius:50%;background:var(--card);
@@ -3775,36 +3780,29 @@ function renderFullTreeSVG(rootId, backLink){
       <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
     </div>
   </div>`;
-  // عند البدء (لا شيء مفتوح بعد): لا حاجة لأيقونات الأدوات (طباعة/بحث/إلخ) لأن لا شيء لفعله
-  // بها بعد — نستبدلها بعنوان بسيط للصفحة "شجرة العائلة"، وتظهر الأيقونات فقط بعد أن يبدأ
-  // المستخدم فعليًا بفتح الجذر ليصبح لها معنى واستخدام
-  // "بدأ التصفح" علامة منفصلة تمامًا عن fullSet نفسها — إغلاق آخر صندوق مفتوح (بالضغط عليه
-  // مجددًا) لا يعيد إخفاء الأيقونات ثم إظهارها مجددًا لاحقًا (وميض غير مقصود)؛ تبقى الأيقونات
-  // ظاهرة طوال الجلسة بمجرد أول فتح، ولا تُخفى إلا عند تبديل الوضع نفسه بزر 🗂️
-  const treeStarted = treeViewMode.fullTreeStarted || fullSet.size > 0;
-  if(fullSet.size > 0) treeViewMode.fullTreeStarted = true;
-  const headerHtml = treeStarted ? backLink : `<div class="fulltree-title-bar">شجرة العائلة</div>`;
-  main.innerHTML = headerHtml +
-    `<div class="fulltree-wrap ${treeStarted?'':'fulltree-wrap-start'}" style="height:${totalHeight}px;">
+  // عنوان "شجرة العائلة" أصبح ثابتًا دائم الظهور (مبني داخل backLink نفسها الآن)، ولا يتبدّل
+  // مع الأيقونات إطلاقًا — والأيقونات الثلاث غير الأساسية (رئيسية/بحث/انتقال) تُخفى فقط أثناء
+  // تفعيل العرض المتكامل تحديدًا (عبر CSS)، فيبقى زرا الظهور والطباعة وحدهما ظاهرين طوال تلك
+  // الجلسة كما طُلب بدقة، بصرف النظر عمّا فُتح أو أُغلق من الشجرة نفسها
+  main.innerHTML = backLink +
+    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
       <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
       ${boxesHtml}
     </div>` + notesHtml + legend;
-  if(treeStarted){
-    main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
-    main.querySelector('.tree-detail-btn').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
-    document.getElementById('treeSearchBtn').onclick = ()=>{
-      goTo({view:'home'});
-      state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
-      render();
-    };
-    document.getElementById('treeFullModeBtn').onclick = ()=>{
-      treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
-      treeViewMode.expandedFullIds = [];
-      treeViewMode.fullTreeStarted = false;
-      render();
-    };
-    document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
-  }
+  main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
+  main.querySelector('.tree-detail-btn[data-detail-id]').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
+  document.getElementById('treeSearchBtn').onclick = ()=>{
+    goTo({view:'home'});
+    state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
+    render();
+  };
+  document.getElementById('treeFullModeBtn').onclick = ()=>{
+    treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
+    treeViewMode.expandedFullIds = [];
+    treeViewMode.fullTreeStarted = false;
+    render();
+  };
+  document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
   main.querySelectorAll('.fulltree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
@@ -3825,12 +3823,15 @@ function renderBranchTree(rootId){
   // آخر اسم مفتوح حاليًا في المسار (أو الجذر نفسه لو لسه ما فتحنا شيء) — هذا هو الاسم الذي
   // يفتح زر "التفاصيل" صفحته الشخصية الكاملة، بدل الاستمرار في التنقل داخل الشجرة فقط
   const currentDetailId = path.length ? path[path.length-1] : rootId;
-  const backLink = `<div class="tree-toolbar">
-    <span class="tree-home-btn" title="الصفحة الرئيسية">🏠</span>
-    <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
-    <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
-    <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${treeViewMode.fullTreeMode ? '🗂️' : '🗃️'}</span>
-    <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
+  const backLink = `<div class="tree-header-row">
+    <div class="tree-title-fixed">شجرة العائلة</div>
+    <div class="tree-toolbar-vertical">
+      <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${treeViewMode.fullTreeMode ? '🗂️' : '🗃️'}</span>
+      <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
+      <span class="tree-home-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="الصفحة الرئيسية">🏠</span>
+      <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" id="treeSearchBtn" title="بحث شامل">🔍</span>
+      <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
+    </div>
   </div>`;
   if(treeViewMode.fullTreeMode){
     renderFullTreeSVG(rootId, backLink);
@@ -3930,7 +3931,7 @@ function renderBranchTree(rootId){
   main.querySelector('.tree-home-btn').onclick = ()=>{
     goTo({view:'home'});
   };
-  main.querySelector('.tree-detail-btn').onclick = (e)=>{
+  main.querySelector('.tree-detail-btn[data-detail-id]').onclick = (e)=>{
     goTo({view:'profile', personId: e.currentTarget.dataset.detailId});
   };
   document.getElementById('treeSearchBtn').onclick = ()=>{
