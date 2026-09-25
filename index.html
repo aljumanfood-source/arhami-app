@@ -3547,7 +3547,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false, fullTreeMode:false};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false, fullTreeMode:false, fullTreeStarted:false};
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
@@ -3702,7 +3702,7 @@ function renderFullTreeSVG(rootId, backLink){
 
   // تخطيط هادئ: كل ورقة (شخص مغلق أو بلا أبناء) تأخذ فتحة أفقية متساوية عبر عرض ثابت منطقي
   // (1000 وحدة)، وكل أب يتمركز فوق منتصف أبنائه تلقائيًا — بالضبط نفس أسلوب نماذج الطباعة
-  const LOGICAL_W = 1000, ROW_H = 130, MARGIN_X = 40;
+  const LOGICAL_W = 1000, ROW_H = 85, MARGIN_X = 40;
   let leafIndex = 0;
   function countLeaves(n){ return (!n.children || !n.children.length) ? 1 : n.children.reduce((s,c)=>s+countLeaves(c),0); }
   const leafCount = Math.max(1, countLeaves(tree));
@@ -3722,8 +3722,8 @@ function renderFullTreeSVG(rootId, backLink){
   const totalHeight = (maxDepth(tree)+1)*ROW_H + 60;
 
   const boxSizes = [
-    {w:190, h:56, fs:20}, {w:150, h:46, fs:16}, {w:120, h:38, fs:13},
-    {w:98, h:32, fs:11}, {w:82, h:28, fs:9.5}, {w:70, h:24, fs:8.5}
+    {w:150, h:40, fs:15}, {w:64, h:26, fs:11.5}, {w:56, h:24, fs:10.5},
+    {w:50, h:22, fs:9.5}, {w:46, h:20, fs:8.5}, {w:42, h:18, fs:8}
   ];
   function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
 
@@ -3764,7 +3764,11 @@ function renderFullTreeSVG(rootId, backLink){
   // عند البدء (لا شيء مفتوح بعد): لا حاجة لأيقونات الأدوات (طباعة/بحث/إلخ) لأن لا شيء لفعله
   // بها بعد — نستبدلها بعنوان بسيط للصفحة "شجرة العائلة"، وتظهر الأيقونات فقط بعد أن يبدأ
   // المستخدم فعليًا بفتح الجذر ليصبح لها معنى واستخدام
-  const treeStarted = fullSet.size > 0;
+  // "بدأ التصفح" علامة منفصلة تمامًا عن fullSet نفسها — إغلاق آخر صندوق مفتوح (بالضغط عليه
+  // مجددًا) لا يعيد إخفاء الأيقونات ثم إظهارها مجددًا لاحقًا (وميض غير مقصود)؛ تبقى الأيقونات
+  // ظاهرة طوال الجلسة بمجرد أول فتح، ولا تُخفى إلا عند تبديل الوضع نفسه بزر 🗂️
+  const treeStarted = state.fullTreeStarted || fullSet.size > 0;
+  if(fullSet.size > 0) state.fullTreeStarted = true;
   const headerHtml = treeStarted ? backLink : `<div class="fulltree-title-bar">شجرة العائلة</div>`;
   main.innerHTML = headerHtml +
     `<div class="fulltree-wrap ${treeStarted?'':'fulltree-wrap-start'}" style="height:${totalHeight}px;">
@@ -3782,6 +3786,7 @@ function renderFullTreeSVG(rootId, backLink){
     document.getElementById('treeFullModeBtn').onclick = ()=>{
       state.fullTreeMode = !state.fullTreeMode;
       state.expandedFullSet = new Set();
+      state.fullTreeStarted = false;
       render();
     };
     document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
@@ -3930,6 +3935,7 @@ function renderBranchTree(rootId){
   document.getElementById('treeFullModeBtn').onclick = ()=>{
     state.fullTreeMode = !state.fullTreeMode;
     state.expandedFullSet = new Set(); // نبدأ نظيفًا عند تبديل الوضع كي لا يختلط سلوك الوضعين
+    state.fullTreeStarted = false;
     render();
   };
   document.getElementById('treePrintBtn').onclick = ()=>{
