@@ -3714,7 +3714,8 @@ function renderFullTreeSVG(rootId, backLink){
     n.y = n.depth*ROW_H + 60;
   }
   layout(tree);
-  const totalHeight = (Math.max(...(function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; })(tree), 0)+1)*ROW_H + 60;
+  function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; }
+  const totalHeight = (maxDepth(tree)+1)*ROW_H + 60;
 
   const boxSizes = [
     {w:190, h:56, fs:20}, {w:150, h:46, fs:16}, {w:120, h:38, fs:13},
