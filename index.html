@@ -420,6 +420,10 @@
   .tree-box.female{background:#FBD9E6;border-color:#E6A9C4;color:var(--green-deep);}
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-legend-wrap{margin-top:60px;padding-top:14px;border-top:1px solid rgba(201,162,39,.35);}
+  .tree-childless-notes{margin:24px 16px 0;padding:12px 14px;background:rgba(201,162,39,.08);border-radius:10px;border:1px solid rgba(201,162,39,.3);}
+  .tree-childless-notes-title{font-size:12.5px;font-weight:800;color:var(--green-deep);margin-bottom:6px;}
+  .tree-childless-notes p{font-size:11.5px;color:var(--ink-soft);line-height:1.7;margin:0;}
+  .tree-childless-notes p + p{margin-top:4px;}
   .tree-legend-title{
     text-align:center;font-size:14px;font-weight:800;color:var(--green-deep);margin:0 0 12px;
   }
@@ -3696,7 +3700,7 @@ function renderBranchTree(rootId){
         html += `<div class="tree-will-shortcut" data-will-id="${id}">📜 الوصية</div>`;
       }
       if(kids.length>0){
-        html += `<div class="tree-children">` + renderSiblingGroup(kids, depth+1) + `</div>`;
+        html += `<div class="tree-children">` + renderSiblingGroup(kids, depth+1, p) + `</div>`;
       } else {
         html += `<div class="tree-empty">لا يوجد أبناء مسجّلون بعد</div>`;
       }
@@ -3708,9 +3712,25 @@ function renderBranchTree(rootId){
   // وتختفي بقية إخوته تمامًا؛ لو ما فيه أحد مفتوح بعد، تظهر كل الإخوة جنبًا لجنب كشبكة مضغوطة.
   // وضع "العرض المتكامل": كل الإخوة يظهرون دائمًا جنبًا لجنب بصرف النظر عن حالة الفتح، وكل من
   // كان مفتوحًا منهم (عبر fullSet) تظهر أولاده تحته أيضًا — بلا إغلاق أي أحد عند فتح غيره
-  function renderSiblingGroup(ids, depth){
+  const childlessNotes = []; // ملاحظات "لم ينسل/تنسل" تُجمع أثناء الرسم وتظهر أسفل الصفحة دفعة واحدة
+  function renderSiblingGroup(ids, depth, parent){
     const openId = path[depth];
-    const toShow = state.fullTreeMode ? ids : (ids.includes(openId) ? [openId] : ids);
+    let toShow = state.fullTreeMode ? ids : (ids.includes(openId) ? [openId] : ids);
+    if(state.fullTreeMode && parent){
+      // في العرض المتكامل تحديدًا: من لا نسل له مطلقًا يأخذ مساحة كاملة في الصف دون أن يضيف
+      // شيئًا تحته، فيدفع بقية الفروع (كسليم في المثال) للأسفل ويكسر المحاذاة. نُخرجهم من
+      // الصف نفسه ونجمعهم كملاحظة نصية واحدة أسفل الصفحة بدل صندوق فارغ يأخذ مكانًا
+      const childless = toShow.filter(cid=>!(P[cid].childIds||[]).some(gc=>P[gc]));
+      if(childless.length){
+        toShow = toShow.filter(cid=>!childless.includes(cid));
+        const allFemale = childless.every(cid=>P[cid].gender==='f');
+        const allMale = childless.every(cid=>P[cid].gender==='m');
+        const noun = allFemale ? 'بنات' : (allMale ? 'أبناء' : 'أبناء وبنات');
+        const verb = allFemale ? 'لم تنسلن' : 'لم ينسلوا';
+        const names = childless.map(cid=>P[cid].name).join('، ');
+        childlessNotes.push(`${noun} ${shortDisplayName(parent.name)}: ${names} — ${verb}`);
+      }
+    }
     // ترتيب العرض فقط (لا يمسّ ترتيب الأبناء المخزَّن ولا منطق الفتح/الطي): توفاهم الله أولًا،
     // ثم الذكور، ثم الإناث — يطابق ترتيب دليل الألوان أسفل الشجرة
     function colorRank(cid){
@@ -3729,7 +3749,14 @@ function renderBranchTree(rootId){
       <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
     </div>
   </div>`;
-  main.innerHTML = backLink + `<div class="tree-wrap">` + renderLevel(rootId, 0, true) + `</div>` + legend;
+  // مهم: نبني جسم الشجرة أولًا (renderLevel يملأ childlessNotes أثناء تنفيذه بالتأثير الجانبي)
+  // ثم نبني قسم الملاحظات من النتيجة النهائية — لا يصح تجهيز HTML الملاحظات قبل اكتمال الرسم
+  const treeHtml = renderLevel(rootId, 0, true);
+  const notesHtml = childlessNotes.length
+    ? `<div class="tree-childless-notes"><p class="tree-childless-notes-title">ملاحظات</p>` +
+      childlessNotes.map(n=>`<p>${n}</p>`).join('') + `</div>`
+    : '';
+  main.innerHTML = backLink + `<div class="tree-wrap">` + treeHtml + `</div>` + notesHtml + legend;
   main.querySelector('.tree-home-btn').onclick = ()=>{
     goTo({view:'home'});
   };
