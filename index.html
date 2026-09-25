@@ -421,6 +421,10 @@
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-legend-wrap{margin-top:60px;padding-top:14px;border-top:1px solid rgba(201,162,39,.35);}
   .fulltree-wrap{position:relative;width:100%;overflow-x:auto;}
+  .fulltree-wrap-start{margin-top:6px;}
+  .fulltree-title-bar{
+    padding:16px 18px 4px;font-size:15px;font-weight:800;color:var(--green-deep);text-align:center;
+  }
   .fulltree-svg{position:absolute;top:0;left:0;width:100%;height:100%;}
   .fulltree-box{
     position:absolute;transform:translate(-50%,0);
@@ -429,7 +433,7 @@
     padding:4px 6px;font-weight:700;color:var(--ink);cursor:pointer;line-height:1.25;
     box-shadow:0 1px 3px rgba(0,0,0,.08);
   }
-  .fulltree-box.tree-root{background:var(--green);color:#fff;border-color:var(--green-deep);font-weight:800;}
+  .fulltree-box.tree-root{background:var(--green);color:#fff;border-color:var(--green-deep);font-weight:800;white-space:nowrap;}
   .fulltree-box.female{background:#FBD9E6;border-color:#E6A9C4;}
   .fulltree-box.deceased{background:var(--green);color:#fff;border-color:var(--green-deep);}
   .fulltree-box.deceased.female{background:var(--green);}
@@ -3711,7 +3715,7 @@ function renderFullTreeSVG(rootId, backLink){
       n.children.forEach(layout);
       n.x = (n.children[0].x + n.children[n.children.length-1].x)/2;
     }
-    n.y = n.depth*ROW_H + 60;
+    n.y = n.depth*ROW_H + 36;
   }
   layout(tree);
   function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; }
@@ -3732,7 +3736,7 @@ function renderFullTreeSVG(rootId, backLink){
     const xPct = (n.x/LOGICAL_W*100).toFixed(2);
     const yPx = n.y;
     boxesHtml += `<div class="fulltree-box ${p.isDeceased?'deceased':''} ${p.gender==='f'?'female':''} ${n.depth===0?'tree-root':''}"
-      data-node="${n.id}" style="left:${xPct}%;top:${yPx}px;width:${s.w*(n.depth===0?1.3:1)}px;min-height:${s.h}px;font-size:${s.fs}px;">${label}</div>`;
+      data-node="${n.id}" style="left:${xPct}%;top:${yPx}px;width:${s.w*(n.depth===0?1.9:1)}px;min-height:${s.h}px;font-size:${n.depth===0?16:s.fs}px;">${label}</div>`;
     if(n.children){
       n.children.forEach(c=>{
         const midY = (n.y + c.y)/2 + (n.depth===0?10:0);
@@ -3757,24 +3761,31 @@ function renderFullTreeSVG(rootId, backLink){
       <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
     </div>
   </div>`;
-  main.innerHTML = backLink +
-    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
+  // عند البدء (لا شيء مفتوح بعد): لا حاجة لأيقونات الأدوات (طباعة/بحث/إلخ) لأن لا شيء لفعله
+  // بها بعد — نستبدلها بعنوان بسيط للصفحة "شجرة العائلة"، وتظهر الأيقونات فقط بعد أن يبدأ
+  // المستخدم فعليًا بفتح الجذر ليصبح لها معنى واستخدام
+  const treeStarted = fullSet.size > 0;
+  const headerHtml = treeStarted ? backLink : `<div class="fulltree-title-bar">شجرة العائلة</div>`;
+  main.innerHTML = headerHtml +
+    `<div class="fulltree-wrap ${treeStarted?'':'fulltree-wrap-start'}" style="height:${totalHeight}px;">
       <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
       ${boxesHtml}
     </div>` + notesHtml + legend;
-  main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
-  main.querySelector('.tree-detail-btn').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
-  document.getElementById('treeSearchBtn').onclick = ()=>{
-    goTo({view:'home'});
-    state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
-    render();
-  };
-  document.getElementById('treeFullModeBtn').onclick = ()=>{
-    state.fullTreeMode = !state.fullTreeMode;
-    state.expandedFullSet = new Set();
-    render();
-  };
-  document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
+  if(treeStarted){
+    main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
+    main.querySelector('.tree-detail-btn').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
+    document.getElementById('treeSearchBtn').onclick = ()=>{
+      goTo({view:'home'});
+      state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
+      render();
+    };
+    document.getElementById('treeFullModeBtn').onclick = ()=>{
+      state.fullTreeMode = !state.fullTreeMode;
+      state.expandedFullSet = new Set();
+      render();
+    };
+    document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
+  }
   main.querySelectorAll('.fulltree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
