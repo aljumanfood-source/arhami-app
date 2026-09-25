@@ -3526,7 +3526,7 @@ function mergeAllDuplicates(){
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
 const searchInput = document.getElementById('searchInput');
-let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false};
+let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false, fullTreeMode:false};
 
 // وضع المدير: الإضافة/التعديل/الحذف مقصورة على من يعرف الرقم السري — الزوار العاديون يقدرون
 // يتصفحون ويبحثون بس. الرقم يُدخل مرة وحدة بكل جهاز ويضل محفوظًا محليًا بعدها.
@@ -3645,9 +3645,12 @@ function wireBranchBoxes(){
 // شجرة تصفح تفاعلية لفرع واحد: مربع أخضر بأعلى فيه اسم الجد كاملًا، الضغط عليه يفتح/يطوي
 // أبناءه المباشرين كمربعات تحته، وكل مربع ابن يفتح/يطوي أبناءه هو بنفس الطريقة — تنازليًا بلا حد
 function renderBranchTree(rootId){
-  // مسار الفتح: عنصر واحد بكل مستوى بحيث فتح أخ يطوي أخوه تلقائيًا (أكورديون حقيقي) — بدل
-  // مجموعة مفتوحة بلا حدود
+  // مسار الفتح: عنصر واحد بكل مستوى بحيث فتح أخ يطوي أخوه تلقائيًا (أكورديون حقيقي) — هذا
+  // يبقى الوضع الافتراضي للتصفح اليومي السريع. "عرض متكامل" وضع منفصل يُفعَّل بزر خاص تحديدًا
+  // لتحضير صفحات الطباعة/الكتاب: فيه لا يُغلق أحد عند فتح غيره، فتظهر الشجرة كاملة كما طُلب
   const path = state.expanded || [];
+  if(!state.expandedFullSet) state.expandedFullSet = new Set();
+  const fullSet = state.expandedFullSet;
   const root = P[rootId];
   // آخر اسم مفتوح حاليًا في المسار (أو الجذر نفسه لو لسه ما فتحنا شيء) — هذا هو الاسم الذي
   // يفتح زر "التفاصيل" صفحته الشخصية الكاملة، بدل الاستمرار في التنقل داخل الشجرة فقط
@@ -3656,6 +3659,7 @@ function renderBranchTree(rootId){
     <span class="tree-home-btn" title="الصفحة الرئيسية">🏠</span>
     <span class="tree-detail-btn" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
     <span class="tree-detail-btn" id="treeSearchBtn" title="بحث شامل">🔍</span>
+    <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${state.fullTreeMode ? '🗂️' : '🗃️'}</span>
     <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
   </div>`;
   function shortDisplayName(name){
@@ -3668,7 +3672,7 @@ function renderBranchTree(rootId){
   function renderLevel(id, depth, isRoot){
     const p = P[id];
     if(!p) return '';
-    const isOpen = path[depth]===id;
+    const isOpen = state.fullTreeMode ? fullSet.has(id) : path[depth]===id;
     const boxClass = isRoot ? 'tree-box tree-root' : 'tree-box';
     const label = isRoot ? p.chain : shortDisplayName(p.name);
     const hint = isRoot ? `<span class="tree-root-hint">اضغط للمتابعة</span>` : '';
@@ -3700,11 +3704,13 @@ function renderBranchTree(rootId){
     html += `</div>`;
     return html;
   }
-  // يعرض إخوة مستوى واحد: لو أحدهم مفتوح (موجود بالمسار) يظهر هو فقط مع أولاده، وتختفي
-  // بقية إخوته تمامًا؛ لو ما فيه أحد مفتوح بعد، تظهر كل الإخوة جنبًا لجنب كشبكة مضغوطة
+  // يعرض إخوة مستوى واحد. الوضع العادي: لو أحدهم مفتوح (موجود بالمسار) يظهر هو فقط مع أولاده،
+  // وتختفي بقية إخوته تمامًا؛ لو ما فيه أحد مفتوح بعد، تظهر كل الإخوة جنبًا لجنب كشبكة مضغوطة.
+  // وضع "العرض المتكامل": كل الإخوة يظهرون دائمًا جنبًا لجنب بصرف النظر عن حالة الفتح، وكل من
+  // كان مفتوحًا منهم (عبر fullSet) تظهر أولاده تحته أيضًا — بلا إغلاق أي أحد عند فتح غيره
   function renderSiblingGroup(ids, depth){
     const openId = path[depth];
-    const toShow = ids.includes(openId) ? [openId] : ids;
+    const toShow = state.fullTreeMode ? ids : (ids.includes(openId) ? [openId] : ids);
     // ترتيب العرض فقط (لا يمسّ ترتيب الأبناء المخزَّن ولا منطق الفتح/الطي): توفاهم الله أولًا،
     // ثم الذكور، ثم الإناث — يطابق ترتيب دليل الألوان أسفل الشجرة
     function colorRank(cid){
@@ -3743,9 +3749,28 @@ function renderBranchTree(rootId){
     // المتصفَّحة تدريجيًا هي بالضبط "صفحة" الكتاب المطلوبة، مقطوعة عند حيث توقّف المستخدم
     window.print();
   };
+  document.getElementById('treeFullModeBtn').onclick = ()=>{
+    state.fullTreeMode = !state.fullTreeMode;
+    state.expandedFullSet = new Set(); // نبدأ نظيفًا عند تبديل الوضع كي لا يختلط سلوك الوضعين
+    render();
+  };
+  document.getElementById('treePrintBtn').onclick = ()=>{
+    // نأخذ بالضبط ما هو ظاهر أمام المستخدم في هذه اللحظة (نفس المربعات بنفس أحجامها المتدرّجة)
+    // ونحوّله لصفحة PDF عبر حوار الطباعة المدمج بالمتصفح — لا حاجة لأداة رسم منفصلة، فالشجرة
+    // المتصفَّحة تدريجيًا هي بالضبط "صفحة" الكتاب المطلوبة، مقطوعة عند حيث توقّف المستخدم
+    window.print();
+  };
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
+      if(state.fullTreeMode){
+        // وضع العرض المتكامل: الضغط يبدّل فتح/طي هذا الشخص وحده، بلا أي تأثير على إخوته —
+        // كلهم يبقون ظاهرين دائمًا، هذا فقط يظهر/يخفي أبناء من ضُغط عليه تحديدًا
+        if(state.expandedFullSet.has(id)) state.expandedFullSet.delete(id);
+        else state.expandedFullSet.add(id);
+        render();
+        return;
+      }
       const depth = parseInt(el.dataset.depth, 10);
       let p = (state.expanded || []).slice(0, depth); // اقطع أي فرع مفتوح بنفس هذا المستوى أو أعمق
       if((state.expanded||[])[depth] !== id){
