@@ -420,6 +420,19 @@
   .tree-box.female{background:#FBD9E6;border-color:#E6A9C4;color:var(--green-deep);}
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-legend-wrap{margin-top:60px;padding-top:14px;border-top:1px solid rgba(201,162,39,.35);}
+  .fulltree-wrap{position:relative;width:100%;overflow-x:auto;}
+  .fulltree-svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+  .fulltree-box{
+    position:absolute;transform:translate(-50%,0);
+    border:1.5px solid var(--gold-rich);border-radius:8px;background:var(--card);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:4px 6px;font-weight:700;color:var(--ink);cursor:pointer;line-height:1.25;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .fulltree-box.tree-root{background:var(--green);color:#fff;border-color:var(--green-deep);font-weight:800;}
+  .fulltree-box.female{background:#FBD9E6;border-color:#E6A9C4;}
+  .fulltree-box.deceased{background:var(--green);color:#fff;border-color:var(--green-deep);}
+  .fulltree-box.deceased.female{background:var(--green);}
   .tree-childless-notes{margin:24px 16px 0;padding:12px 14px;background:rgba(201,162,39,.08);border-radius:10px;border:1px solid rgba(201,162,39,.3);}
   .tree-childless-notes-title{font-size:12.5px;font-weight:800;color:var(--green-deep);margin-bottom:6px;}
   .tree-childless-notes p{font-size:11.5px;color:var(--ink-soft);line-height:1.7;margin:0;}
@@ -3648,6 +3661,128 @@ function wireBranchBoxes(){
 
 // شجرة تصفح تفاعلية لفرع واحد: مربع أخضر بأعلى فيه اسم الجد كاملًا، الضغط عليه يفتح/يطوي
 // أبناءه المباشرين كمربعات تحته، وكل مربع ابن يفتح/يطوي أبناءه هو بنفس الطريقة — تنازليًا بلا حد
+// عرض شجرة على هيئة أعمدة متوازية حقيقية (كل ابن مباشر للجذر يأخذ عمودًا رأسيًا خاصًا به تنزل
+// فيه ذريته كلها تحته مباشرة، لا تتوزّع عشوائيًا)، بخطوط توصيل دقيقة ومربعات تصغر تدريجيًا مع
+// العمق — هذا هو وضع "العرض المتكامل" تحديدًا، مبني بإحداثيات محسوبة (لا Flexbox) ليحافظ على
+// المحاذاة الرأسية الصحيحة تحت كل جدّ بصرف النظر عن عدد إخوته أو أبنائه
+function renderFullTreeSVG(rootId, backLink){
+  if(!state.expandedFullSet) state.expandedFullSet = new Set();
+  const fullSet = state.expandedFullSet;
+  function shortDisplayName(name){
+    const m = name.match(/^(.*?) (بن|بنت) /);
+    return m ? m[1] : name;
+  }
+  const childlessNotes = [];
+  function buildNode(id, depth){
+    const p = P[id];
+    const node = {id, depth, p};
+    if(fullSet.has(id)){
+      const kids = (p.childIds||[]).filter(cid=>P[cid]);
+      const withDesc = kids.filter(cid=>(P[cid].childIds||[]).some(gc=>P[gc]));
+      const childless = kids.filter(cid=>!(P[cid].childIds||[]).some(gc=>P[gc]));
+      if(childless.length){
+        const allFemale = childless.every(cid=>P[cid].gender==='f');
+        const allMale = childless.every(cid=>P[cid].gender==='m');
+        const noun = allFemale ? 'بنات' : (allMale ? 'أبناء' : 'أبناء وبنات');
+        const verb = allFemale ? 'لم تنسلن' : 'لم ينسلوا';
+        const names = childless.map(cid=>P[cid].name).join('، ');
+        childlessNotes.push(`${noun} ${shortDisplayName(p.name)}: ${names} — ${verb}`);
+      }
+      function colorRank(cid){ const person=P[cid]; if(person.isDeceased) return 0; return person.gender==='f'?2:1; }
+      const sortedKids = withDesc.slice().sort((a,b)=>colorRank(a)-colorRank(b));
+      if(sortedKids.length) node.children = sortedKids.map(cid=>buildNode(cid, depth+1));
+    }
+    return node;
+  }
+  const tree = buildNode(rootId, 0);
+
+  // تخطيط هادئ: كل ورقة (شخص مغلق أو بلا أبناء) تأخذ فتحة أفقية متساوية عبر عرض ثابت منطقي
+  // (1000 وحدة)، وكل أب يتمركز فوق منتصف أبنائه تلقائيًا — بالضبط نفس أسلوب نماذج الطباعة
+  const LOGICAL_W = 1000, ROW_H = 130, MARGIN_X = 40;
+  let leafIndex = 0;
+  function countLeaves(n){ return (!n.children || !n.children.length) ? 1 : n.children.reduce((s,c)=>s+countLeaves(c),0); }
+  const leafCount = Math.max(1, countLeaves(tree));
+  const slotW = (LOGICAL_W - MARGIN_X*2) / leafCount;
+  function layout(n){
+    if(!n.children || !n.children.length){
+      n.x = MARGIN_X + slotW*(leafIndex+0.5);
+      leafIndex++;
+    } else {
+      n.children.forEach(layout);
+      n.x = (n.children[0].x + n.children[n.children.length-1].x)/2;
+    }
+    n.y = n.depth*ROW_H + 60;
+  }
+  layout(tree);
+  const totalHeight = (Math.max(...(function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; })(tree), 0)+1)*ROW_H + 60;
+
+  const boxSizes = [
+    {w:190, h:56, fs:20}, {w:150, h:46, fs:16}, {w:120, h:38, fs:13},
+    {w:98, h:32, fs:11}, {w:82, h:28, fs:9.5}, {w:70, h:24, fs:8.5}
+  ];
+  function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
+
+  let svgLines = '';
+  let boxesHtml = '';
+  function walk(n){
+    const s = sizeFor(n.depth);
+    const p = n.p;
+    const label = n.depth===0 ? p.chain : shortDisplayName(p.name);
+    const xPct = (n.x/LOGICAL_W*100).toFixed(2);
+    const yPx = n.y;
+    boxesHtml += `<div class="fulltree-box ${p.isDeceased?'deceased':''} ${p.gender==='f'?'female':''} ${n.depth===0?'tree-root':''}"
+      data-node="${n.id}" style="left:${xPct}%;top:${yPx}px;width:${s.w*(n.depth===0?1.3:1)}px;min-height:${s.h}px;font-size:${s.fs}px;">${label}</div>`;
+    if(n.children){
+      n.children.forEach(c=>{
+        const midY = (n.y + c.y)/2 + (n.depth===0?10:0);
+        const x1 = (n.x/LOGICAL_W*100).toFixed(2), x2 = (c.x/LOGICAL_W*100).toFixed(2);
+        svgLines += `<path d="M ${x1} ${n.y+ (n.depth===0?28:s.h/2)} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${c.y - sizeFor(c.depth).h/2}"
+          stroke="#C9A227" stroke-width="1.6" fill="none"/>`;
+        walk(c);
+      });
+    }
+  }
+  walk(tree);
+
+  const notesHtml = childlessNotes.length
+    ? `<div class="tree-childless-notes"><p class="tree-childless-notes-title">ملاحظات</p>` +
+      childlessNotes.map(n=>`<p>${n}</p>`).join('') + `</div>`
+    : '';
+  const legend = `<div class="tree-legend-wrap">
+    <p class="tree-legend-title">ألوان توضيحية</p>
+    <div class="tree-legend">
+      <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
+      <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
+      <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
+    </div>
+  </div>`;
+  main.innerHTML = backLink +
+    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
+      <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
+      ${boxesHtml}
+    </div>` + notesHtml + legend;
+  main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
+  main.querySelector('.tree-detail-btn').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
+  document.getElementById('treeSearchBtn').onclick = ()=>{
+    goTo({view:'home'});
+    state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
+    render();
+  };
+  document.getElementById('treeFullModeBtn').onclick = ()=>{
+    state.fullTreeMode = !state.fullTreeMode;
+    state.expandedFullSet = new Set();
+    render();
+  };
+  document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
+  main.querySelectorAll('.fulltree-box').forEach(el=>{
+    el.onclick = ()=>{
+      const id = el.dataset.node;
+      if(fullSet.has(id)) fullSet.delete(id); else fullSet.add(id);
+      render();
+    };
+  });
+}
+
 function renderBranchTree(rootId){
   // مسار الفتح: عنصر واحد بكل مستوى بحيث فتح أخ يطوي أخوه تلقائيًا (أكورديون حقيقي) — هذا
   // يبقى الوضع الافتراضي للتصفح اليومي السريع. "عرض متكامل" وضع منفصل يُفعَّل بزر خاص تحديدًا
@@ -3666,6 +3801,10 @@ function renderBranchTree(rootId){
     <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${state.fullTreeMode ? '🗂️' : '🗃️'}</span>
     <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
   </div>`;
+  if(state.fullTreeMode){
+    renderFullTreeSVG(rootId, backLink);
+    return;
+  }
   function shortDisplayName(name){
     // بعض الأشخاص خُزِّن نسبهم الكامل بالخطأ في حقل "الاسم" نفسه بدل الاسم الأول فقط (كما في
     // مثال "محمد بن سعيد بن محمد بن سليمان...") — نعرض هنا الاسم الأول فقط داخل مربع الشجرة
