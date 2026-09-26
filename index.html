@@ -57,6 +57,15 @@
     }
   }
 
+  /* شاشة الحاسوب (فأرة + شاشة عريضة): الإطار يتّسع ليملأ معظم الشاشة بدل عرض الهاتف الضيق،
+     ومربعات الشجرة المتكاملة تُكبَّر تناسبيًا في الكود (DESK_SCALE) */
+  @media (min-width: 900px) and (min-height: 560px) and (hover: hover) and (pointer: fine){
+    .app{
+      max-width:min(94vw, 1500px);
+      height:calc(100vh - 24px);
+    }
+  }
+
   /* header — decorative arch line behind the title */
   header.top{
     position:relative;flex-shrink:0;padding:20px 18px 10px;overflow:hidden;
@@ -3583,6 +3592,11 @@ function mergeAllDuplicates(){
 
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
+// عند تغيير حجم نافذة الحاسوب يُعاد رسم الشجرة المتكاملة لتأخذ العرض الجديد
+let _resizeT;
+window.addEventListener('resize', ()=>{ clearTimeout(_resizeT); _resizeT = setTimeout(()=>{
+  try{ if(state && state.view==='branchTree' && treeViewMode.fullTreeMode) render(); }catch(e){}
+}, 200); });
 const searchInput = document.getElementById('searchInput');
 let state = {view:'home', personId:null, pendingApprove:null, branchId:null, searchMode:'full', boxesHidden:false, fullSearchMenu:false};
 
@@ -3758,7 +3772,9 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
     {w:150, h:40, fs:15}, {w:64, h:26, fs:11.5}, {w:56, h:24, fs:10.5},
     {w:50, h:22, fs:9.5}, {w:46, h:20, fs:8.5}, {w:42, h:18, fs:8}
   ];
-  function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
+  // على الحاسوب تُكبَّر المربعات والخطوط بنسبة ثابتة (الهاتف كما هو دون أي تغيير)
+  const DESK_SCALE = window.matchMedia('(min-width: 900px) and (min-height: 560px) and (hover: hover) and (pointer: fine)').matches ? 1.4 : 1;
+  function sizeFor(depth){ const b = boxSizes[Math.min(depth, boxSizes.length-1)]; return {w:b.w*DESK_SCALE, h:b.h*DESK_SCALE, fs:b.fs*DESK_SCALE}; }
 
   // تخطيط شجرة حقيقي (Reingold–Tilford مبسّط): عرض كل فرع = الأكبر من (عرض مربعه هو نفسه) أو
   // (مجموع عروض أبنائه + فجوات صغيرة بينهم) — بخلاف المحاولة السابقة التي حسبت التباعد من
@@ -3826,7 +3842,7 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
     const xPx = n.x.toFixed(2);
     const yPx = n.y;
     boxesHtml += `<div class="fulltree-box ${p.isDeceased?'deceased':''} ${p.gender==='f'?'female':''} ${n.depth===0?'tree-root':''}"
-      data-node="${n.id}" style="left:${xPx}px;top:${yPx}px;width:${boxW(n.depth)}px;min-height:${s.h}px;font-size:${n.depth===0?16:s.fs}px;">${label}</div>`;
+      data-node="${n.id}" style="left:${xPx}px;top:${yPx}px;width:${boxW(n.depth)}px;min-height:${s.h}px;font-size:${n.depth===0?16*DESK_SCALE:s.fs}px;">${label}</div>`;
     if(n.children){
       n.children.forEach(c=>{
         const midY = (n.y+sizeFor(n.depth).h + c.y)/2;
