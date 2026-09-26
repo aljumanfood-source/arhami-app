@@ -3745,42 +3745,54 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   ];
   function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
 
-  // تخطيط متراص: كل ورقة تأخذ فتحة أفقية بحجمها الطبيعي فقط (عرض مربعها + فجوة ثابتة صغيرة)
-  // بدل توزيعها قسرًا على عرض الشاشة الكامل دائمًا — وهذا بالضبط سبب اتساع الفراغات في الصور
-  // السابقة: عدد قليل من الإخوة كان يُشَدّ ليملأ العرض كاملًا رغم صغر مربعاتهم. الآن: إن كانت
-  // المساحة الطبيعية المطلوبة أقل من العرض المتاح، تتوسّط المجموعة المتراصة الشاشة بفراغين
-  // متساويين على الطرفين (لا تُشَدّ)؛ ولا تُشَدّ لملء العرض إلا إذا زاد عدد الإخوة عن أن تسعهم
-  // المساحة أصلًا (عندها فقط تتّسع الفجوات قليلًا لتفادي أي تداخل، والتمرير الأفقي متاح أصلًا)
-  const LOGICAL_W = 1000, ROW_H = 54, MARGIN_X = 40, LEAF_GAP = 14;
-  const leaves = [];
-  function collectLeaves(n){
-    if(!n.children || !n.children.length){ leaves.push(n); }
-    else n.children.forEach(collectLeaves);
+  // تخطيط شجرة حقيقي (Reingold–Tilford مبسّط): عرض كل فرع = الأكبر من (عرض مربعه هو نفسه) أو
+  // (مجموع عروض أبنائه + فجوات صغيرة بينهم) — بخلاف المحاولة السابقة التي حسبت التباعد من
+  // الأوراق فقط، فسمحت لمربعات الآباء (خماس/سليم مثلًا) بالتلامس رغم أن أبناءهما متباعدون
+  // بشكل صحيح؛ هذه الطريقة تمنع أي تراكب عند أي مستوى، جذرًا كان أم ورقة. المسافة الأفقية بين
+  // أي مربعين متجاورين الآن ثابتة وصغيرة جدًا كما طُلب (H_GAP)، والمسافة الرأسية بين أي مربع
+  // وابنه أصبحت أيضًا صغيرة وثابتة (V_GAP)، محسوبة من الارتفاع الفعلي لكل مربع لا رقم موحَّد
+  const LOGICAL_W = 1000, MARGIN_X = 40, H_GAP = 3, V_GAP = 8;
+  function shiftSubtree(n, dx){
+    if(n.children) n.children.forEach(c=>{ c.x += dx; shiftSubtree(c, dx); });
   }
-  collectLeaves(tree);
-  const naturalWidths = leaves.map(n=>sizeFor(n.depth).w + LEAF_GAP);
-  const naturalTotal = naturalWidths.reduce((a,b)=>a+b, 0);
-  const availableW = LOGICAL_W - MARGIN_X*2;
-  const scale = naturalTotal > availableW ? availableW/naturalTotal : 1; // تمدّد فقط عند الحاجة
-  const startX = MARGIN_X + Math.max(0, (availableW - naturalTotal*scale)/2);
-  let cursorX = startX;
-  leaves.forEach((n,i)=>{
-    const slot = naturalWidths[i]*scale;
-    n.x = cursorX + slot/2;
-    cursorX += slot;
-  });
-  function layout(n){
+  function layoutX(n, leftEdge){
     if(!n.children || !n.children.length){
-      // x مُسنَد مسبقًا في المرحلة أعلاه؛ لا شيء إضافي هنا لأوراق الشجرة
-    } else {
-      n.children.forEach(layout);
-      n.x = (n.children[0].x + n.children[n.children.length-1].x)/2;
+      n.width = sizeFor(n.depth).w;
+      n.x = leftEdge + n.width/2;
+      return n.width;
     }
-    n.y = n.depth*ROW_H + 8;
+    let cursor = leftEdge;
+    n.children.forEach((c,i)=>{
+      if(i>0) cursor += H_GAP;
+      cursor += layoutX(c, cursor);
+    });
+    const childrenSpan = cursor - leftEdge;
+    const ownW = sizeFor(n.depth).w;
+    n.width = Math.max(ownW, childrenSpan);
+    if(ownW > childrenSpan) shiftSubtree(n, (ownW-childrenSpan)/2);
+    n.x = leftEdge + n.width/2;
+    return n.width;
   }
-  layout(tree);
+  layoutX(tree, MARGIN_X);
+  // إن كانت الشجرة أضيق من المساحة المتاحة (الحالة الشائعة)، تتوسّط الشاشة بفراغين متساويين
+  // على الطرفين بدل الالتصاق باليمين؛ وإن كانت أوسع، تبقى بعرضها الطبيعي (تمرير أفقي متاح)
+  const availableW = LOGICAL_W - MARGIN_X*2;
+  if(tree.width < availableW) shiftSubtree({children:[tree], x:0}, (availableW-tree.width)/2);
+
+  function layoutY(n, topEdge){
+    n.y = topEdge;
+    if(n.children){
+      const nextTop = topEdge + sizeFor(n.depth).h + V_GAP;
+      n.children.forEach(c=>layoutY(c, nextTop));
+    }
+  }
+  layoutY(tree, 8);
   function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; }
-  const totalHeight = (maxDepth(tree)+1)*ROW_H + 60;
+  const totalHeight = (function(){
+    let maxY = 0;
+    (function walkH(n){ maxY = Math.max(maxY, n.y + sizeFor(n.depth).h); if(n.children) n.children.forEach(walkH); })(tree);
+    return maxY + 40;
+  })();
 
   let svgLines = '';
   let boxesHtml = '';
