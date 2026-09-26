@@ -3721,7 +3721,7 @@ function renderFullTreeSVG(rootId, backLink){
 
   // تخطيط هادئ: كل ورقة (شخص مغلق أو بلا أبناء) تأخذ فتحة أفقية متساوية عبر عرض ثابت منطقي
   // (1000 وحدة)، وكل أب يتمركز فوق منتصف أبنائه تلقائيًا — بالضبط نفس أسلوب نماذج الطباعة
-  const LOGICAL_W = 1000, ROW_H = 68, MARGIN_X = 40;
+  const LOGICAL_W = 1000, ROW_H = 54, MARGIN_X = 40;
   let leafIndex = 0;
   function countLeaves(n){ return (!n.children || !n.children.length) ? 1 : n.children.reduce((s,c)=>s+countLeaves(c),0); }
   const leafCount = Math.max(1, countLeaves(tree));
