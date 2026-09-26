@@ -66,6 +66,22 @@
     }
   }
 
+
+  /* نافذة ملف PDF + الورقة الخفية التي تُصوَّر */
+  .pdf-overlay{position:fixed;inset:0;background:rgba(30,15,45,0.55);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+  .pdf-card{background:var(--paper);border:2px solid var(--gold-rich);border-radius:18px;padding:20px 18px;width:min(92vw,340px);text-align:center;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+  .pdf-title{font-weight:800;font-size:17px;color:var(--ink);}
+  .pdf-sub{font-size:12.5px;color:var(--muted);}
+  .pdf-btn{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;padding:11px;border-radius:12px;border:1.5px solid var(--gold-rich);background:var(--card, #fff);color:var(--ink);cursor:pointer;}
+  .pdf-btn-main{background:#1F7A4D;color:#fff;border-color:#1F7A4D;}
+  .pdf-btn-ghost{border-color:transparent;background:transparent;color:var(--muted);font-weight:500;}
+  .pdf-spin{width:34px;height:34px;margin:6px auto;border:4px solid var(--gold-line);border-top-color:var(--gold-rich);border-radius:50%;animation:pdfspin 0.9s linear infinite;}
+  @keyframes pdfspin{to{transform:rotate(360deg);}}
+  .pdf-sheet{position:fixed;top:0;left:-20000px;background:var(--paper);padding:8mm;direction:rtl;box-sizing:border-box;}
+  .pdf-sheet .tree-toolbar, .pdf-sheet .tree-header-row, .pdf-sheet .boxes-back, .pdf-sheet .full-search-menu-back{display:none !important;}
+  .pdf-sheet .fulltree-scroll{overflow:visible !important;}
+  .pdf-sheet .pdf-legend .tree-legend-wrap{margin-top:14px;}
+
   /* header — decorative arch line behind the title */
   header.top{
     position:relative;flex-shrink:0;padding:20px 18px 10px;overflow:hidden;
@@ -3940,10 +3956,96 @@ function populateTreeBottomBar(currentDetailId){
     treeViewMode.fullScrollX = undefined;
     render();
   };
-  document.getElementById('treePrintBtn').onclick = ()=>{
+  document.getElementById('treePrintBtn').onclick = ()=>{ exportTreePdf(); };
+}
+
+// ====== ملف PDF عرضي A4 يُنشأ داخل التطبيق نفسه ثم يُشارَك (واتساب...) أو يُنزَّل ======
+// شاشة الطباعة في متصفح الهاتف تتجاهل اتجاه الصفحة الذي يحدده الموقع فتُخرج ورقة طولية؛ لذلك
+// صار التطبيق يرسم الصفحة بنفسه كصورة بألوانها ويضعها في ملف PDF عرضي A4 مضمون الاتجاه
+const PDF_LIBS = [
+  ['jspdf', 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'],
+  ['htmlToImage', 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js']
+];
+function loadScriptOnce(globalName, url){
+  if(window[globalName]) return Promise.resolve();
+  return new Promise((res, rej)=>{
+    const sc = document.createElement('script'); sc.src = url; sc.onload = ()=>res(); sc.onerror = ()=>rej(new Error('load '+url));
+    document.head.appendChild(sc);
+  });
+}
+function pdfOverlay(html){
+  let ov = document.getElementById('pdfOverlay');
+  if(!ov){ ov = document.createElement('div'); ov.id = 'pdfOverlay'; ov.className = 'pdf-overlay'; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="pdf-card">${html}</div>`;
+  ov.style.display = 'flex';
+  return ov;
+}
+function closePdfOverlay(){ const ov = document.getElementById('pdfOverlay'); if(ov) ov.style.display = 'none'; }
+
+async function exportTreePdf(){
+  pdfOverlay(`<div class="pdf-title">جارٍ تجهيز ملف PDF…</div><div class="pdf-spin"></div>`);
+  let sheet;
+  try{
+    await Promise.all(PDF_LIBS.map(([g,u])=>loadScriptOnce(g,u)));
+    // 1) رسم الشجرة بتخطيط الورقة (عرض A4 العرضي) ثم نسخ المحتوى إلى "ورقة" خفية بمقاس A4
     window.__arhamiPrint = true; render();
-    setTimeout(()=>window.print(), 80);
+    const MMPX = 96/25.4, PAGE_W = 297*MMPX, PAGE_H = 210*MMPX;
+    sheet = document.createElement('div');
+    sheet.className = 'pdf-sheet';
+    sheet.style.width = PAGE_W + 'px';
+    sheet.innerHTML = main.innerHTML +
+      `<div class="pdf-legend">${document.querySelector('#treeBottomBar .tree-legend-wrap')?.outerHTML || ''}</div>`;
+    document.body.appendChild(sheet);
+    await new Promise(r=>setTimeout(r, 60));
+    if(document.fonts && document.fonts.ready) await document.fonts.ready;
+    // 2) تحويل الورقة إلى صورة بألوانها كما تظهر (المتصفح نفسه يرسم النص العربي فيبقى متصلًا سليمًا)
+    const img = await htmlToImage.toJpeg(sheet, { quality: 0.95, pixelRatio: 2.5, style: { position:'static', left:'0', top:'0' }, backgroundColor: (getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || '#F6F1E2') });
+    const contentH = Math.max(sheet.scrollHeight, 1);
+    // 3) ملف PDF عرضي A4 دائمًا؛ إن كان المحتوى أطول من الورقة يُصغَّر تناسبيًا ليبقى في صفحة واحدة
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const paper = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || '#F6F0E4';
+    pdf.setFillColor(paper); pdf.rect(0, 0, 297, 210, 'F');
+    const hMm = contentH / MMPX;
+    const k = Math.min(1, 210 / hMm);
+    const w = 297 * k, h = hMm * k;
+    pdf.addImage(img, 'JPEG', (297 - w)/2, 0, w, h);
+    const rootName = (P[state.branchRootId] && P[state.branchRootId].name) || 'العائلة';
+    const fileName = `شجرة عائلة ${rootName}.pdf`;
+    const blob = pdf.output('blob');
+    const file = new File([blob], fileName, { type: 'application/pdf' });
+    showPdfReady(file, blob, fileName);
+  }catch(err){
+    console.error(err);
+    pdfOverlay(`<div class="pdf-title">تعذّر تجهيز الملف</div>
+      <div class="pdf-sub">تأكد من اتصال الإنترنت ثم حاول مرة أخرى.</div>
+      <button class="pdf-btn" id="pdfClose">إغلاق</button>`);
+    document.getElementById('pdfClose').onclick = closePdfOverlay;
+  }finally{
+    if(sheet) sheet.remove();
+    window.__arhamiPrint = false; try{ render(); }catch(e){}
+  }
+}
+
+function showPdfReady(file, blob, fileName){
+  const canShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+  pdfOverlay(`<div class="pdf-title">ملف PDF جاهز ✅</div>
+    <div class="pdf-sub">ورقة A4 عرضية بألوان التطبيق</div>
+    ${canShare ? `<button class="pdf-btn pdf-btn-main" id="pdfShare">📤 إرسال (واتساب وغيره)</button>` : ''}
+    <button class="pdf-btn" id="pdfDownload">⬇️ تنزيل الملف</button>
+    <button class="pdf-btn pdf-btn-ghost" id="pdfClose">إغلاق</button>`);
+  // الضغط على زر المشاركة لمسة جديدة من المستخدم، وهذا شرط المتصفح لفتح قائمة المشاركة
+  if(canShare) document.getElementById('pdfShare').onclick = async ()=>{
+    try{ await navigator.share({ files: [file], title: fileName }); closePdfOverlay(); }
+    catch(e){ if(e && e.name !== 'AbortError') showToast && showToast('تعذّرت المشاركة، استخدم التنزيل'); }
   };
+  document.getElementById('pdfDownload').onclick = ()=>{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 30000);
+  };
+  document.getElementById('pdfClose').onclick = closePdfOverlay;
 }
 
 function renderBranchTree(rootId){
