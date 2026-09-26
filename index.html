@@ -370,6 +370,18 @@
      حقيقي (أخ واحد مفتوح بكل مستوى)، وشبكة مضغوطة توفّر المساحة بدل التكديس عموديًا */
   .tree-toolbar{padding:14px 16px 0;}
   .tree-header-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 16px 0;}
+  /* شريط مهام سفلي ثابت (مثل تطبيقات الهاتف الأخرى) — خارج منطقة main القابلة للتمرير تمامًا،
+     فيبقى ظاهرًا دائمًا بصرف النظر عن مكان التمرير داخل الشجرة. دليل الألوان التوضيحي يجلس
+     مباشرة فوقه كصف منفصل ضمن نفس الشريط الثابت */
+  .tree-bottom-bar{
+    flex-shrink:0;background:var(--paper);border-top:1.5px solid rgba(201,162,39,.4);
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));
+  }
+  .tree-bottom-bar .tree-legend-wrap{margin-top:0;padding-top:0;border-top:none;padding-bottom:8px;}
+  .tree-bottom-bar .tree-toolbar-row{
+    display:flex;flex-direction:row;justify-content:center;gap:14px;align-items:center;
+  }
+  .tree-bottom-bar .tree-toolbar-row .hidden-in-full{display:none;}
   .tree-title-fixed{font-size:15px;font-weight:800;color:var(--green-deep);padding-top:8px;}
   .tree-toolbar-vertical{display:flex;flex-direction:column;gap:8px;align-items:center;}
   .tree-toolbar-vertical .tree-detail-btn, .tree-toolbar-vertical .tree-home-btn{margin-inline-start:0;}
@@ -393,9 +405,13 @@
      بالضبط بأحجامها المتدرّجة (لا تغيير هنا، فالتصغير التدريجي مبني أصلًا في كل مربع) */
   @media print{
     body{background:#fff !important;padding:0 !important;}
-    .app{max-width:none !important;height:auto !important;border:none !important;box-shadow:none !important;border-radius:0 !important;}
-    header.top, #fullHeader, .tree-toolbar, .boxes-back, .full-search-menu-back{display:none !important;}
+    .app{max-width:none !important;height:auto !important;border:none !important;box-shadow:none !important;border-radius:0 !important;display:block !important;}
+    header.top, #fullHeader, .tree-toolbar, .tree-header-row, .boxes-back, .full-search-menu-back{display:none !important;}
     .tree-wrap{padding:0 !important;}
+    /* الشريط السفلي الثابت يحمل دليل الألوان والأيقونات معًا الآن — عند الطباعة نُخفي الأيقونات
+       فقط ونُبقي دليل الألوان ظاهرًا في نهاية الصفحة كجزء طبيعي من محتوى الطباعة */
+    #treeBottomBar{position:static !important;border-top:none !important;}
+    .tree-toolbar-row{display:none !important;}
     .tree-legend-wrap{margin-top:24px !important;}
   }
   .tree-box-wrap{margin-bottom:8px;}
@@ -549,6 +565,7 @@
   </header>
   <div id="backupAnchor"></div>
   <main id="main"></main>
+  <div id="treeBottomBar" class="tree-bottom-bar" style="display:none;"></div>
   <div class="toast" id="toast"></div>
   <div id="syncBadge" style="display:none;position:fixed;bottom:12px;right:50%;transform:translateX(50%);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:12px;font-weight:700;z-index:60;box-shadow:0 2px 10px rgba(0,0,0,0.15);white-space:nowrap;"></div>
 </div>
@@ -3631,6 +3648,9 @@ function render(){
   const isHome = state.view==='home';
   document.getElementById('fullHeader').style.display = isHome ? '' : 'none';
   document.getElementById('compactHeader').style.display = isHome ? 'none' : 'flex';
+  // الشريط السفلي الثابت (أيقونات الشجرة + دليل الألوان) خاص بشاشة الشجرة فقط — يُخفى افتراضيًا
+  // في كل شاشة أخرى، وrenderBranchTree هو من يُظهره ويملؤه عند الحاجة تحديدًا
+  document.getElementById('treeBottomBar').style.display = 'none';
   if(state.view==='home') renderHome();
   else if(state.view==='branchTree') renderBranchTree(state.branchRootId);
   else if(state.view==='profile') renderProfile(state.personId);
@@ -3680,7 +3700,7 @@ function wireBranchBoxes(){
 // فيه ذريته كلها تحته مباشرة، لا تتوزّع عشوائيًا)، بخطوط توصيل دقيقة ومربعات تصغر تدريجيًا مع
 // العمق — هذا هو وضع "العرض المتكامل" تحديدًا، مبني بإحداثيات محسوبة (لا Flexbox) ليحافظ على
 // المحاذاة الرأسية الصحيحة تحت كل جدّ بصرف النظر عن عدد إخوته أو أبنائه
-function renderFullTreeSVG(rootId, backLink){
+function renderFullTreeSVG(rootId, backLink, currentDetailId){
   // expandedFullIds مصفوفة عادية (لا Set) عمدًا — history.push في goTo يستنسخ state عبر
   // JSON.stringify/parse لحفظ لقطة للرجوع، و Set لا ينجو من هذا التحويل (يتحوّل لكائن فارغ {}
   // فيضيع كل شيء بداخله)، بعكس المصفوفة العادية التي تُحفظ وتُستعاد بسلامة تامة
@@ -3772,25 +3792,46 @@ function renderFullTreeSVG(rootId, backLink){
     ? `<div class="tree-childless-notes"><p class="tree-childless-notes-title">ملاحظات</p>` +
       childlessNotes.map(n=>`<p>${n}</p>`).join('') + `</div>`
     : '';
-  const legend = `<div class="tree-legend-wrap">
+  // عنوان "شجرة العائلة" ثابت أعلى الصفحة (داخل backLink)، وأيقونات الأدوات ودليل الألوان
+  // انتقلا لشريط سفلي ثابت مشترك (populateTreeBottomBar) خارج main تمامًا — يبقى ظاهرًا دائمًا
+  // كشريط مهام حتى أثناء التمرير داخل الشجرة نفسها
+  main.innerHTML = backLink +
+    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
+      <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
+      ${boxesHtml}
+    </div>` + notesHtml;
+  populateTreeBottomBar(currentDetailId);
+  main.querySelectorAll('.fulltree-box').forEach(el=>{
+    el.onclick = ()=>{
+      const id = el.dataset.node;
+      if(fullSet.has(id)) fullSet.delete(id); else fullSet.add(id);
+      render();
+    };
+  });
+}
+
+// يملأ الشريط السفلي الثابت (دليل الألوان + أيقونات الشجرة) — مشترك بين وضعي الشجرة (العادي
+// والمتكامل) بدل تكرار نفس الترميز في الدالتين، ويُستدعى مرة واحدة بعد أن main.innerHTML يكتمل
+function populateTreeBottomBar(currentDetailId){
+  const bar = document.getElementById('treeBottomBar');
+  bar.style.display = 'block';
+  bar.innerHTML = `<div class="tree-legend-wrap">
     <p class="tree-legend-title">ألوان توضيحية</p>
     <div class="tree-legend">
       <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
       <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
       <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
     </div>
+  </div>
+  <div class="tree-toolbar-row">
+    <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${treeViewMode.fullTreeMode ? '🗂️' : '🗃️'}</span>
+    <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
+    <span class="tree-home-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="الصفحة الرئيسية">🏠</span>
+    <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" id="treeSearchBtn" title="بحث شامل">🔍</span>
+    <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
   </div>`;
-  // عنوان "شجرة العائلة" أصبح ثابتًا دائم الظهور (مبني داخل backLink نفسها الآن)، ولا يتبدّل
-  // مع الأيقونات إطلاقًا — والأيقونات الثلاث غير الأساسية (رئيسية/بحث/انتقال) تُخفى فقط أثناء
-  // تفعيل العرض المتكامل تحديدًا (عبر CSS)، فيبقى زرا الظهور والطباعة وحدهما ظاهرين طوال تلك
-  // الجلسة كما طُلب بدقة، بصرف النظر عمّا فُتح أو أُغلق من الشجرة نفسها
-  main.innerHTML = backLink +
-    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
-      <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
-      ${boxesHtml}
-    </div>` + notesHtml + legend;
-  main.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
-  main.querySelector('.tree-detail-btn[data-detail-id]').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
+  bar.querySelector('.tree-home-btn').onclick = ()=>{ goTo({view:'home'}); };
+  bar.querySelector('.tree-detail-btn[data-detail-id]').onclick = (e)=>{ goTo({view:'profile', personId: e.currentTarget.dataset.detailId}); };
   document.getElementById('treeSearchBtn').onclick = ()=>{
     goTo({view:'home'});
     state.searchMode = 'full'; state.branchId = null; state.boxesHidden = true;
@@ -3803,13 +3844,6 @@ function renderFullTreeSVG(rootId, backLink){
     render();
   };
   document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
-  main.querySelectorAll('.fulltree-box').forEach(el=>{
-    el.onclick = ()=>{
-      const id = el.dataset.node;
-      if(fullSet.has(id)) fullSet.delete(id); else fullSet.add(id);
-      render();
-    };
-  });
 }
 
 function renderBranchTree(rootId){
@@ -3825,16 +3859,9 @@ function renderBranchTree(rootId){
   const currentDetailId = path.length ? path[path.length-1] : rootId;
   const backLink = `<div class="tree-header-row">
     <div class="tree-title-fixed">شجرة العائلة</div>
-    <div class="tree-toolbar-vertical">
-      <span class="tree-detail-btn" id="treeFullModeBtn" title="عرض الشجرة كاملة بلا إغلاق تلقائي، لتحضير الطباعة">${treeViewMode.fullTreeMode ? '🗂️' : '🗃️'}</span>
-      <span class="tree-detail-btn" id="treePrintBtn" title="طباعة هذا المستوى كصفحة PDF">🖨️</span>
-      <span class="tree-home-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="الصفحة الرئيسية">🏠</span>
-      <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" id="treeSearchBtn" title="بحث شامل">🔍</span>
-      <span class="tree-detail-btn ${treeViewMode.fullTreeMode?'hidden-in-full':''}" title="صفحة التفاصيل الخاصة بالاسم المفتوح حاليًا" data-detail-id="${currentDetailId}">↩️</span>
-    </div>
   </div>`;
   if(treeViewMode.fullTreeMode){
-    renderFullTreeSVG(rootId, backLink);
+    renderFullTreeSVG(rootId, backLink, currentDetailId);
     return;
   }
   function shortDisplayName(name){
@@ -3912,14 +3939,6 @@ function renderBranchTree(rootId){
     const sorted = toShow.slice().sort((a,b)=>colorRank(a)-colorRank(b));
     return sorted.map(cid=>renderLevel(cid, depth, false)).join('');
   }
-  const legend = `<div class="tree-legend-wrap">
-    <p class="tree-legend-title">ألوان توضيحية</p>
-    <div class="tree-legend">
-      <div class="tree-legend-item"><div class="tree-legend-dot deceased"></div><span class="tree-legend-label">توفاه الله</span></div>
-      <div class="tree-legend-item"><div class="tree-legend-dot male"></div><span class="tree-legend-label">ذكر</span></div>
-      <div class="tree-legend-item"><div class="tree-legend-dot female"></div><span class="tree-legend-label">أنثى</span></div>
-    </div>
-  </div>`;
   // مهم: نبني جسم الشجرة أولًا (renderLevel يملأ childlessNotes أثناء تنفيذه بالتأثير الجانبي)
   // ثم نبني قسم الملاحظات من النتيجة النهائية — لا يصح تجهيز HTML الملاحظات قبل اكتمال الرسم
   const treeHtml = renderLevel(rootId, 0, true);
@@ -3927,38 +3946,8 @@ function renderBranchTree(rootId){
     ? `<div class="tree-childless-notes"><p class="tree-childless-notes-title">ملاحظات</p>` +
       childlessNotes.map(n=>`<p>${n}</p>`).join('') + `</div>`
     : '';
-  main.innerHTML = backLink + `<div class="tree-wrap">` + treeHtml + `</div>` + notesHtml + legend;
-  main.querySelector('.tree-home-btn').onclick = ()=>{
-    goTo({view:'home'});
-  };
-  main.querySelector('.tree-detail-btn[data-detail-id]').onclick = (e)=>{
-    goTo({view:'profile', personId: e.currentTarget.dataset.detailId});
-  };
-  document.getElementById('treeSearchBtn').onclick = ()=>{
-    goTo({view:'home'});
-    state.searchMode = 'full';
-    state.branchId = null;
-    state.boxesHidden = true;
-    render();
-  };
-  document.getElementById('treePrintBtn').onclick = ()=>{
-    // نأخذ بالضبط ما هو ظاهر أمام المستخدم في هذه اللحظة (نفس المربعات بنفس أحجامها المتدرّجة)
-    // ونحوّله لصفحة PDF عبر حوار الطباعة المدمج بالمتصفح — لا حاجة لأداة رسم منفصلة، فالشجرة
-    // المتصفَّحة تدريجيًا هي بالضبط "صفحة" الكتاب المطلوبة، مقطوعة عند حيث توقّف المستخدم
-    window.print();
-  };
-  document.getElementById('treeFullModeBtn').onclick = ()=>{
-    treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
-    treeViewMode.expandedFullIds = []; // نبدأ نظيفًا عند تبديل الوضع كي لا يختلط سلوك الوضعين
-    treeViewMode.fullTreeStarted = false;
-    render();
-  };
-  document.getElementById('treePrintBtn').onclick = ()=>{
-    // نأخذ بالضبط ما هو ظاهر أمام المستخدم في هذه اللحظة (نفس المربعات بنفس أحجامها المتدرّجة)
-    // ونحوّله لصفحة PDF عبر حوار الطباعة المدمج بالمتصفح — لا حاجة لأداة رسم منفصلة، فالشجرة
-    // المتصفَّحة تدريجيًا هي بالضبط "صفحة" الكتاب المطلوبة، مقطوعة عند حيث توقّف المستخدم
-    window.print();
-  };
+  main.innerHTML = backLink + `<div class="tree-wrap">` + treeHtml + `</div>` + notesHtml;
+  populateTreeBottomBar(currentDetailId);
   main.querySelectorAll('.tree-box').forEach(el=>{
     el.onclick = ()=>{
       const id = el.dataset.node;
