@@ -3739,17 +3739,39 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   }
   const tree = buildNode(rootId, 0);
 
-  // تخطيط هادئ: كل ورقة (شخص مغلق أو بلا أبناء) تأخذ فتحة أفقية متساوية عبر عرض ثابت منطقي
-  // (1000 وحدة)، وكل أب يتمركز فوق منتصف أبنائه تلقائيًا — بالضبط نفس أسلوب نماذج الطباعة
-  const LOGICAL_W = 1000, ROW_H = 54, MARGIN_X = 40;
-  let leafIndex = 0;
-  function countLeaves(n){ return (!n.children || !n.children.length) ? 1 : n.children.reduce((s,c)=>s+countLeaves(c),0); }
-  const leafCount = Math.max(1, countLeaves(tree));
-  const slotW = (LOGICAL_W - MARGIN_X*2) / leafCount;
+  const boxSizes = [
+    {w:150, h:40, fs:15}, {w:64, h:26, fs:11.5}, {w:56, h:24, fs:10.5},
+    {w:50, h:22, fs:9.5}, {w:46, h:20, fs:8.5}, {w:42, h:18, fs:8}
+  ];
+  function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
+
+  // تخطيط متراص: كل ورقة تأخذ فتحة أفقية بحجمها الطبيعي فقط (عرض مربعها + فجوة ثابتة صغيرة)
+  // بدل توزيعها قسرًا على عرض الشاشة الكامل دائمًا — وهذا بالضبط سبب اتساع الفراغات في الصور
+  // السابقة: عدد قليل من الإخوة كان يُشَدّ ليملأ العرض كاملًا رغم صغر مربعاتهم. الآن: إن كانت
+  // المساحة الطبيعية المطلوبة أقل من العرض المتاح، تتوسّط المجموعة المتراصة الشاشة بفراغين
+  // متساويين على الطرفين (لا تُشَدّ)؛ ولا تُشَدّ لملء العرض إلا إذا زاد عدد الإخوة عن أن تسعهم
+  // المساحة أصلًا (عندها فقط تتّسع الفجوات قليلًا لتفادي أي تداخل، والتمرير الأفقي متاح أصلًا)
+  const LOGICAL_W = 1000, ROW_H = 54, MARGIN_X = 40, LEAF_GAP = 14;
+  const leaves = [];
+  function collectLeaves(n){
+    if(!n.children || !n.children.length){ leaves.push(n); }
+    else n.children.forEach(collectLeaves);
+  }
+  collectLeaves(tree);
+  const naturalWidths = leaves.map(n=>sizeFor(n.depth).w + LEAF_GAP);
+  const naturalTotal = naturalWidths.reduce((a,b)=>a+b, 0);
+  const availableW = LOGICAL_W - MARGIN_X*2;
+  const scale = naturalTotal > availableW ? availableW/naturalTotal : 1; // تمدّد فقط عند الحاجة
+  const startX = MARGIN_X + Math.max(0, (availableW - naturalTotal*scale)/2);
+  let cursorX = startX;
+  leaves.forEach((n,i)=>{
+    const slot = naturalWidths[i]*scale;
+    n.x = cursorX + slot/2;
+    cursorX += slot;
+  });
   function layout(n){
     if(!n.children || !n.children.length){
-      n.x = MARGIN_X + slotW*(leafIndex+0.5);
-      leafIndex++;
+      // x مُسنَد مسبقًا في المرحلة أعلاه؛ لا شيء إضافي هنا لأوراق الشجرة
     } else {
       n.children.forEach(layout);
       n.x = (n.children[0].x + n.children[n.children.length-1].x)/2;
@@ -3759,12 +3781,6 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   layout(tree);
   function maxDepth(n){ return n.children ? Math.max(n.depth, ...n.children.map(maxDepth)) : n.depth; }
   const totalHeight = (maxDepth(tree)+1)*ROW_H + 60;
-
-  const boxSizes = [
-    {w:150, h:40, fs:15}, {w:64, h:26, fs:11.5}, {w:56, h:24, fs:10.5},
-    {w:50, h:22, fs:9.5}, {w:46, h:20, fs:8.5}, {w:42, h:18, fs:8}
-  ];
-  function sizeFor(depth){ return boxSizes[Math.min(depth, boxSizes.length-1)]; }
 
   let svgLines = '';
   let boxesHtml = '';
