@@ -369,7 +369,7 @@
   /* شجرة تصفح تفاعلية داخل فرع واحد (خلفان/محمد/شنين) — مربعات قابلة للطي/الفتح، أكورديون
      حقيقي (أخ واحد مفتوح بكل مستوى)، وشبكة مضغوطة توفّر المساحة بدل التكديس عموديًا */
   .tree-toolbar{padding:14px 16px 0;}
-  .tree-header-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 16px 0;}
+  .tree-header-row{display:flex;align-items:flex-start;justify-content:center;padding:4px 16px 0;}
   /* شريط مهام سفلي ثابت (مثل تطبيقات الهاتف الأخرى) — خارج منطقة main القابلة للتمرير تمامًا،
      فيبقى ظاهرًا دائمًا بصرف النظر عن مكان التمرير داخل الشجرة. دليل الألوان التوضيحي يجلس
      مباشرة فوقه كصف منفصل ضمن نفس الشريط الثابت */
@@ -382,7 +382,7 @@
     display:flex;flex-direction:row;justify-content:center;gap:14px;align-items:center;
   }
   .tree-bottom-bar .tree-toolbar-row .hidden-in-full{display:none;}
-  .tree-title-fixed{font-size:15px;font-weight:800;color:var(--green-deep);padding-top:8px;}
+  .tree-title-fixed{font-size:15px;font-weight:800;color:var(--green-deep);padding-top:2px;text-align:center;}
   .tree-toolbar-vertical{display:flex;flex-direction:column;gap:8px;align-items:center;}
   .tree-toolbar-vertical .tree-detail-btn, .tree-toolbar-vertical .tree-home-btn{margin-inline-start:0;}
   .tree-toolbar-vertical .hidden-in-full{display:none;}
@@ -3778,9 +3778,13 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
       data-node="${n.id}" style="left:${xPct}%;top:${yPx}px;width:${s.w*(n.depth===0?1.9:1)}px;min-height:${s.h}px;font-size:${n.depth===0?16:s.fs}px;">${label}</div>`;
     if(n.children){
       n.children.forEach(c=>{
-        const midY = (n.y + c.y)/2;
+        const midY = (n.y+sizeFor(n.depth).h + c.y)/2;
         const x1 = (n.x/LOGICAL_W*100).toFixed(2), x2 = (c.x/LOGICAL_W*100).toFixed(2);
-        svgLines += `<path d="M ${x1} ${n.y+sizeFor(n.depth).h/2} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${c.y - sizeFor(c.depth).h/2}"
+        // المربعات ليست ممركزة رأسيًا على y (فقط أفقيًا عبر translate(-50%,0))، فأعلى المربع =
+        // y تمامًا وأسفله = y + الارتفاع الكامل. كان الخط يبدأ من منتصف الأب وينتهي فوق أعلى
+        // الابن بمقدار نصف ارتفاعه — لم يظهر الفراغ عند الأب لأن المربع نفسه (فوق الخط في
+        // الطبقات) كان يغطيه، لكنه ظهر بوضوح عند الابن حيث لا شيء يغطي تلك الفجوة
+        svgLines += `<path d="M ${x1} ${n.y+sizeFor(n.depth).h} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${c.y}"
           stroke="#C9A227" stroke-width="1.6" fill="none"/>`;
         walk(c);
       });
