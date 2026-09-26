@@ -424,8 +424,15 @@
   /* طباعة صفحة الشجرة كملف PDF: نخفي كل شيء عدا الشجرة نفسها ودليل الألوان — شريط الأزرار
      العلوي وصندوق البحث وإطار التطبيق الزخرفي لا معنى لها على الورق. الشجرة تُطبع كما هي
      بالضبط بأحجامها المتدرّجة (لا تغيير هنا، فالتصغير التدريجي مبني أصلًا في كل مربع) */
+  /* الطباعة: ورقة A4 عرضية دائمًا، وبألوان التطبيق نفسها (المتصفحات تحذف الخلفيات الملوّنة
+     افتراضيًا عند الطباعة فتظهر المربعات مفرّغة؛ print-color-adjust:exact يمنع ذلك) */
+  @page{ size: A4 landscape; margin: 0; }
   @media print{
-    body{background:#fff !important;padding:0 !important;}
+    *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+    html, body{background:var(--paper) !important;margin:0 !important;}
+    body{padding:8mm !important;}
+    main{overflow:visible !important;padding:0 !important;}
+    .fulltree-scroll{overflow:visible !important;}
     .app{max-width:none !important;height:auto !important;border:none !important;box-shadow:none !important;border-radius:0 !important;display:block !important;}
     header.top, #fullHeader, .tree-toolbar, .tree-header-row, .boxes-back, .full-search-menu-back{display:none !important;}
     .tree-wrap{padding:0 !important;}
@@ -3592,6 +3599,9 @@ function mergeAllDuplicates(){
 
 /* ---------------- Rendering ---------------- */
 const main = document.getElementById('main');
+// الطباعة من قائمة المتصفح (Ctrl+P) أيضًا تُرسم بتخطيط الورقة، ثم يعود العرض العادي بعدها
+window.addEventListener('beforeprint', ()=>{ if(!window.__arhamiPrint){ window.__arhamiPrint = true; try{ render(); }catch(e){} } });
+window.addEventListener('afterprint', ()=>{ setTimeout(()=>{ window.__arhamiPrint = false; try{ render(); }catch(e){} }, 1200); });
 // عند تغيير حجم نافذة الحاسوب يُعاد رسم الشجرة المتكاملة لتأخذ العرض الجديد
 let _resizeT;
 window.addEventListener('resize', ()=>{ clearTimeout(_resizeT); _resizeT = setTimeout(()=>{
@@ -3773,7 +3783,7 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
     {w:50, h:22, fs:9.5}, {w:46, h:20, fs:8.5}, {w:42, h:18, fs:8}
   ];
   // على الحاسوب تُكبَّر المربعات والخطوط بنسبة ثابتة (الهاتف كما هو دون أي تغيير)
-  const DESK_SCALE = window.matchMedia('(min-width: 900px) and (min-height: 560px) and (hover: hover) and (pointer: fine)').matches ? 1.4 : 1;
+  const DESK_SCALE = window.__arhamiPrint ? 1.3 : window.matchMedia('(min-width: 900px) and (min-height: 560px) and (hover: hover) and (pointer: fine)').matches ? 1.4 : 1;
   function sizeFor(depth){ const b = boxSizes[Math.min(depth, boxSizes.length-1)]; return {w:b.w*DESK_SCALE, h:b.h*DESK_SCALE, fs:b.fs*DESK_SCALE}; }
 
   // تخطيط شجرة حقيقي (Reingold–Tilford مبسّط): عرض كل فرع = الأكبر من (عرض مربعه هو نفسه) أو
@@ -3787,7 +3797,8 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   // من نصف بكسل، فتلتصق المربعات المتجاورة رغم أن الحساب "يرى" فجوة. H_GAP = 1 مم فعلي
   const MM = 96/25.4;
   const _cs = getComputedStyle(main);
-  const LOGICAL_W = Math.max((main.clientWidth - parseFloat(_cs.paddingLeft||0) - parseFloat(_cs.paddingRight||0)) || 400, 280), MARGIN_X = 6, H_GAP = 1*MM, V_GAP = 8;
+  // عند الطباعة: عرض التخطيط = عرض ورقة A4 العرضية القابل للطباعة (297 − هامشين 8 مم)
+  const LOGICAL_W = window.__arhamiPrint ? (297-16)*MM : Math.max((main.clientWidth - parseFloat(_cs.paddingLeft||0) - parseFloat(_cs.paddingRight||0)) || 400, 280), MARGIN_X = 6, H_GAP = 1*MM, V_GAP = 8;
   function boxW(depth){ return sizeFor(depth).w * (depth===0 ? 1.9 : 1); }
   function shiftSubtree(n, dx){
     if(n.children) n.children.forEach(c=>{ c.x += dx; shiftSubtree(c, dx); });
@@ -3878,6 +3889,13 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
     _sc.scrollLeft = (typeof treeViewMode.fullScrollX === 'number') ? treeViewMode.fullScrollX : Math.max(0, tree.x - _sc.clientWidth/2);
   }
   if(_sc) _sc.onscroll = ()=>{ treeViewMode.fullScrollX = _sc.scrollLeft; };
+  // عند الطباعة: إن كانت الشجرة أعرض من الورقة (أو أطول من ثلثي ارتفاعها) تُصغَّر كلها تناسبيًا
+  // لتدخل في صفحة A4 عرضية واحدة بدل أن تُقصّ أطرافها
+  if(window.__arhamiPrint){
+    const _w = main.querySelector('.fulltree-wrap');
+    const fit = Math.min(1, LOGICAL_W / wrapW, ((210-16)*MM*0.66) / totalHeight);
+    if(_w && fit < 1) _w.style.zoom = fit;
+  }
   populateTreeBottomBar(currentDetailId);
   main.querySelectorAll('.fulltree-box').forEach(el=>{
     el.onclick = ()=>{
@@ -3922,7 +3940,10 @@ function populateTreeBottomBar(currentDetailId){
     treeViewMode.fullScrollX = undefined;
     render();
   };
-  document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
+  document.getElementById('treePrintBtn').onclick = ()=>{
+    window.__arhamiPrint = true; render();
+    setTimeout(()=>window.print(), 80);
+  };
 }
 
 function renderBranchTree(rootId){
