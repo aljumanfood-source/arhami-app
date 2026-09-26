@@ -441,14 +441,15 @@
   .tree-box.female{background:#FBD9E6;border-color:#E6A9C4;color:var(--green-deep);}
   .tree-box.open{background:var(--gold-rich);color:#fff;border-color:var(--gold-rich);}
   .tree-legend-wrap{margin-top:60px;padding-top:14px;border-top:1px solid rgba(201,162,39,.35);}
-  .fulltree-wrap{position:relative;width:100%;overflow-x:auto;}
+  .fulltree-scroll{width:100%;overflow-x:auto;direction:ltr;}
+  .fulltree-wrap{position:relative;margin:0 auto;}
   .fulltree-wrap-start{margin-top:6px;}
   .fulltree-title-bar{
     padding:8px 18px 2px;font-size:15px;font-weight:800;color:var(--green-deep);text-align:center;
   }
-  .fulltree-svg{position:absolute;top:0;left:0;width:100%;height:100%;}
+  .fulltree-svg{position:absolute;top:0;left:0;}
   .fulltree-box{
-    position:absolute;transform:translate(-50%,0);
+    position:absolute;transform:translate(-50%,0);direction:rtl;
     border:1.5px solid var(--gold-rich);border-radius:8px;background:var(--card);
     display:flex;align-items:center;justify-content:center;text-align:center;
     padding:4px 6px;font-weight:700;color:var(--ink);cursor:pointer;line-height:1.25;
@@ -3751,13 +3752,19 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   // بشكل صحيح؛ هذه الطريقة تمنع أي تراكب عند أي مستوى، جذرًا كان أم ورقة. المسافة الأفقية بين
   // أي مربعين متجاورين الآن ثابتة وصغيرة جدًا كما طُلب (H_GAP)، والمسافة الرأسية بين أي مربع
   // وابنه أصبحت أيضًا صغيرة وثابتة (V_GAP)، محسوبة من الارتفاع الفعلي لكل مربع لا رقم موحَّد
-  const LOGICAL_W = 1000, MARGIN_X = 40, H_GAP = 3, V_GAP = 8;
+  // التخطيط الأفقي صار بالبكسل الحقيقي (لا بوحدات منطقية نسبية من 1000): عرض المربعات يُرسم
+  // بالبكسل، فحين كانت المواضع نسبة مئوية من 1000 وحدة كانت الوحدة الواحدة على شاشة الهاتف أقل
+  // من نصف بكسل، فتلتصق المربعات المتجاورة رغم أن الحساب "يرى" فجوة. H_GAP = 1 مم فعلي
+  const MM = 96/25.4;
+  const _cs = getComputedStyle(main);
+  const LOGICAL_W = Math.max((main.clientWidth - parseFloat(_cs.paddingLeft||0) - parseFloat(_cs.paddingRight||0)) || 400, 280), MARGIN_X = 6, H_GAP = 1*MM, V_GAP = 8;
+  function boxW(depth){ return sizeFor(depth).w * (depth===0 ? 1.9 : 1); }
   function shiftSubtree(n, dx){
     if(n.children) n.children.forEach(c=>{ c.x += dx; shiftSubtree(c, dx); });
   }
   function layoutX(n, leftEdge){
     if(!n.children || !n.children.length){
-      n.width = sizeFor(n.depth).w;
+      n.width = boxW(n.depth);
       n.x = leftEdge + n.width/2;
       return n.width;
     }
@@ -3767,7 +3774,7 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
       cursor += layoutX(c, cursor);
     });
     const childrenSpan = cursor - leftEdge;
-    const ownW = sizeFor(n.depth).w;
+    const ownW = boxW(n.depth);
     n.width = Math.max(ownW, childrenSpan);
     if(ownW > childrenSpan) shiftSubtree(n, (ownW-childrenSpan)/2);
     n.x = leftEdge + n.width/2;
@@ -3778,6 +3785,8 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   // على الطرفين بدل الالتصاق باليمين؛ وإن كانت أوسع، تبقى بعرضها الطبيعي (تمرير أفقي متاح)
   const availableW = LOGICAL_W - MARGIN_X*2;
   if(tree.width < availableW) shiftSubtree({children:[tree], x:0}, (availableW-tree.width)/2);
+  // إن كانت الشجرة أعرض من الشاشة، يتّسع حيّزها بقدرها فعلًا ويُمرَّر أفقيًا بدل التراكب
+  const wrapW = Math.max(LOGICAL_W, tree.width + MARGIN_X*2);
 
   function layoutY(n, topEdge){
     n.y = topEdge;
@@ -3800,14 +3809,14 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
     const s = sizeFor(n.depth);
     const p = n.p;
     const label = n.depth===0 ? p.chain : shortDisplayName(p.name);
-    const xPct = (n.x/LOGICAL_W*100).toFixed(2);
+    const xPx = n.x.toFixed(2);
     const yPx = n.y;
     boxesHtml += `<div class="fulltree-box ${p.isDeceased?'deceased':''} ${p.gender==='f'?'female':''} ${n.depth===0?'tree-root':''}"
-      data-node="${n.id}" style="left:${xPct}%;top:${yPx}px;width:${s.w*(n.depth===0?1.9:1)}px;min-height:${s.h}px;font-size:${n.depth===0?16:s.fs}px;">${label}</div>`;
+      data-node="${n.id}" style="left:${xPx}px;top:${yPx}px;width:${boxW(n.depth)}px;min-height:${s.h}px;font-size:${n.depth===0?16:s.fs}px;">${label}</div>`;
     if(n.children){
       n.children.forEach(c=>{
         const midY = (n.y+sizeFor(n.depth).h + c.y)/2;
-        const x1 = (n.x/LOGICAL_W*100).toFixed(2), x2 = (c.x/LOGICAL_W*100).toFixed(2);
+        const x1 = n.x.toFixed(2), x2 = c.x.toFixed(2);
         // المربعات ليست ممركزة رأسيًا على y (فقط أفقيًا عبر translate(-50%,0))، فأعلى المربع =
         // y تمامًا وأسفله = y + الارتفاع الكامل. كان الخط يبدأ من منتصف الأب وينتهي فوق أعلى
         // الابن بمقدار نصف ارتفاعه — لم يظهر الفراغ عند الأب لأن المربع نفسه (فوق الخط في
@@ -3828,10 +3837,17 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
   // انتقلا لشريط سفلي ثابت مشترك (populateTreeBottomBar) خارج main تمامًا — يبقى ظاهرًا دائمًا
   // كشريط مهام حتى أثناء التمرير داخل الشجرة نفسها
   main.innerHTML = backLink +
-    `<div class="fulltree-wrap" style="height:${totalHeight}px;">
-      <svg class="fulltree-svg" viewBox="0 0 100 ${totalHeight}" preserveAspectRatio="none">${svgLines}</svg>
+    `<div class="fulltree-scroll"><div class="fulltree-wrap" style="height:${totalHeight}px;width:${wrapW}px;">
+      <svg class="fulltree-svg" width="${wrapW}" height="${totalHeight}" viewBox="0 0 ${wrapW} ${totalHeight}">${svgLines}</svg>
       ${boxesHtml}
-    </div>` + notesHtml;
+    </div></div>` + notesHtml;
+  // عند اتساع الشجرة عن الشاشة: يبدأ التمرير الأفقي ومربع الجذر في منتصف الشاشة
+  const _sc = main.querySelector('.fulltree-scroll');
+  if(_sc && wrapW > _sc.clientWidth){
+    // يُحفظ موضع التمرير بين النقرات، فلا تقفز الشاشة للجذر كلما فُتح اسم أو أُغلق
+    _sc.scrollLeft = (typeof treeViewMode.fullScrollX === 'number') ? treeViewMode.fullScrollX : Math.max(0, tree.x - _sc.clientWidth/2);
+  }
+  if(_sc) _sc.onscroll = ()=>{ treeViewMode.fullScrollX = _sc.scrollLeft; };
   populateTreeBottomBar(currentDetailId);
   main.querySelectorAll('.fulltree-box').forEach(el=>{
     el.onclick = ()=>{
@@ -3873,6 +3889,7 @@ function populateTreeBottomBar(currentDetailId){
     treeViewMode.fullTreeMode = !treeViewMode.fullTreeMode;
     treeViewMode.expandedFullIds = [];
     treeViewMode.fullTreeStarted = false;
+    treeViewMode.fullScrollX = undefined;
     render();
   };
   document.getElementById('treePrintBtn').onclick = ()=>{ window.print(); };
