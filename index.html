@@ -382,6 +382,18 @@
     display:flex;flex-direction:row;justify-content:center;gap:14px;align-items:center;
   }
   .tree-bottom-bar .tree-toolbar-row .hidden-in-full{display:none;}
+  /* شريط مضغوط بصف واحد: دليل الألوان (نقاط صغيرة وتسميتها بجانبها) في جهة، والأيقونات في
+     الجهة الأخرى — بدل صفّين كبيرين كانا يأكلان نصف الشاشة تقريبًا، خصوصًا في الوضع الأفقي */
+  .tree-bottom-bar{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 10px;
+    padding:5px 12px calc(5px + env(safe-area-inset-bottom,0px));}
+  .tree-bottom-bar .tree-legend-wrap{padding:0;margin:0;}
+  .tree-bottom-bar .tree-legend-title{display:none;}
+  .tree-bottom-bar .tree-legend{gap:12px;padding:0;}
+  .tree-bottom-bar .tree-legend-item{flex-direction:row;gap:5px;}
+  .tree-bottom-bar .tree-legend-dot{width:14px;height:14px;border-width:1px;}
+  .tree-bottom-bar .tree-legend-label{font-size:11px;white-space:nowrap;}
+  .tree-bottom-bar .tree-toolbar-row{gap:8px;}
+  .tree-bottom-bar .tree-detail-btn, .tree-bottom-bar .tree-home-btn{width:32px;height:32px;font-size:15px;margin-inline-start:0;}
   .tree-title-fixed{font-size:15px;font-weight:800;color:var(--green-deep);padding-top:2px;text-align:center;}
   .tree-toolbar-vertical{display:flex;flex-direction:column;gap:8px;align-items:center;}
   .tree-toolbar-vertical .tree-detail-btn, .tree-toolbar-vertical .tree-home-btn{margin-inline-start:0;}
@@ -413,6 +425,8 @@
     #treeBottomBar{position:static !important;border-top:none !important;}
     .tree-toolbar-row{display:none !important;}
     .tree-legend-wrap{margin-top:24px !important;}
+    #treeBottomBar{display:block !important;}
+    #treeBottomBar .tree-legend-title{display:block !important;}
   }
   .tree-box-wrap{margin-bottom:8px;}
   .tree-children{
@@ -3862,7 +3876,7 @@ function renderFullTreeSVG(rootId, backLink, currentDetailId){
 // والمتكامل) بدل تكرار نفس الترميز في الدالتين، ويُستدعى مرة واحدة بعد أن main.innerHTML يكتمل
 function populateTreeBottomBar(currentDetailId){
   const bar = document.getElementById('treeBottomBar');
-  bar.style.display = 'block';
+  bar.style.display = 'flex';
   bar.innerHTML = `<div class="tree-legend-wrap">
     <p class="tree-legend-title">ألوان توضيحية</p>
     <div class="tree-legend">
