@@ -1965,11 +1965,14 @@ P.hamood17_muhammad37.spouseId = 'izza9_saeed_nasra9';
 P.hamood17_muhammad37.spouseName = P.izza9_saeed_nasra9.chain;
 add('asma11_muhammad37','أسماء','f','muhammad37_rashid_shanin',null,8,'أسماء بنت محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 // شيخة: أخت سعيد بن راشد بن شنين
-add('shaikha3_rashid_shanin','شيخة','f','rashid_shanin',null,7,'شيخة بنت راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+// شيخة بنت راشد بن شنين حُذفت بطلب المستخدم: أم عائشة بنت عبدالله الصحيحة هي جوخة بنت حمد بن حمود بن شنين
+add('jokha_hamd25_abdullah25','جوخة','f','hamd25_hamood24',null,7,'جوخة بنت حمد بن حمود بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 add('abdullah25_muhammad_mansour','عبدالله بن محمد بن منصور الطوقي','m',null,null,7,'عبدالله بن محمد بن منصور الطوقي');
-P.shaikha3_rashid_shanin.spouseId = 'abdullah25_muhammad_mansour';
-P.shaikha3_rashid_shanin.spouseName = P.abdullah25_muhammad_mansour.chain;
-add('aisha_abdullah25_shaikha3','عائشة','f','abdullah25_muhammad_mansour','shaikha3_rashid_shanin',8,'عائشة بنت عبدالله بن محمد بن منصور الطوقية');
+P.jokha_hamd25_abdullah25.spouseId = 'abdullah25_muhammad_mansour';
+P.jokha_hamd25_abdullah25.spouseName = P.abdullah25_muhammad_mansour.chain;
+P.abdullah25_muhammad_mansour.spouseId = 'jokha_hamd25_abdullah25';
+P.abdullah25_muhammad_mansour.spouseName = P.jokha_hamd25_abdullah25.chain;
+add('aisha_abdullah25_shaikha3','عائشة','f','abdullah25_muhammad_mansour','jokha_hamd25_abdullah25',8,'عائشة بنت عبدالله بن محمد بن منصور الطوقية');
 add('sulaiman_muhammad','سليمان','m','muhammad_salim',null,5,'سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('muhammad_sulaiman','محمد','m','sulaiman_muhammad',null,6,'محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('sharifa_rashid','شريفة','f','rashid_khalfan',null,6,'شريفة بنت راشد بن خلفان بن سليم بن راشد بن علي بن سالم الطوقية');
@@ -2282,45 +2285,46 @@ P.riya2_sulaiman_sharifa6.spouseId = 'hamd12_hamood_muhammad_riya2';
 P.riya2_sulaiman_sharifa6.spouseName = P.hamd12_hamood_muhammad_riya2.chain;
 
 add('asma9_sulaiman_sharifa6','أسماء','f','sulaiman_m2','sharifa6_khayla_naumani',8,'أسماء بنت سليمان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
-add('salim9_sultan_asma9','سالم بن سلطان بن محمد الطوقي','m',null,null,8,'سالم بن سلطان بن محمد الطوقي');
-add('ali4_salim9_asma9','علي','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'علي بن سالم بن سلطان بن محمد الطوقي');
-add('masaad4_salim9_asma9','مسعود','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'مسعود بن سالم بن سلطان بن محمد الطوقي');
-add('saif13_salim9_asma9','سيف','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سيف بن سالم بن سلطان بن محمد الطوقي');
-add('sulaiman4_salim9_asma9','سليمان','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سليمان بن سالم بن سلطان بن محمد الطوقي');
-add('saeed19_salim9_asma9','سعيد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سعيد بن سالم بن سلطان بن محمد الطوقي');
-add('humaid19_salim9_asma9','حميد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'حميد بن سالم بن سلطان بن محمد الطوقي');
+add('zahra_masud_abud_sultan','زهرة بنت مسعود بن عبود الطوقية','f',null,null,7,'زهرة بنت مسعود بن عبود الطوقية');
+add('salim9_sultan_asma9','سالم','m','sultan_m','zahra_masud_abud_sultan',8,'سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ali4_salim9_asma9','علي','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'علي بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('masaad4_salim9_asma9','مسعود','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'مسعود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saif13_salim9_asma9','سيف','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سيف بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('sulaiman4_salim9_asma9','سليمان','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سليمان بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saeed19_salim9_asma9','سعيد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سعيد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('humaid19_salim9_asma9','حميد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'حميد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 P.humaid19_salim9_asma9.isDeceased = true;
-add('hamood14_salim9_asma9','حمود','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'حمود بن سالم بن سلطان بن محمد الطوقي');
-add('ahmad15_salim9_asma9','احمد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'احمد بن سالم بن سلطان بن محمد الطوقي');
+add('hamood14_salim9_asma9','حمود','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'حمود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('ahmad15_salim9_asma9','احمد','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'احمد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('khadija6_salim9_asma9','خديجة','f','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'خديجة بنت سالم بن سلطان بن محمد الطوقية');
 add('halima_salim9_asma9','حليمة','f','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'حليمة بنت سالم بن سلطان بن محمد الطوقية');
 queueSpouseLink('halima_salim9_asma9', 'khalfan6_muhammad33_shamsa7');
 
 // أحفاد أسماء بنت سليمان (أولاد إخوة/أبناء سالم بن سلطان الثمانية)
-add('ruqaya_ali4','رقية','f','ali4_salim9_asma9',null,10,'رقية بنت علي بن سالم بن سلطان بن محمد الطوقية');
-add('hawraa_ali4','حوراء','f','ali4_salim9_asma9',null,10,'حوراء بنت علي بن سالم بن سلطان بن محمد الطوقية');
-add('taghreed_ali4','تغريد','f','ali4_salim9_asma9',null,10,'تغريد بنت علي بن سالم بن سلطان بن محمد الطوقية');
-add('hussain_ali4','حسين','m','ali4_salim9_asma9',null,10,'حسين بن علي بن سالم بن سلطان بن محمد الطوقي');
+add('ruqaya_ali4','رقية','f','ali4_salim9_asma9',null,10,'رقية بنت علي بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hawraa_ali4','حوراء','f','ali4_salim9_asma9',null,10,'حوراء بنت علي بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('taghreed_ali4','تغريد','f','ali4_salim9_asma9',null,10,'تغريد بنت علي بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hussain_ali4','حسين','m','ali4_salim9_asma9',null,10,'حسين بن علي بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
-add('khadija7_masaad4','خديجة','f','masaad4_salim9_asma9',null,10,'خديجة بنت مسعود بن سالم بن سلطان بن محمد الطوقية');
-add('fatima15_masaad4','فاطمة','f','masaad4_salim9_asma9',null,10,'فاطمة بنت مسعود بن سالم بن سلطان بن محمد الطوقية');
-add('zainab2_masaad4','زينب','f','masaad4_salim9_asma9',null,10,'زينب بنت مسعود بن سالم بن سلطان بن محمد الطوقية');
-add('muhammad34_masaad4','محمد','m','masaad4_salim9_asma9',null,10,'محمد بن مسعود بن سالم بن سلطان بن محمد الطوقي');
+add('khadija7_masaad4','خديجة','f','masaad4_salim9_asma9',null,10,'خديجة بنت مسعود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('fatima15_masaad4','فاطمة','f','masaad4_salim9_asma9',null,10,'فاطمة بنت مسعود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zainab2_masaad4','زينب','f','masaad4_salim9_asma9',null,10,'زينب بنت مسعود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad34_masaad4','محمد','m','masaad4_salim9_asma9',null,10,'محمد بن مسعود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
-add('samar_saif13','سمر','f','saif13_salim9_asma9',null,10,'سمر بنت سيف بن سالم بن سلطان بن محمد الطوقية');
-add('salim12_saif13','سالم','m','saif13_salim9_asma9',null,10,'سالم بن سيف بن سالم بن سلطان بن محمد الطوقي');
-add('mulhim_saif13','ملهم','m','saif13_salim9_asma9',null,10,'ملهم بن سيف بن سالم بن سلطان بن محمد الطوقي');
+add('samar_saif13','سمر','f','saif13_salim9_asma9',null,10,'سمر بنت سيف بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('salim12_saif13','سالم','m','saif13_salim9_asma9',null,10,'سالم بن سيف بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('mulhim_saif13','ملهم','m','saif13_salim9_asma9',null,10,'ملهم بن سيف بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
-add('maryam2_humaid19','مريم','f','humaid19_salim9_asma9',null,10,'مريم بنت حميد بن سالم بن سلطان بن محمد الطوقية');
-add('zahra_humaid19','زهراء','f','humaid19_salim9_asma9',null,10,'زهراء بنت حميد بن سالم بن سلطان بن محمد الطوقية');
-add('hamood15_humaid19','حمود','m','humaid19_salim9_asma9',null,10,'حمود بن حميد بن سالم بن سلطان بن محمد الطوقي');
+add('maryam2_humaid19','مريم','f','humaid19_salim9_asma9',null,10,'مريم بنت حميد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('zahra_humaid19','زهراء','f','humaid19_salim9_asma9',null,10,'زهراء بنت حميد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('hamood15_humaid19','حمود','m','humaid19_salim9_asma9',null,10,'حمود بن حميد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 
-add('sara2_hamood14','سارة','f','hamood14_salim9_asma9',null,10,'سارة بنت حمود بن سالم بن سلطان بن محمد الطوقية');
-add('malak2_hamood14','ملك','f','hamood14_salim9_asma9',null,10,'ملك بنت حمود بن سالم بن سلطان بن محمد الطوقية');
+add('sara2_hamood14','سارة','f','hamood14_salim9_asma9',null,10,'سارة بنت حمود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('malak2_hamood14','ملك','f','hamood14_salim9_asma9',null,10,'ملك بنت حمود بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
 
-add('muhammad35_ahmad15','محمد','m','ahmad15_salim9_asma9',null,10,'محمد بن احمد بن سالم بن سلطان بن محمد الطوقي');
-add('haitham_ahmad15','هيثم','m','ahmad15_salim9_asma9',null,10,'هيثم بن احمد بن سالم بن سلطان بن محمد الطوقي');
-add('salim13_ahmad15','سالم','m','ahmad15_salim9_asma9',null,10,'سالم بن احمد بن سالم بن سلطان بن محمد الطوقي');
+add('muhammad35_ahmad15','محمد','m','ahmad15_salim9_asma9',null,10,'محمد بن احمد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('haitham_ahmad15','هيثم','m','ahmad15_salim9_asma9',null,10,'هيثم بن احمد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('salim13_ahmad15','سالم','m','ahmad15_salim9_asma9',null,10,'سالم بن احمد بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 P.asma9_sulaiman_sharifa6.spouseId = 'salim9_sultan_asma9';
 P.asma9_sulaiman_sharifa6.spouseName = P.salim9_sultan_asma9.chain;
 
@@ -2355,8 +2359,130 @@ add('hamood_m2','حمود','m','muhammad_sulaiman',null,7,'حمود بن محم�
 // ليس له زوجة معروفة حاليًا غير سيف بن حمود (ابنه المؤكَّد بشكل مستقل)
 add('asma12_hamood_izza9','أسماء','f','hamood17_muhammad37','izza9_saeed_nasra9',9,'أسماء بنت حمود بن محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
 
-add('aamir_riya','عامر','m','sultan_m',null,8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('aamir_riya','عامر','m','sultan_m','aisha_abdullah25_shaikha3',8,'عامر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
 add('rashid_sultan_brother','راشد','m','sultan_m',null,8,'راشد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي'); // أخو عامر بن سلطان، زوج عزا بنت حميد
+
+/* ---- عائلة عامر بن سلطان: أمه وإخوانه وأخواله (دفعة أيلول 2026) ---- */
+queueSpouseLink('aisha_abdullah25_shaikha3', 'sultan_m');
+P.zahra_masud_abud_sultan.spouseId = 'sultan_m';
+P.zahra_masud_abud_sultan.spouseName = P.sultan_m.chain;
+add('muhammad_sultan_aisha8','محمد','m','sultan_m','aisha_abdullah25_shaikha3',8,'محمد بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+P.muhammad_sultan_aisha8.isDeceased = true;
+add('khawla_sultan_aisha8','خولة','f','sultan_m','aisha_abdullah25_shaikha3',8,'خولة بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+P.khawla_sultan_aisha8.isDeceased = true;
+add('jokha_sultan_aisha8','جوخة','f','sultan_m','aisha_abdullah25_shaikha3',8,'جوخة بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('ziyana_sultan_aisha8','زيانة','f','sultan_m','aisha_abdullah25_shaikha3',8,'زيانة بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('safiya_sultan_aisha8','صفية','f','sultan_m','aisha_abdullah25_shaikha3',8,'صفية بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+P.safiya_sultan_aisha8.isDeceased = true;
+add('dalila_sultan_aisha8','دليلة','f','sultan_m','aisha_abdullah25_shaikha3',8,'دليلة بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('nasir_sultan_aisha8','ناصر','m','sultan_m','aisha_abdullah25_shaikha3',8,'ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('saif_sultan_m_noissue','سيف','m','sultan_m',null,8,'سيف بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('aziza_sultan_m_noissue','عزيزة','f','sultan_m',null,8,'عزيزة بنت سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('sultan_salim9_asma9','سلطان','m','salim9_sultan_asma9','asma9_sulaiman_sharifa6',9,'سلطان بن سالم بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+P.sultan_salim9_asma9.isDeceased = true;
+add('hamdoon_alrashidi_jokha','حمدون الراشدي','m',null,null,8,'حمدون الراشدي');
+P.jokha_sultan_aisha8.spouseId = 'hamdoon_alrashidi_jokha';
+P.jokha_sultan_aisha8.spouseName = P.hamdoon_alrashidi_jokha.chain;
+P.hamdoon_alrashidi_jokha.spouseId = 'jokha_sultan_aisha8';
+P.hamdoon_alrashidi_jokha.spouseName = P.jokha_sultan_aisha8.chain;
+add('amr26_jkh_1','زيانة','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'زيانة بنت حمدون الراشدية');
+P.amr26_jkh_1.isDeceased = true;
+add('amr26_jkh_2','حمود','m','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'حمود بن حمدون الراشدي');
+P.amr26_jkh_2.isDeceased = true;
+add('amr26_jkh_3','زوينة','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'زوينة بنت حمدون الراشدية');
+P.amr26_jkh_3.isDeceased = true;
+add('amr26_jkh_4','ريا','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'ريا بنت حمدون الراشدية');
+add('amr26_jkh_5','موزة','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'موزة بنت حمدون الراشدية');
+P.amr26_jkh_5.isDeceased = true;
+add('amr26_jkh_6','راشد','m','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'راشد بن حمدون الراشدي');
+P.amr26_jkh_6.isDeceased = true;
+add('amr26_jkh_7','عائشة','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'عائشة بنت حمدون الراشدية');
+P.amr26_jkh_7.isDeceased = true;
+add('amr26_jkh_8','ناصر','m','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'ناصر بن حمدون الراشدي');
+P.amr26_jkh_8.isDeceased = true;
+add('amr26_jkh_9','أصيلة','f','hamdoon_alrashidi_jokha','jokha_sultan_aisha8',9,'أصيلة بنت حمدون الراشدية');
+P.ziyana_sultan_aisha8.spouseId = 'saud3_muhammad_rahma6';
+P.ziyana_sultan_aisha8.spouseName = P.saud3_muhammad_rahma6.chain;
+if(!P.saud3_muhammad_rahma6.spouseId){ P.saud3_muhammad_rahma6.spouseId = 'ziyana_sultan_aisha8'; P.saud3_muhammad_rahma6.spouseName = P.ziyana_sultan_aisha8.chain; }
+add('amr26_zyn_10','أسماء','f','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'أسماء بنت سعود بن محمد بن سالم الطوقية');
+add('amr26_zyn_11','عزة','f','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'عزة بنت سعود بن محمد بن سالم الطوقية');
+add('amr26_zyn_12','سلطان','m','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'سلطان بن سعود بن محمد بن سالم الطوقي');
+add('amr26_zyn_13','سعيد','m','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'سعيد بن سعود بن محمد بن سالم الطوقي');
+P.amr26_zyn_13.isDeceased = true;
+add('amr26_zyn_14','أحمد','m','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'أحمد بن سعود بن محمد بن سالم الطوقي');
+add('amr26_zyn_15','حمد','m','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'حمد بن سعود بن محمد بن سالم الطوقي');
+add('amr26_zyn_16','علي','m','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'علي بن سعود بن محمد بن سالم الطوقي');
+add('amr26_zyn_17','أصيلة','f','saud3_muhammad_rahma6','ziyana_sultan_aisha8',10,'أصيلة بنت سعود بن محمد بن سالم الطوقية');
+P.safiya_sultan_aisha8.spouseId = 'abdullah23_abdullah22_sulaima';
+P.safiya_sultan_aisha8.spouseName = P.abdullah23_abdullah22_sulaima.chain;
+if(!P.abdullah23_abdullah22_sulaima.spouseId){ P.abdullah23_abdullah22_sulaima.spouseId = 'safiya_sultan_aisha8'; P.abdullah23_abdullah22_sulaima.spouseName = P.safiya_sultan_aisha8.chain; }
+add('amr26_sfy_18','فايزة','f','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'فايزة بنت عبدالله بن عبدالله البروانية');
+add('amr26_sfy_19','فاطمة','f','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'فاطمة بنت عبدالله بن عبدالله البروانية');
+add('amr26_sfy_20','سالم','m','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'سالم بن عبدالله بن عبدالله البرواني');
+add('amr26_sfy_21','أسماء','f','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'أسماء بنت عبدالله بن عبدالله البروانية');
+add('amr26_sfy_22','علي','m','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'علي بن عبدالله بن عبدالله البرواني');
+add('amr26_sfy_23','هدى','f','abdullah23_abdullah22_sulaima','safiya_sultan_aisha8',10,'هدى بنت عبدالله بن عبدالله البروانية');
+add('shamsa_muhammad37_ali_majid','شمسة','f','muhammad37_rashid_shanin',null,8,'شمسة بنت محمد بن راشد بن شنين بن سليم بن راشد بن علي بن سالم الطوقية');
+add('ali_majid_saeed_albarwani','علي بن ماجد بن سعيد البرواني','m',null,'shamsa_muhammad37_ali_majid',9,'علي بن ماجد بن سعيد البرواني');
+P.dalila_sultan_aisha8.spouseId = 'ali_majid_saeed_albarwani';
+P.dalila_sultan_aisha8.spouseName = P.ali_majid_saeed_albarwani.chain;
+P.ali_majid_saeed_albarwani.spouseId = 'dalila_sultan_aisha8';
+P.ali_majid_saeed_albarwani.spouseName = P.dalila_sultan_aisha8.chain;
+add('amr26_dll_24','عامر','m','ali_majid_saeed_albarwani','dalila_sultan_aisha8',10,'عامر بن علي بن ماجد بن سعيد البرواني');
+add('amr26_dll_25','هلال','m','ali_majid_saeed_albarwani','dalila_sultan_aisha8',10,'هلال بن علي بن ماجد بن سعيد البرواني');
+add('amr26_dll_26','سارة','f','ali_majid_saeed_albarwani','dalila_sultan_aisha8',10,'سارة بنت علي بن ماجد بن سعيد البروانية');
+add('amr26_nsr_27','سلطان','m','nasir_sultan_aisha8',null,9,'سلطان بن ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('amr26_nsr_28','محمد','m','nasir_sultan_aisha8',null,9,'محمد بن ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('amr26_nsr_29','سليمان','m','nasir_sultan_aisha8',null,9,'سليمان بن ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('amr26_nsr_30','أحمد','m','nasir_sultan_aisha8',null,9,'أحمد بن ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقي');
+add('amr26_nsr_31','عائشة','f','nasir_sultan_aisha8',null,9,'عائشة بنت ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('amr26_nsr_32','مريم','f','nasir_sultan_aisha8',null,9,'مريم بنت ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('amr26_nsr_33','فاطمة','f','nasir_sultan_aisha8',null,9,'فاطمة بنت ناصر بن سلطان بن محمد بن سليمان بن محمد بن سليم بن راشد بن علي بن سالم الطوقية');
+add('muhammad_abdullah25_jokha','محمد','m','abdullah25_muhammad_mansour','jokha_hamd25_abdullah25',8,'محمد بن عبدالله بن محمد بن منصور الطوقي');
+add('saeed_abdullah25_jokha','سعيد','m','abdullah25_muhammad_mansour','jokha_hamd25_abdullah25',8,'سعيد بن عبدالله بن محمد بن منصور الطوقي');
+add('abdullah_saeed_abdullah25','عبدالله','m','saeed_abdullah25_jokha',null,9,'عبدالله بن سعيد بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_abs_34','هدى','f','abdullah_saeed_abdullah25',null,10,'هدى بنت عبدالله بن سعيد بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_abs_35','هايدي','f','abdullah_saeed_abdullah25',null,10,'هايدي بنت عبدالله بن سعيد بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_abs_36','هيام','f','abdullah_saeed_abdullah25',null,10,'هيام بنت عبدالله بن سعيد بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_abs_37','هويدا','f','abdullah_saeed_abdullah25',null,10,'هويدا بنت عبدالله بن سعيد بن عبدالله بن محمد بن منصور الطوقية');
+add('salim_abdullah25','سالم','m','abdullah25_muhammad_mansour',null,8,'سالم بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_salim_abdullah25_38','أسامة','m','salim_abdullah25',null,9,'أسامة بن سالم بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_salim_abdullah25_39','ريان','m','salim_abdullah25',null,9,'ريان بن سالم بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_salim_abdullah25_40','عامر','m','salim_abdullah25',null,9,'عامر بن سالم بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_salim_abdullah25_41','فريدة','f','salim_abdullah25',null,9,'فريدة بنت سالم بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_salim_abdullah25_42','نوح','m','salim_abdullah25',null,9,'نوح بن سالم بن عبدالله بن محمد بن منصور الطوقي');
+add('fahd_abdullah25','فهد','m','abdullah25_muhammad_mansour',null,8,'فهد بن عبدالله بن محمد بن منصور الطوقي');
+add('aziz_abdullah25','عزيز','m','abdullah25_muhammad_mansour',null,8,'عزيز بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_aziz_abdullah25_43','شني','f','aziz_abdullah25',null,9,'شني بنت عزيز بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_aziz_abdullah25_44','زكية','f','aziz_abdullah25',null,9,'زكية بنت عزيز بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_aziz_abdullah25_45','عمادي','m','aziz_abdullah25',null,9,'عمادي بن عزيز بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_aziz_abdullah25_46','محمد','m','aziz_abdullah25',null,9,'محمد بن عزيز بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_aziz_abdullah25_47','روكية','f','aziz_abdullah25',null,9,'روكية بنت عزيز بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_aziz_abdullah25_48','چوندي','f','aziz_abdullah25',null,9,'چوندي بنت عزيز بن عبدالله بن محمد بن منصور الطوقية');
+add('ali_abdullah25','علي','m','abdullah25_muhammad_mansour',null,8,'علي بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_ali_abdullah25_49','شاديا','f','ali_abdullah25',null,9,'شاديا بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_50','فايزة','f','ali_abdullah25',null,9,'فايزة بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_51','سميرة','f','ali_abdullah25',null,9,'سميرة بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_52','ناصر','m','ali_abdullah25',null,9,'ناصر بن علي بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_ali_abdullah25_53','عبدالله','m','ali_abdullah25',null,9,'عبدالله بن علي بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_ali_abdullah25_54','طالب','m','ali_abdullah25',null,9,'طالب بن علي بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_ali_abdullah25_55','غالب','m','ali_abdullah25',null,9,'غالب بن علي بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_ali_abdullah25_56','ثريا','f','ali_abdullah25',null,9,'ثريا بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_57','حسنى','f','ali_abdullah25',null,9,'حسنى بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_58','عزا','f','ali_abdullah25',null,9,'عزا بنت علي بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_ali_abdullah25_59','محمد','m','ali_abdullah25',null,9,'محمد بن علي بن عبدالله بن محمد بن منصور الطوقي');
+add('mabrouk_abdullah25','مبروك','m','abdullah25_muhammad_mansour',null,8,'مبروك بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_mabrouk_abdullah25_60','هلال','m','mabrouk_abdullah25',null,9,'هلال بن مبروك بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_mabrouk_abdullah25_61','عبدالله','m','mabrouk_abdullah25',null,9,'عبدالله بن مبروك بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_mabrouk_abdullah25_62','زوينة','f','mabrouk_abdullah25',null,9,'زوينة بنت مبروك بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_mabrouk_abdullah25_63','عزا','f','mabrouk_abdullah25',null,9,'عزا بنت مبروك بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_mabrouk_abdullah25_64','نصرى','f','mabrouk_abdullah25',null,9,'نصرى بنت مبروك بن عبدالله بن محمد بن منصور الطوقية');
+add('nasir_abdullah25','ناصر','m','abdullah25_muhammad_mansour',null,8,'ناصر بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_nasir_abdullah25_65','سعيد','m','nasir_abdullah25',null,9,'سعيد بن ناصر بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_nasir_abdullah25_66','محمد','m','nasir_abdullah25',null,9,'محمد بن ناصر بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_nasir_abdullah25_67','آدم','m','nasir_abdullah25',null,9,'آدم بن ناصر بن عبدالله بن محمد بن منصور الطوقي');
+add('amr26_k_nasir_abdullah25_68','تسنيم','f','nasir_abdullah25',null,9,'تسنيم بنت ناصر بن عبدالله بن محمد بن منصور الطوقية');
+add('amr26_k_nasir_abdullah25_69','فاطمة','f','nasir_abdullah25',null,9,'فاطمة بنت ناصر بن عبدالله بن محمد بن منصور الطوقية');
 
 // خديجة: سليمان بن محمد بن سليمان's daughter (من زوجته الثالثة غير المسمّاة، مضافة أعلاه)،
 // راشد بن سلطان's SECOND wife (besides عزا بنت حميد)
