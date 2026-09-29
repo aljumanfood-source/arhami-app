@@ -5751,6 +5751,31 @@ function repairFamilyLinks(){
       if(match && P[dup.id]){ mergeOneDuplicate(match.id, dup.id); fixedCount++; }
     });
   });
+  // Pass 0c: روابط الأب/الأم التي أكّدها المستخدم في دفعة عامر بن سلطان تُفرض فوق أي تعديل قديم
+  // محفوظ في القاعدة الحيّة (parentOverrides) — تعديل الأم في ملف البيانات وحده لا يكفي لشخص كان
+  // قد رُبط من التطبيق سابقًا، لأن السجل الحيّ يُطبَّق بعده فيغلبه (سبب ظهور أخوال عامر فارغة). إن
+  // كان الأب/الأم الحاليّ نسخة مُضافة من التطبيق بنفس الاسم الأول، تُدمج في نسخة ملف البيانات (فينتقل
+  // من ربطه بها إليها)، وإلا يُعاد الربط الصحيح عبر setParentLink فيُحفظ ويُصحَّح السجل الحيّ نفسه
+  const SEED_PARENT_FIXES = {
+    aamir_riya: {motherId:'aisha_abdullah25_shaikha3'},
+    aisha_abdullah25_shaikha3: {fatherId:'abdullah25_muhammad_mansour', motherId:'jokha_hamd25_abdullah25'},
+    salim9_sultan_asma9: {fatherId:'sultan_m', motherId:'zahra_masud_abud_sultan'}
+  };
+  const _first = n => String(n||'').trim().split(/\s+/)[0].replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
+  Object.keys(SEED_PARENT_FIXES).forEach(pid=>{
+    const fix = SEED_PARENT_FIXES[pid];
+    ['fatherId','motherId'].forEach(field=>{
+      if(!(field in fix) || !P[pid] || !P[fix[field]]) return;
+      const cur = P[pid][field];
+      if(cur === fix[field]) return;
+      const curP = cur && P[cur];
+      if(curP && !SEED_PERSON_IDS.has(cur) && curP.gender===P[fix[field]].gender && _first(curP.name)===_first(P[fix[field]].name)){
+        mergeOneDuplicate(fix[field], cur);   // يربط كل أبنائها (ومنهم هذا الشخص) بالنسخة الصحيحة ويحذف المكرّرة
+      }
+      if(P[pid] && P[pid][field] !== fix[field]) setParentLink(pid, {[field]: fix[field]});
+      fixedCount++;
+    });
+  });
   // Pass 0b: enforce spouse-link reciprocity UNIVERSALLY, for every person, regardless of how
   // the link was written (a queued PENDING_SPOUSE_LINK, a direct "P.x.spouseId = 'y'" line in
   // the seed, or something merged in from Firebase). Found 107 people across this file whose
