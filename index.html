@@ -3526,6 +3526,19 @@ function computeArhamTree(personId){
   addArhamRoots(personId, 'self', categories, excludeIds);
   if(p.fatherId) addArhamRoots(p.fatherId, 'father', categories, excludeIds);
   if(p.motherId) addArhamRoots(p.motherId, 'mother', categories, excludeIds);
+  // أولاد البنت الذين أبوهم نفسه ظاهر في هذه القائمة (كبنت من العائلة تزوجت رجلًا من العائلة) يُذكرون
+  // عند أبيهم فقط، ويُحذفون من تحت أمهم — النسب للأب، ولئلا يتكرر الشخص نفسه في موضعين
+  const shownIds = new Set();
+  (function collect(nodes){ nodes.forEach(n=>{ shownIds.add(n.person.id); collect(n.children); }); })
+    (Object.values(categories).flat());
+  (function prune(nodes){
+    nodes.forEach(n=>{
+      if(n.person.gender==='f'){
+        n.children = n.children.filter(c=>!(c.person.fatherId && c.person.fatherId!==n.person.id && shownIds.has(c.person.fatherId)));
+      }
+      prune(n.children);
+    });
+  })(Object.values(categories).flat());
   return categories;
 }
 
@@ -3609,13 +3622,20 @@ function willRootLines(root){
   const g = root.person.gender==='f' ? 'ها' : 'ه';
   const lines = [`${root.person.name} وأولاد${g} ` + root.children.map(c=>c.person.name).join(' و')];
   const levelTitle = d => d===1 ? `أحفاد${g}` : d===2 ? `أولاد أحفاد${g}` : d===3 ? `أحفاد أحفاد${g}` : `ذرية أحفاد${g} (الجيل ${d+1})`;
-  let parents = root.children, depth = 1;
+  // من "أولاد أحفاده" فما بعد يُذكر الأب باسمين (أحمد بن عبدالله) لأن أسماء الأحفاد تتكرر كثيرًا
+  // فيلتبس "أولاد أحمد" بين أكثر من أحمد
+  let parents = root.children.map(n=>({node:n, up:root.person})), depth = 1;
   while(parents.length){
-    const groups = parents.filter(pn=>pn.children && pn.children.length).map(pn=>
-      pn.children.map(c=>c.person.name).join(' و') + (pn.children.length===1 ? ' ولد ' : ' أولاد ') + pn.person.name);
+    const groups = parents.filter(x=>x.node.children && x.node.children.length).map(x=>{
+      const pn = x.node, kids = pn.children;
+      const dad = pn.person.fatherId && P[pn.person.fatherId] ? String(P[pn.person.fatherId].name).trim().split(/\s+/)[0] : null;
+      // النسب دائمًا للأب الحقيقي (لا للأم وإن كان الشخص ظاهرًا في القائمة من جهة أمه)
+      const who = depth>=2 && dad ? `${pn.person.name} ${pn.person.gender==='f'?'بنت':'بن'} ${dad}` : pn.person.name;
+      return kids.map(c=>c.person.name).join(' و') + (kids.length===1 ? ' ولد ' : ' أولاد ') + who;
+    });
     if(!groups.length) break;
     lines.push(`${levelTitle(depth)}: ` + groups.join('، و'));
-    parents = parents.flatMap(pn=>pn.children||[]);
+    parents = parents.flatMap(x=>(x.node.children||[]).map(c=>({node:c, up:x.node.person})));
     depth++;
   }
   return lines;
