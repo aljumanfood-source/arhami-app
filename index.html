@@ -547,6 +547,10 @@
   .will-intro{font-size:13px;color:var(--ink);line-height:1.9;margin:10px 0;}
   .will-line{font-size:14.5px;color:var(--ink);margin:4px 0;}
   .will-narrative{margin-top:16px;}
+  .will-section-head{
+    font-family:'Markazi Text',serif;font-weight:800;font-size:18px;color:var(--gold-rich, #A8862E);
+    margin:22px 0 2px;border-bottom:1px solid var(--gold-line, #E6D7A8);padding-bottom:3px;
+  }
   .will-root-line{
     font-family:'Markazi Text',serif;font-weight:700;font-size:16.5px;color:var(--green-deep);
     margin:16px 0 4px;
@@ -3582,6 +3586,38 @@ function narrateRootChildren(root){
   return `وأولاد${suffix} ` + combined.join(' و');
 }
 
+
+// عنوان القسم في الوصية حسب صلة القرابة (بدل كتابة "عمي/أخي..." قبل كل اسم)
+function willSectionTitle(label){
+  const map = {
+    'أخي':'الإخوة وأولادهم', 'أختي':'الأخوات وأولادهن',
+    'عمي':'الأعمام وأولادهم', 'عمتي':'العمات وأولادهن',
+    'خالي':'الأخوال وأولادهم', 'خالتي':'الخالات وأولادهن',
+    'عم أبي':'أعمام الأب وأولادهم', 'عمة أبي':'عمات الأب وأولادهن',
+    'خال أبي':'أخوال الأب وأولادهم', 'خالة أبي':'خالات الأب وأولادهن',
+    'عم أمي':'أعمام الأم وأولادهم', 'عمة أمي':'عمات الأم وأولادهن',
+    'خال أمي':'أخوال الأم وأولادهم', 'خالة أمي':'خالات الأم وأولادهن'
+  };
+  return (map[label] || label) + ':';
+}
+// أسطر شخص واحد: "فلان وأولاده أ وب" ثم لكل جيل أدنى سطر يجمع الأسماء تحت آبائهم:
+// "أحفاده: س وص أولاد أ، وع ولد ب" ثم "أولاد أحفاده: ..." وهكذا
+function willRootLines(root){
+  const g = root.person.gender==='f' ? 'ها' : 'ه';
+  const lines = [`${root.person.name} وأولاد${g} ` + root.children.map(c=>c.person.name).join(' و')];
+  const levelTitle = d => d===1 ? `أحفاد${g}` : d===2 ? `أولاد أحفاد${g}` : d===3 ? `أحفاد أحفاد${g}` : `ذرية أحفاد${g} (الجيل ${d+1})`;
+  let parents = root.children, depth = 1;
+  while(parents.length){
+    const groups = parents.filter(pn=>pn.children && pn.children.length).map(pn=>
+      pn.children.map(c=>c.person.name).join(' و') + (pn.children.length===1 ? ' ولد ' : ' أولاد ') + pn.person.name);
+    if(!groups.length) break;
+    lines.push(`${levelTitle(depth)}: ` + groups.join('، و'));
+    parents = parents.flatMap(pn=>pn.children||[]);
+    depth++;
+  }
+  return lines;
+}
+
 function addTargetFor(personId, relKey){
   const person = P[personId];
   if(!person) return null;
@@ -5084,16 +5120,40 @@ function renderWasiyya(personId){
     const e = document.createElement('p'); e.className='section-note'; e.textContent='لا يوجد أقربون مستحقون مسجّلون بعد — أضف الأعمام والأخوال من صفحات الوالدين للحصول على قائمة كاملة.';
     doc.appendChild(e);
   } else {
+    // التنسيق الجديد: عنوان لكل قسم (الإخوة، الأعمام، الأخوال، أعمام الأب...) بدل تكرار "عمي فلان"
+    // قبل كل اسم، ثم لكل شخص سطر "فلان وأولاده ..." وتحته "أحفاده: ... أولاد فلان" و"أولاد أحفاده: ..."،
+    // ومن لا ذرية لهم في القسم نفسه يُجمعون متتالين في سطر واحد
     const narrative = document.createElement('div');
     narrative.className = 'will-narrative';
+    const sections = [];
     order.forEach(key=>{
       categories[key].forEach(root=>{
-        const heading = document.createElement('p');
-        heading.className = 'will-root-line';
-        const hasKids = root.children.length>0;
-        heading.textContent = `${root.label} ${root.person.name}` + (hasKids ? ' ' + narrateRootChildren(root) : '');
-        narrative.appendChild(heading);
+        let sec = sections.find(x=>x.label===root.label);
+        if(!sec){ sec = {label:root.label, roots:[]}; sections.push(sec); }
+        sec.roots.push(root);
       });
+    });
+    sections.forEach(sec=>{
+      const head = document.createElement('p');
+      head.className = 'will-section-head';
+      head.textContent = willSectionTitle(sec.label);
+      narrative.appendChild(head);
+      const withKids = sec.roots.filter(r=>r.children.length>0);
+      const noKids = sec.roots.filter(r=>r.children.length===0);
+      withKids.forEach(root=>{
+        willRootLines(root).forEach((line,i)=>{
+          const el = document.createElement('p');
+          el.className = i===0 ? 'will-root-line' : 'will-child-line';
+          el.textContent = line;
+          narrative.appendChild(el);
+        });
+      });
+      if(noKids.length){
+        const el = document.createElement('p');
+        el.className = 'will-root-line';
+        el.textContent = noKids.map(r=>r.person.name).join(' و');
+        narrative.appendChild(el);
+      }
     });
     doc.appendChild(narrative);
   }
